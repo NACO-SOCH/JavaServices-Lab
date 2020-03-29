@@ -23,7 +23,7 @@ public class LabTestSampleBatchDto {
 	private Long num_ofSamples;
 	private Long acceptedSamples;
 	private Long rejectedSamples;
-	private String batchStatus;
+	private Long batchStatusId;
 	private List<LabTestSampleDto> labTestSampleDtoList;
 
 	public LabTestSampleBatchDto() {
@@ -174,12 +174,12 @@ public class LabTestSampleBatchDto {
 		this.rejectedSamples = rejectedSamples;
 	}
 
-	public String getBatchStatus() {
-		return batchStatus;
+	public Long getBatchStatusId() {
+		return batchStatusId;
 	}
 
-	public void setBatchStatus(String batchStatus) {
-		this.batchStatus = batchStatus;
+	public void setBatchStatusId(Long batchStatusId) {
+		this.batchStatusId = batchStatusId;
 	}
 
 	public List<LabTestSampleDto> getLabTestSampleDtoList() {

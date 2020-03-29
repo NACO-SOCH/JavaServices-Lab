@@ -17,7 +17,7 @@ import gov.naco.soch.lab.dto.LabTestSampleBatchDto;
 import gov.naco.soch.lab.service.RecieveSamplesService;
 
 @RestController
-@RequestMapping("/recievesample")
+@RequestMapping("/recievesamples")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class RecieveSamplesController {
 

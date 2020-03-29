@@ -32,8 +32,10 @@ public class LabTestSampleDto {
 	private String authorizerSignature;
 	private String typeOfSpecimen;
 	private Long labTechnicianId;
+	private String labTechnicianName;
 	private String labTechnicianSignature;
 	private Long labInchargeId;
+	private String labInchargeName;
 	private String labInchargeSignature;
 	private String testRequestFormLink;
 
@@ -265,6 +267,14 @@ public class LabTestSampleDto {
 		this.labTechnicianId = labTechnicianId;
 	}
 
+	public String getLabTechnicianName() {
+		return labTechnicianName;
+	}
+
+	public void setLabTechnicianName(String labTechnicianName) {
+		this.labTechnicianName = labTechnicianName;
+	}
+
 	public String getLabTechnicianSignature() {
 		return labTechnicianSignature;
 	}
@@ -279,6 +289,14 @@ public class LabTestSampleDto {
 
 	public void setLabInchargeId(Long labInchargeId) {
 		this.labInchargeId = labInchargeId;
+	}
+
+	public String getLabInchargeName() {
+		return labInchargeName;
+	}
+
+	public void setLabInchargeName(String labInchargeName) {
+		this.labInchargeName = labInchargeName;
 	}
 
 	public String getLabInchargeSignature() {
