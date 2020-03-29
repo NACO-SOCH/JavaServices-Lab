@@ -51,7 +51,7 @@ public class RecieveSamplesServiceMapperUtil {
 			labTestSampleBatch.getLabTestSamples().forEach(s -> {
 				labTestSampleDtoList.add(mapToLabTestSamplesDTO(s));
 			});
-
+			labTestSampleBatchDto.setLabTestSampleDtoList(labTestSampleDtoList);
 		}
 		return labTestSampleBatchDto;
 	}
@@ -73,7 +73,9 @@ public class RecieveSamplesServiceMapperUtil {
 		if (s.getMasterSampleStatus() != null) {
 			labTestSampleDto.setSampleStatusId(s.getMasterSampleStatus().getId());
 		}
-		labTestSampleDto.setSampleStatusId(s.getMasterSampleStatus().getId());
+		if (s.getMasterSampleStatus() != null) {
+			labTestSampleDto.setSampleStatusId(s.getMasterSampleStatus().getId());
+		}
 		if (s.getMasterRemark() != null) {
 			labTestSampleDto.setRemarksId(s.getMasterRemark().getId());
 		}
