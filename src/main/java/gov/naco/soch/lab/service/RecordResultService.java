@@ -2,8 +2,11 @@ package gov.naco.soch.lab.service;
 
 import java.util.Optional;
 
+import javax.transaction.Transactional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 
 import gov.naco.soch.entity.LabTestSample;
 import gov.naco.soch.entity.MasterResultStatus;
@@ -11,16 +14,17 @@ import gov.naco.soch.exception.ServiceException;
 import gov.naco.soch.lab.dto.LabTestSampleDto;
 import gov.naco.soch.lab.mapper.RecordResultMapperUtil;
 import gov.naco.soch.repository.LabTestSampleRepository;
-
+@Service
+@Transactional
 public class RecordResultService {
-	
-	
+
+
 	@Autowired
 	private LabTestSampleRepository labTestSampleRepository;
-	
-		
-public boolean saveLabSampleResult(LabTestSampleDto labTestSampleDto) {
-		
+
+
+	public boolean saveLabSampleResult(LabTestSampleDto labTestSampleDto) {
+
 		boolean isSaved=false;		
 		LabTestSample labTestSample=null;
 		if(null==labTestSampleDto.getId()) {			
@@ -38,7 +42,7 @@ public boolean saveLabSampleResult(LabTestSampleDto labTestSampleDto) {
 			else
 			{			
 				throw new ServiceException("SampleID not present", null, HttpStatus.BAD_REQUEST);
-				
+
 			}
 		}
 

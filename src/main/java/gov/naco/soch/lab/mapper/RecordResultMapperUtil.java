@@ -4,6 +4,7 @@ import gov.naco.soch.entity.LabTestSample;
 import gov.naco.soch.entity.MasterResultType;
 import gov.naco.soch.lab.dto.LabTestSampleDto;
 
+
 public class RecordResultMapperUtil {
 	public static LabTestSample mapToLabTestSample(LabTestSample labTestSample,LabTestSampleDto labTestSampleDto) {
 
