@@ -22,8 +22,10 @@ public class ReceiveSamplesServiceMapperUtil {
 		labTestSampleBatchDto.setNum_ofSamples(labTestSampleBatch.getNumOfSamples());
 		labTestSampleBatchDto.setAcceptedSamples(labTestSampleBatch.getAcceptedSamples());
 		labTestSampleBatchDto.setRejectedSamples(labTestSampleBatch.getRejectedSamples());
-		labTestSampleBatchDto.setBatchStatusId(labTestSampleBatch.getMasterBatchStatus().getId());
-
+		if(labTestSampleBatch.getMasterBatchStatus()!=null) {
+			labTestSampleBatchDto.setBatchStatusId(labTestSampleBatch.getMasterBatchStatus().getId());
+		}
+		
 		if (labTestSampleBatch.getFacility() != null) {
 			labTestSampleBatchDto.setArtcId(labTestSampleBatch.getFacility().getId());
 			labTestSampleBatchDto.setArtcName(labTestSampleBatch.getFacility().getName());
