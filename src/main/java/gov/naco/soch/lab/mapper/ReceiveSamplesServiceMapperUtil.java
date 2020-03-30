@@ -22,10 +22,11 @@ public class ReceiveSamplesServiceMapperUtil {
 		labTestSampleBatchDto.setNum_ofSamples(labTestSampleBatch.getNumOfSamples());
 		labTestSampleBatchDto.setAcceptedSamples(labTestSampleBatch.getAcceptedSamples());
 		labTestSampleBatchDto.setRejectedSamples(labTestSampleBatch.getRejectedSamples());
-		if(labTestSampleBatch.getMasterBatchStatus()!=null) {
+		if (labTestSampleBatch.getMasterBatchStatus() != null) {
 			labTestSampleBatchDto.setBatchStatusId(labTestSampleBatch.getMasterBatchStatus().getId());
+			labTestSampleBatchDto.setBatchStatus(labTestSampleBatch.getMasterBatchStatus().getStatus());
 		}
-		
+
 		if (labTestSampleBatch.getFacility() != null) {
 			labTestSampleBatchDto.setArtcId(labTestSampleBatch.getFacility().getId());
 			labTestSampleBatchDto.setArtcName(labTestSampleBatch.getFacility().getName());
@@ -64,6 +65,8 @@ public class ReceiveSamplesServiceMapperUtil {
 		labTestSampleDto.setTestBatchId(s.getLabTestSampleBatch().getId());
 		labTestSampleDto.setBeneficiaryId(s.getBeneficiary().getId());
 		labTestSampleDto.setBeneficiaryName(s.getBeneficiary().getFirstName());
+		labTestSampleDto.setBeneficiaryDob(s.getBeneficiary().getDateOfBirth());
+		labTestSampleDto.setBeneficiaryAge(s.getBeneficiary().getAge());
 		s.getBeneficiary().getArtBeneficiaryDetails().forEach(a -> {
 			if (a.getIsDelete() == Boolean.FALSE) {
 				labTestSampleDto.setArtId(a.getId());
@@ -74,15 +77,15 @@ public class ReceiveSamplesServiceMapperUtil {
 //		labTestSampleDto.setTestTypeId(s.getTestTypeId());
 		if (s.getMasterSampleStatus() != null) {
 			labTestSampleDto.setSampleStatusId(s.getMasterSampleStatus().getId());
-		}
-		if (s.getMasterSampleStatus() != null) {
-			labTestSampleDto.setSampleStatusId(s.getMasterSampleStatus().getId());
+			labTestSampleDto.setSampleStatus(s.getMasterSampleStatus().getStatus());
 		}
 		if (s.getMasterRemark() != null) {
 			labTestSampleDto.setRemarksId(s.getMasterRemark().getId());
+			labTestSampleDto.setRemarks(s.getMasterRemark().getRemarks());
 		}
 		if (s.getMasterResultStatus() != null) {
 			labTestSampleDto.setResultStatusId(s.getMasterResultStatus().getId());
+			labTestSampleDto.setResultStatus(s.getMasterResultStatus().getStatus());
 		}
 		labTestSampleDto.setSampleCollectedDate(s.getSampleCollectedDate());
 		labTestSampleDto.setSampleDispatchDate(s.getSampleDispatchDate());
@@ -90,8 +93,9 @@ public class ReceiveSamplesServiceMapperUtil {
 		labTestSampleDto.setResultReceivedDate(s.getResultReceivedDate());
 		labTestSampleDto.setResultApprovedDate(s.getResultApprovedDate());
 		labTestSampleDto.setResultDispatchDate(s.getResultDispatchDate());
-		if(s.getResultType()!=null) {
+		if (s.getResultType() != null) {
 			labTestSampleDto.setResultTypeId(s.getResultType().getId());
+			labTestSampleDto.setResultType(s.getResultType().getResultType());
 		}
 		labTestSampleDto.setResultValue(s.getResultValue());
 		labTestSampleDto.setLogValue(s.getLogValue());
@@ -100,6 +104,7 @@ public class ReceiveSamplesServiceMapperUtil {
 //		labTestSampleDto.setTestMachineTypeId();
 		if (s.getMachine() != null) {
 			labTestSampleDto.setTestMachineId(s.getMachine().getId());
+			labTestSampleDto.setTestMachine(s.getMachine().getMachineName());
 		}
 		if (s.getAuthorizer() != null) {
 			labTestSampleDto.setAuthorizerId(s.getAuthorizer().getId());
