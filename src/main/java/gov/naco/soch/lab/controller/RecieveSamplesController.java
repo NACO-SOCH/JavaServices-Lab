@@ -14,29 +14,29 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import gov.naco.soch.lab.dto.LabTestSampleBatchDto;
-import gov.naco.soch.lab.service.RecieveSamplesService;
+import gov.naco.soch.lab.service.ReceiveSamplesService;
 
 @RestController
-@RequestMapping("/recievesamples")
+@RequestMapping("/receivesamples")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class RecieveSamplesController {
 
 	private static final Logger logger = LoggerFactory.getLogger(LabTechController.class);
 
 	@Autowired
-	private RecieveSamplesService recieveSamplesService;
+	private ReceiveSamplesService receiveSamplesService;
 
 	@GetMapping("/list/{labId}")
-	public List<LabTestSampleBatchDto> fetchRecieveSamplesList(@PathVariable("labId") Long labId) {
-		logger.info("fetchRecieveSamplesList method is invoked");
-		return recieveSamplesService.fetchRecieveSamplesList(labId);
+	public List<LabTestSampleBatchDto> fetchReceiveSamplesList(@PathVariable("labId") Long labId) {
+		logger.info("fetchReceiveSamplesList method is invoked");
+		return receiveSamplesService.fetchReceiveSamplesList(labId);
 	}
 
 	@PostMapping("/{batchId}")
-	public LabTestSampleBatchDto saveRecievedSamples(@PathVariable("batchId") Long batchId,
+	public LabTestSampleBatchDto saveReceivedSamples(@PathVariable("batchId") Long batchId,
 			@RequestBody LabTestSampleBatchDto labTestSampleBatchDto) {
-		logger.info("saveRecievedSamples method is invoked");
-		labTestSampleBatchDto = recieveSamplesService.saveRecievedSamples(labTestSampleBatchDto);
+		logger.info("saveReceivedSamples method is invoked");
+		labTestSampleBatchDto = receiveSamplesService.saveReceivedSamples(labTestSampleBatchDto);
 		return labTestSampleBatchDto;
 	}
 }

@@ -17,8 +17,8 @@ public class LabTestSampleDto {
 	private Long resultStatusId;
 	private LocalDateTime sampleCollectedDate;
 	private LocalDateTime sampleDispatchDate;
-	private LocalDateTime sampleReceviedDate;
-	private LocalDateTime resultRecivedDate;
+	private LocalDateTime sampleReceivedDate;
+	private LocalDateTime resultReceivedDate;
 	private LocalDateTime resultApprovedDate;
 	private LocalDateTime resultDispatchDate;
 	private Long resultTypeId;
@@ -148,19 +148,19 @@ public class LabTestSampleDto {
 	}
 
 	public LocalDateTime getSampleReceviedDate() {
-		return sampleReceviedDate;
+		return sampleReceivedDate;
 	}
 
-	public void setSampleReceviedDate(LocalDateTime sampleReceviedDate) {
-		this.sampleReceviedDate = sampleReceviedDate;
+	public void setSampleReceivedDate(LocalDateTime sampleReceivedDate) {
+		this.sampleReceivedDate = sampleReceivedDate;
 	}
 
-	public LocalDateTime getResultRecivedDate() {
-		return resultRecivedDate;
+	public LocalDateTime getResultReceivedDate() {
+		return resultReceivedDate;
 	}
 
-	public void setResultRecivedDate(LocalDateTime resultRecivedDate) {
-		this.resultRecivedDate = resultRecivedDate;
+	public void setResultReceivedDate(LocalDateTime resultReceivedDate) {
+		this.resultReceivedDate = resultReceivedDate;
 	}
 
 	public LocalDateTime getResultApprovedDate() {

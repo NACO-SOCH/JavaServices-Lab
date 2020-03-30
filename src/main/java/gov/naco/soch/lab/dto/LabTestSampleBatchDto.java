@@ -19,7 +19,7 @@ public class LabTestSampleBatchDto {
 	private String labTechName;
 	private String labTechContact;
 	private LocalDateTime dispatchDate;
-	private LocalDateTime receviedDate;
+	private LocalDateTime receivedDate;
 	private Long num_ofSamples;
 	private Long acceptedSamples;
 	private Long rejectedSamples;
@@ -142,12 +142,12 @@ public class LabTestSampleBatchDto {
 		this.dispatchDate = dispatchDate;
 	}
 
-	public LocalDateTime getReceviedDate() {
-		return receviedDate;
+	public LocalDateTime getReceivedDate() {
+		return receivedDate;
 	}
 
-	public void setReceviedDate(LocalDateTime receviedDate) {
-		this.receviedDate = receviedDate;
+	public void setReceivedDate(LocalDateTime receivedDate) {
+		this.receivedDate = receivedDate;
 	}
 
 	public Long getNum_ofSamples() {

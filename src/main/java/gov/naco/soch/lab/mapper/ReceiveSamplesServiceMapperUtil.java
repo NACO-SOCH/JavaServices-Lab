@@ -10,7 +10,7 @@ import gov.naco.soch.entity.LabTestSampleBatch;
 import gov.naco.soch.lab.dto.LabTestSampleBatchDto;
 import gov.naco.soch.lab.dto.LabTestSampleDto;
 
-public class RecieveSamplesServiceMapperUtil {
+public class ReceiveSamplesServiceMapperUtil {
 
 	public static LabTestSampleBatchDto mapToLabTestSampleBatchDto(LabTestSampleBatch labTestSampleBatch) {
 
@@ -18,7 +18,7 @@ public class RecieveSamplesServiceMapperUtil {
 		labTestSampleBatchDto.setId(labTestSampleBatch.getId());
 		labTestSampleBatchDto.setBdnSerialNumber(labTestSampleBatch.getBdnSerialNumber());
 		labTestSampleBatchDto.setDispatchDate(labTestSampleBatch.getDispatchDate());
-		labTestSampleBatchDto.setReceviedDate(labTestSampleBatch.getReceviedDate());
+		labTestSampleBatchDto.setReceivedDate(labTestSampleBatch.getReceivedDate());
 		labTestSampleBatchDto.setNum_ofSamples(labTestSampleBatch.getNumOfSamples());
 		labTestSampleBatchDto.setAcceptedSamples(labTestSampleBatch.getAcceptedSamples());
 		labTestSampleBatchDto.setRejectedSamples(labTestSampleBatch.getRejectedSamples());
@@ -84,8 +84,8 @@ public class RecieveSamplesServiceMapperUtil {
 		}
 		labTestSampleDto.setSampleCollectedDate(s.getSampleCollectedDate());
 		labTestSampleDto.setSampleDispatchDate(s.getSampleDispatchDate());
-		labTestSampleDto.setSampleReceviedDate(s.getSampleReceviedDate());
-		labTestSampleDto.setResultRecivedDate(s.getResultRecivedDate());
+		labTestSampleDto.setSampleReceviedDate(s.getSampleReceivedDate());
+		labTestSampleDto.setResultRecivedDate(s.getResultReceivedDate());
 		labTestSampleDto.setResultApprovedDate(s.getResultApprovedDate());
 		labTestSampleDto.setResultDispatchDate(s.getResultDispatchDate());
 		if(s.getResultType()!=null) {

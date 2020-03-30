@@ -20,7 +20,7 @@ import gov.naco.soch.entity.MasterSampleStatus;
 import gov.naco.soch.entity.UserMaster;
 import gov.naco.soch.lab.dto.LabTestSampleBatchDto;
 import gov.naco.soch.lab.dto.LabTestSampleDto;
-import gov.naco.soch.lab.mapper.RecieveSamplesServiceMapperUtil;
+import gov.naco.soch.lab.mapper.ReceiveSamplesServiceMapperUtil;
 import gov.naco.soch.repository.LabTestSampleBatchRepository;
 import gov.naco.soch.repository.MasterBatchStatusRepository;
 import gov.naco.soch.repository.MasterRemarkRepository;
@@ -29,7 +29,7 @@ import gov.naco.soch.repository.UserMasterRepository;
 
 @Service
 @Transactional
-public class RecieveSamplesService {
+public class ReceiveSamplesService {
 
 	@Autowired
 	private LabTestSampleBatchRepository labTestSampleBatchRepository;
@@ -46,10 +46,10 @@ public class RecieveSamplesService {
 	@Autowired
 	private MasterRemarkRepository masterRemarkRepository;
 
-	private static final Logger logger = LoggerFactory.getLogger(RecieveSamplesService.class);
+	private static final Logger logger = LoggerFactory.getLogger(ReceiveSamplesService.class);
 
-	public List<LabTestSampleBatchDto> fetchRecieveSamplesList(Long labId) {
-		logger.debug("In fetchRecieveSamplesList() of RecieveSamplesService");
+	public List<LabTestSampleBatchDto> fetchReceiveSamplesList(Long labId) {
+		logger.debug("In fetchReceiveSamplesList() of RecieveSamplesService");
 
 		List<LabTestSampleBatchDto> labTestSampleBatchDtoList = new ArrayList<>();
 
@@ -58,7 +58,7 @@ public class RecieveSamplesService {
 		if (!CollectionUtils.isEmpty(labTestSampleBatchList)) {
 
 			labTestSampleBatchList.forEach(l -> {
-				LabTestSampleBatchDto labTestSampleBatchDto = RecieveSamplesServiceMapperUtil
+				LabTestSampleBatchDto labTestSampleBatchDto = ReceiveSamplesServiceMapperUtil
 						.mapToLabTestSampleBatchDto(l);
 				labTestSampleBatchDtoList.add(labTestSampleBatchDto);
 			});
@@ -66,7 +66,7 @@ public class RecieveSamplesService {
 		return labTestSampleBatchDtoList;
 	}
 
-	public LabTestSampleBatchDto saveRecievedSamples(LabTestSampleBatchDto labTestSampleBatchDto) {
+	public LabTestSampleBatchDto saveReceivedSamples(LabTestSampleBatchDto labTestSampleBatchDto) {
 
 		Optional<LabTestSampleBatch> labTestSampleBatchOpt = labTestSampleBatchRepository
 				.findById(labTestSampleBatchDto.getId());
@@ -74,7 +74,7 @@ public class RecieveSamplesService {
 			LabTestSampleBatch labTestSampleBatch = labTestSampleBatchOpt.get();
 			labTestSampleBatch.setAcceptedSamples(labTestSampleBatchDto.getAcceptedSamples());
 			labTestSampleBatch.setRejectedSamples(labTestSampleBatchDto.getRejectedSamples());
-			labTestSampleBatch.setReceviedDate(LocalDateTime.now());
+			labTestSampleBatch.setReceivedDate(LocalDateTime.now());
 			Optional<UserMaster> labTechUserOpt = userMasterRepository.findById(labTestSampleBatchDto.getLabTechId());
 			if (labTechUserOpt.isPresent()) {
 				labTestSampleBatch.setVlLabTechUser(labTechUserOpt.get());
@@ -118,7 +118,7 @@ public class RecieveSamplesService {
 				});
 			}
 			LabTestSampleBatch labTestSampleBatchSaved = labTestSampleBatchRepository.save(labTestSampleBatch);
-			return RecieveSamplesServiceMapperUtil.mapToLabTestSampleBatchDto(labTestSampleBatchSaved);
+			return ReceiveSamplesServiceMapperUtil.mapToLabTestSampleBatchDto(labTestSampleBatchSaved);
 		} else {
 			// throw error
 		}
