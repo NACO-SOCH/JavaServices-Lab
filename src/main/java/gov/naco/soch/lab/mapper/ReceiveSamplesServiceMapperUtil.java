@@ -71,7 +71,7 @@ public class ReceiveSamplesServiceMapperUtil {
 			}
 		});
 		labTestSampleDto.setBarcodeNumber(s.getBarcodeNumber());
-		labTestSampleDto.setTestTypeId(s.getTestTypeId());
+//		labTestSampleDto.setTestTypeId(s.getTestTypeId());
 		if (s.getMasterSampleStatus() != null) {
 			labTestSampleDto.setSampleStatusId(s.getMasterSampleStatus().getId());
 		}
