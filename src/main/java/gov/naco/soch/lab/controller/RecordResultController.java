@@ -19,7 +19,7 @@ import gov.naco.soch.lab.service.RecordResultService;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class RecordResultController {
 	
-	private static final Logger logger = LoggerFactory.getLogger(LabInchargeController.class);
+	private static final Logger logger = LoggerFactory.getLogger(RecordResultController.class);
 
 	@Autowired
 	private RecordResultService recordResultService;
