@@ -84,8 +84,8 @@ public class ReceiveSamplesServiceMapperUtil {
 		}
 		labTestSampleDto.setSampleCollectedDate(s.getSampleCollectedDate());
 		labTestSampleDto.setSampleDispatchDate(s.getSampleDispatchDate());
-		labTestSampleDto.setSampleReceviedDate(s.getSampleReceivedDate());
-		labTestSampleDto.setResultRecivedDate(s.getResultReceivedDate());
+		labTestSampleDto.setSampleReceivedDate(s.getSampleReceivedDate());
+		labTestSampleDto.setResultReceivedDate(s.getResultReceivedDate());
 		labTestSampleDto.setResultApprovedDate(s.getResultApprovedDate());
 		labTestSampleDto.setResultDispatchDate(s.getResultDispatchDate());
 		if(s.getResultType()!=null) {
