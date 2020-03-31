@@ -20,13 +20,26 @@ public class TestResultDto implements Serializable {
 	private String beneficiaryGender;
 
 
-	private String artCName;
-	private String testName;
+	private String artcName;
+	//private String testName;
 	private Long artNo;
 	private Long noOfPatients;	
 	private String testType;
-
+	private String resultStatus;	
 	private String bdnSerialNo;
+	private Long resultStatusId;
+	private Long testTypeId;
+	private Long batchId;
+	//
+	private String address;		
+	private LocalDateTime resultDate;	
+	private String  resultType;;
+	private String  resultValue;
+	private String  logvalue;
+	private Boolean isError;
+	private Long errorCode;
+	
+	
 	public String getBarCode() {
 		return barCode;
 	}
@@ -81,17 +94,11 @@ public class TestResultDto implements Serializable {
 	public void setBeneficiaryGender(String beneficiaryGender) {
 		this.beneficiaryGender = beneficiaryGender;
 	}
-	public String getArtCName() {
-		return artCName;
+	public String getArtcName() {
+		return artcName;
 	}
-	public void setArtCName(String artCName) {
-		this.artCName = artCName;
-	}
-	public String getTestName() {
-		return testName;
-	}
-	public void setTestName(String testName) {
-		this.testName = testName;
+	public void setArtcName(String artcName) {
+		this.artcName = artcName;
 	}
 	public Long getArtNo() {
 		return artNo;
@@ -110,15 +117,82 @@ public class TestResultDto implements Serializable {
 	}
 	public void setTestType(String testType) {
 		this.testType = testType;
-	}	
+	}
+	public String getResultStatus() {
+		return resultStatus;
+	}
+	public void setResultStatus(String resultStatus) {
+		this.resultStatus = resultStatus;
+	}
 	public String getBdnSerialNo() {
 		return bdnSerialNo;
 	}
 	public void setBdnSerialNo(String bdnSerialNo) {
 		this.bdnSerialNo = bdnSerialNo;
 	}
-
-
+	public Long getResultStatusId() {
+		return resultStatusId;
+	}
+	public void setResultStatusId(Long resultStatusId) {
+		this.resultStatusId = resultStatusId;
+	}
+	public Long getTestTypeId() {
+		return testTypeId;
+	}
+	public void setTestTypeId(Long testTypeId) {
+		this.testTypeId = testTypeId;
+	}
+	public Long getBatchId() {
+		return batchId;
+	}
+	public void setBatchId(Long batchId) {
+		this.batchId = batchId;
+	}
+	public String getAddress() {
+		return address;
+	}
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	public LocalDateTime getResultDate() {
+		return resultDate;
+	}
+	public void setResultDate(LocalDateTime resultDate) {
+		this.resultDate = resultDate;
+	}
+	public String getResultType() {
+		return resultType;
+	}
+	public void setResultType(String resultType) {
+		this.resultType = resultType;
+	}
+	public String getResultValue() {
+		return resultValue;
+	}
+	public void setResultValue(String resultValue) {
+		this.resultValue = resultValue;
+	}
+	public String getLogvalue() {
+		return logvalue;
+	}
+	public void setLogvalue(String logvalue) {
+		this.logvalue = logvalue;
+	}
+	public Boolean getIsError() {
+		return isError;
+	}
+	public void setIsError(Boolean isError) {
+		this.isError = isError;
+	}
+	public Long getErrorCode() {
+		return errorCode;
+	}
+	public void setErrorCode(Long errorCode) {
+		this.errorCode = errorCode;
+	}
+	
+	
+	
 }
 
 

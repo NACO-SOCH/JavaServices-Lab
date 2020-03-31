@@ -8,7 +8,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import gov.naco.soch.lab.dto.TestResultDto;
@@ -27,5 +29,16 @@ public class TestResultsController {
 		logger.debug("getTestResultDetails is invoked!"); 
 		return testResultService.getTestResultDetails(labId); 
 	}
+	
+	
+
+	@PostMapping("/approveSampleResult")
+	public @ResponseBody boolean approveLabSampleResult(@PathVariable(value = "sampleId") Long sampleId) {
+		logger.debug("Entering into method approveLabSampleResult with sampleId->{}:",	sampleId);
+		boolean isApproved = testResultService.approveLabSampleResult(sampleId);
+		return isApproved;
+	}
+	
+	
 }
 
