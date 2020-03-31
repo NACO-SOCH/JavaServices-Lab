@@ -28,11 +28,12 @@ public class TestResultsMapperUtil {
 				testResultDto.setBeneficiaryName(labTestSample.getBeneficiary().getFirstName()+""+labTestSample.getBeneficiary().getMiddleName()+""+labTestSample.getBeneficiary().getLastName());
 				testResultDto.setBeneficiaryUId(labTestSample.getBeneficiary().getUid());
 				testResultDto.setBeneficiaryGender(labTestSample.getBeneficiary().getGender());				
-				testResultDto.setTestName(labTestSample.getTestType().getTypeOfTest());//doubt
+				testResultDto.setTestName(labTestSample.getTest().getTypeOfTest());//doubt
 				testResultDto.setBarCode(labTestSample.getBarcodeNumber());
 				testResultDto.setSamplCollectedDate(labTestSample.getSampleCollectedDate());
 				testResultDto.setSampleReceivedDate(labTestSample.getSampleReceivedDate());
 				testResultDto.setSampleDispatchedDate(labTestSample.getSampleDispatchDate());
+				testResultDto.setTestType(labTestSample.getTestType().getTestType());
 				labTestResultsDtoList.add(testResultDto);
 			}
 		}
@@ -40,25 +41,5 @@ public class TestResultsMapperUtil {
 
 	}
 
-	private static List<LabTestSampleDto> mapTolabTestSampleDtoList(Set<LabTestSample> labTestSampleList) {
 
-		List<LabTestSampleDto> labTestSampleDtoSet=new ArrayList<>();
-
-		for(LabTestSample labTestSample:labTestSampleList) {
-			LabTestSampleDto labTestSampleDto=new LabTestSampleDto();
-			labTestSampleDto.setBarcodeNumber(labTestSample.getBarcodeNumber());
-			labTestSampleDto.setSampleCollectedDate(labTestSample.getSampleCollectedDate());
-			labTestSampleDto.setSampleReceivedDate(labTestSample.getResultReceivedDate());			
-			//labTestSampleDto.setb(labTestSample.getBeneficiary().getAge());
-			//	labTestSampleDto.setbe(labTestSample.getBeneficiary().getStatus());//doubt
-			labTestSampleDto.setBeneficiaryId(labTestSample.getBeneficiary().getId());
-			labTestSampleDto.setBeneficiaryName(labTestSample.getBeneficiary().getFirstName()+" "+labTestSample.getBeneficiary().getMiddleName()+" "+labTestSample.getBeneficiary().getLastName());
-			labTestSampleDto.setLabInchargeName(labTestSample.getLabInCharge().getFirstname()+""+labTestSample.getLabInCharge().getLastname());
-			labTestSampleDto.setLabTechnicianName(labTestSample.getLabTecnician().getFirstname()+""+labTestSample.getLabTecnician().getLastname());
-			labTestSampleDto.setTestMachineId(labTestSample.getTestMachineTypeId());
-			//labTestSampleDto.se(labTestSample.getMachine().getMachineName());			
-			labTestSampleDtoSet.add(labTestSampleDto);
-		}
-		return labTestSampleDtoSet;
-	}
 }

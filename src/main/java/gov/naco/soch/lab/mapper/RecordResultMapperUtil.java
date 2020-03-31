@@ -35,8 +35,8 @@ public class RecordResultMapperUtil {
 			labTestSample.setLogValue(labTestSampleDto.getLogValue());
 		}
 
-		if(null!=labTestSampleDto.getSampleReceviedDate()) {
-			labTestSample.setSampleReceivedDate(labTestSampleDto.getSampleReceviedDate());
+		if(null!=labTestSampleDto.getSampleReceivedDate()) {
+			labTestSample.setSampleReceivedDate(labTestSampleDto.getSampleReceivedDate());
 		}
 		return labTestSample;
 	}
