@@ -9,6 +9,7 @@ public class LabTestSampleBatchDto {
 	private String bdnSerialNumber;
 	private Long artcId;
 	private String artcName;
+	private String artcAddress;
 	private Long artcLabTechId;
 	private String artcLabTechName;
 	private String artcLabTechContact;
@@ -61,6 +62,14 @@ public class LabTestSampleBatchDto {
 
 	public void setArtcName(String artcName) {
 		this.artcName = artcName;
+	}
+
+	public String getArtcAddress() {
+		return artcAddress;
+	}
+
+	public void setArtcAddress(String artcAddress) {
+		this.artcAddress = artcAddress;
 	}
 
 	public Long getArtcLabTechId() {
