@@ -23,6 +23,7 @@ public class VLTestResultMapper {
 		vlTestResultDto.setBeneficiaryName(labTestSample.getBeneficiary().getFirstName());
 		vlTestResultDto.setBeneficiaryDob(labTestSample.getBeneficiary().getDateOfBirth());
 		vlTestResultDto.setBeneficiaryAge(labTestSample.getBeneficiary().getAge());
+		vlTestResultDto.setBeneficiaryGender(labTestSample.getBeneficiary().getGender());
 		vlTestResultDto.setBarcodeNumber(labTestSample.getBarcodeNumber());
 
 		vlTestResultDto.setSampleCollectedDate(labTestSample.getSampleCollectedDate());
@@ -30,6 +31,9 @@ public class VLTestResultMapper {
 		vlTestResultDto.setResultReceivedDate(labTestSample.getResultReceivedDate());
 		vlTestResultDto.setTypeOfSpecimen(labTestSample.getTypeOfSpecimen());
 		vlTestResultDto.setResultValue(labTestSample.getResultValue());
+		vlTestResultDto.setLogValue(labTestSample.getLogValue());
+		vlTestResultDto.setIsError(labTestSample.getIsError());
+		vlTestResultDto.setErrorCode(labTestSample.getErrorCode());
 
 		if (labTestSample.getTestType() != null) {
 			vlTestResultDto.setTestTypeId(labTestSample.getTestType().getId());

@@ -7,6 +7,8 @@ import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -26,6 +28,8 @@ import gov.naco.soch.repository.MasterSampleStatusRepository;
 @Transactional
 public class VLTestResultService {
 
+	private static final Logger logger = LoggerFactory.getLogger(VLTestResultService.class);
+
 	@Autowired
 	private LabTestSampleRepository labTestSampleRepository;
 
@@ -39,6 +43,8 @@ public class VLTestResultService {
 	private MasterBatchStatusRepository masterBatchStatusRepository;
 
 	public List<VLTestResultDto> fetchVLTestResultsList(Long labId) {
+		
+		logger.debug("In fetchVLTestResultsList() of VLTestResultService");
 
 		MasterSampleStatus masterSampleStatus = masterSampleStatusRepository.findByStatusAndIsDelete("ACCEPT",
 				Boolean.FALSE);
@@ -62,11 +68,44 @@ public class VLTestResultService {
 		List<VLTestResultDto> vlTestResultDto = new ArrayList<>();
 		List<LabTestSample> labTestSampleList = labTestSampleRepository.findByIsDelete(Boolean.FALSE);
 		if (!CollectionUtils.isEmpty(labTestSampleList)) {
+			labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
 			labTestSampleList = labTestSampleList.stream()
-					.filter(checkBatchStatus).collect(Collectors.toList());
-			labTestSampleList = labTestSampleList.stream()
-					.filter(isSampleInLab.and(statusAccepted).and(checkResultStatus))
+					.filter(isSampleInLab.and(statusAccepted).and(checkResultStatus)).collect(Collectors.toList());
+			vlTestResultDto = labTestSampleList.stream().map(s -> VLTestResultMapper.mapToVLTestResultDto(s))
 					.collect(Collectors.toList());
+		}
+		return vlTestResultDto;
+	}
+
+	public List<VLTestResultDto> fetchVLTestResultsUnderApproval(Long labId) {
+		
+		logger.debug("In fetchVLTestResultsUnderApproval() of VLTestResultService");
+
+		MasterSampleStatus masterSampleStatus = masterSampleStatusRepository.findByStatusAndIsDelete("ACCEPT",
+				Boolean.FALSE);
+
+		MasterResultStatus masterResultStatus = masterResultStatusRepository
+				.findByStatusAndIsDelete("AWAITING APPROVAL", Boolean.FALSE);
+
+		MasterBatchStatus masterBatchStatus = masterBatchStatusRepository.findByStatusAndIsDelete("DISPATCHED",
+				Boolean.FALSE);
+
+		Predicate<LabTestSample> checkBatchStatus = s -> s.getLabTestSampleBatch().getMasterBatchStatus()
+				.getId() != masterBatchStatus.getId();
+
+		Predicate<LabTestSample> isSampleInLab = s -> s.getLabTestSampleBatch().getLab().getId() == labId;
+
+		Predicate<LabTestSample> statusAccepted = s -> s.getMasterSampleStatus().getId() == masterSampleStatus.getId();
+
+		Predicate<LabTestSample> checkResultStatus = s -> s.getMasterResultStatus().getId() == masterResultStatus
+				.getId();
+
+		List<VLTestResultDto> vlTestResultDto = new ArrayList<>();
+		List<LabTestSample> labTestSampleList = labTestSampleRepository.findByIsDelete(Boolean.FALSE);
+		if (!CollectionUtils.isEmpty(labTestSampleList)) {
+			labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
+			labTestSampleList = labTestSampleList.stream()
+					.filter(isSampleInLab.and(statusAccepted).and(checkResultStatus)).collect(Collectors.toList());
 			vlTestResultDto = labTestSampleList.stream().map(s -> VLTestResultMapper.mapToVLTestResultDto(s))
 					.collect(Collectors.toList());
 		}

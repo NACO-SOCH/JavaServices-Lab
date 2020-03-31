@@ -18,6 +18,7 @@ import gov.naco.soch.lab.service.VLTestResultService;
 @RequestMapping("/vltestresults")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class VLTestResultController {
+
 	private static final Logger logger = LoggerFactory.getLogger(VLTestResultController.class);
 
 	@Autowired
@@ -27,5 +28,11 @@ public class VLTestResultController {
 	public List<VLTestResultDto> fetchVLTestResultsList(@PathVariable("labId") Long labId) {
 		logger.info("fetchVLTestResultsList method is invoked");
 		return vlTestResultService.fetchVLTestResultsList(labId);
+	}
+
+	@GetMapping("/underapproval/{labId}")
+	public List<VLTestResultDto> fetchVLTestResultsUnderApproval(@PathVariable("labId") Long labId) {
+		logger.info("fetchVLTestResultsUnderApproval is invoked!");
+		return vlTestResultService.fetchVLTestResultsUnderApproval(labId);
 	}
 }

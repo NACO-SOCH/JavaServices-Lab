@@ -16,6 +16,8 @@ public class VLTestResultDto {
 	private String beneficiaryName;
 	private LocalDate beneficiaryDob;
 	private String beneficiaryAge;
+	private String beneficiaryGender;
+	private String beneficiaryHivStatus;
 	private String barcodeNumber;
 	private LocalDateTime sampleCollectedDate;
 	private LocalDateTime sampleReceivedDate;
@@ -31,6 +33,9 @@ public class VLTestResultDto {
 	private String labName;
 	private String labAddress;
 	private String typeOfSpecimen;
+	private String logValue;
+	private Boolean isError;
+	private Long errorCode;
 
 	public Long getBatchId() {
 		return batchId;
@@ -118,6 +123,22 @@ public class VLTestResultDto {
 
 	public void setBeneficiaryAge(String beneficiaryAge) {
 		this.beneficiaryAge = beneficiaryAge;
+	}
+
+	public String getBeneficiaryGender() {
+		return beneficiaryGender;
+	}
+
+	public void setBeneficiaryGender(String beneficiaryGender) {
+		this.beneficiaryGender = beneficiaryGender;
+	}
+
+	public String getBeneficiaryHivStatus() {
+		return beneficiaryHivStatus;
+	}
+
+	public void setBeneficiaryHivStatus(String beneficiaryHivStatus) {
+		this.beneficiaryHivStatus = beneficiaryHivStatus;
 	}
 
 	public String getBarcodeNumber() {
@@ -238,6 +259,30 @@ public class VLTestResultDto {
 
 	public void setTypeOfSpecimen(String typeOfSpecimen) {
 		this.typeOfSpecimen = typeOfSpecimen;
+	}
+
+	public String getLogValue() {
+		return logValue;
+	}
+
+	public void setLogValue(String logValue) {
+		this.logValue = logValue;
+	}
+
+	public Boolean getIsError() {
+		return isError;
+	}
+
+	public void setIsError(Boolean isError) {
+		this.isError = isError;
+	}
+
+	public Long getErrorCode() {
+		return errorCode;
+	}
+
+	public void setErrorCode(Long errorCode) {
+		this.errorCode = errorCode;
 	}
 
 }
