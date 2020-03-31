@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 public class VLTestResultDto {
 
 	private Long batchId;
+	private Long sampleId;
 	private String bdnSerialNumber;
 	private Long artcId;
 	private String artcName;
@@ -37,6 +38,14 @@ public class VLTestResultDto {
 
 	public void setBatchId(Long batchId) {
 		this.batchId = batchId;
+	}
+
+	public Long getSampleId() {
+		return sampleId;
+	}
+
+	public void setSampleId(Long sampleId) {
+		this.sampleId = sampleId;
 	}
 
 	public String getBdnSerialNumber() {

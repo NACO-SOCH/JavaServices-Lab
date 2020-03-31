@@ -9,6 +9,7 @@ public class VLTestResultMapper {
 		VLTestResultDto vlTestResultDto = new VLTestResultDto();
 
 		vlTestResultDto.setBatchId(labTestSample.getLabTestSampleBatch().getId());
+		vlTestResultDto.setSampleId(labTestSample.getId());
 		vlTestResultDto.setBdnSerialNumber(labTestSample.getLabTestSampleBatch().getBdnSerialNumber());
 		vlTestResultDto.setArtcId(labTestSample.getLabTestSampleBatch().getFacility().getId());
 		vlTestResultDto.setArtcName(labTestSample.getLabTestSampleBatch().getFacility().getName());
