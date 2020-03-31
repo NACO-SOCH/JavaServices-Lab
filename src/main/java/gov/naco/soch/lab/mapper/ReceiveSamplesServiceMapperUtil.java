@@ -30,10 +30,11 @@ public class ReceiveSamplesServiceMapperUtil {
 		if (labTestSampleBatch.getFacility() != null) {
 			labTestSampleBatchDto.setArtcId(labTestSampleBatch.getFacility().getId());
 			labTestSampleBatchDto.setArtcName(labTestSampleBatch.getFacility().getName());
+			labTestSampleBatchDto.setArtcAddress(labTestSampleBatch.getFacility().getAddress().getAddress());
 		}
 		if (labTestSampleBatch.getLab() != null) {
-			labTestSampleBatchDto.setArtcId(labTestSampleBatch.getLab().getId());
-			labTestSampleBatchDto.setArtcName(labTestSampleBatch.getLab().getName());
+			labTestSampleBatchDto.setLabId(labTestSampleBatch.getLab().getId());
+			labTestSampleBatchDto.setLabName(labTestSampleBatch.getLab().getName());
 			// to change address (null check address)
 			labTestSampleBatchDto.setLabAddress(labTestSampleBatch.getLab().getAddress().getAddress());
 		}
@@ -44,10 +45,10 @@ public class ReceiveSamplesServiceMapperUtil {
 			labTestSampleBatchDto.setArtcLabTechContact(labTestSampleBatch.getArtcLabTechUser().getMobileNumber());
 		}
 		if (labTestSampleBatch.getVlLabTechUser() != null) {
-			labTestSampleBatchDto.setArtcLabTechId(labTestSampleBatch.getVlLabTechUser().getId());
+			labTestSampleBatchDto.setLabTechId(labTestSampleBatch.getVlLabTechUser().getId());
 			// change to full name
-			labTestSampleBatchDto.setArtcLabTechName(labTestSampleBatch.getVlLabTechUser().getFirstname());
-			labTestSampleBatchDto.setArtcLabTechContact(labTestSampleBatch.getVlLabTechUser().getMobileNumber());
+			labTestSampleBatchDto.setLabTechName(labTestSampleBatch.getVlLabTechUser().getFirstname());
+			labTestSampleBatchDto.setLabTechContact(labTestSampleBatch.getVlLabTechUser().getMobileNumber());
 		}
 		if (!CollectionUtils.isEmpty(labTestSampleBatch.getLabTestSamples())) {
 			List<LabTestSampleDto> labTestSampleDtoList = new ArrayList<>();
@@ -73,8 +74,12 @@ public class ReceiveSamplesServiceMapperUtil {
 				labTestSampleDto.setArtNo(a.getArtCentreCode());
 			}
 		});
+		
 		labTestSampleDto.setBarcodeNumber(s.getBarcodeNumber());
-//		labTestSampleDto.setTestTypeId(s.getTestTypeId());
+		if (s.getTestType() != null) {
+			labTestSampleDto.setTestTypeId(s.getTestType().getId());
+			labTestSampleDto.setTestType(s.getTestType().getTestType());
+		}
 		if (s.getMasterSampleStatus() != null) {
 			labTestSampleDto.setSampleStatusId(s.getMasterSampleStatus().getId());
 			labTestSampleDto.setSampleStatus(s.getMasterSampleStatus().getStatus());
