@@ -21,7 +21,7 @@ import gov.naco.soch.lab.service.ReceiveSamplesService;
 @CrossOrigin(origins = "*", allowedHeaders = "*")
 public class RecieveSamplesController {
 
-	private static final Logger logger = LoggerFactory.getLogger(LabTechController.class);
+	private static final Logger logger = LoggerFactory.getLogger(RecieveSamplesController.class);
 
 	@Autowired
 	private ReceiveSamplesService receiveSamplesService;

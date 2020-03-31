@@ -1,5 +1,6 @@
 package gov.naco.soch.lab.dto;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class LabTestSampleDto {
@@ -8,13 +9,19 @@ public class LabTestSampleDto {
 	private Long testBatchId;
 	private Long beneficiaryId;
 	private String beneficiaryName;
+	private LocalDate beneficiaryDob;
+	private String beneficiaryAge;
 	private Long artId;
 	private String artNo;
 	private String barcodeNumber;
 	private Long testTypeId;
+	private String testType;
 	private Long sampleStatusId;
+	private String sampleStatus;
 	private Long remarksId;
+	private String remarks;
 	private Long resultStatusId;
+	private String resultStatus;
 	private LocalDateTime sampleCollectedDate;
 	private LocalDateTime sampleDispatchDate;
 	private LocalDateTime sampleReceivedDate;
@@ -22,12 +29,14 @@ public class LabTestSampleDto {
 	private LocalDateTime resultApprovedDate;
 	private LocalDateTime resultDispatchDate;
 	private Long resultTypeId;
+	private String resultType;
 	private String resultValue;
 	private String logValue;
 	private Boolean isError;
 	private Long errorCode;
 	private Long testMachineTypeId;
 	private Long testMachineId;
+	private String testMachine;
 	private Long authorizerId;
 	private String authorizerSignature;
 	private String typeOfSpecimen;
@@ -75,6 +84,22 @@ public class LabTestSampleDto {
 		this.beneficiaryName = beneficiaryName;
 	}
 
+	public LocalDate getBeneficiaryDob() {
+		return beneficiaryDob;
+	}
+
+	public void setBeneficiaryDob(LocalDate beneficiaryDob) {
+		this.beneficiaryDob = beneficiaryDob;
+	}
+
+	public String getBeneficiaryAge() {
+		return beneficiaryAge;
+	}
+
+	public void setBeneficiaryAge(String beneficiaryAge) {
+		this.beneficiaryAge = beneficiaryAge;
+	}
+
 	public Long getArtId() {
 		return artId;
 	}
@@ -107,12 +132,28 @@ public class LabTestSampleDto {
 		this.testTypeId = testTypeId;
 	}
 
+	public String getTestType() {
+		return testType;
+	}
+
+	public void setTestType(String testType) {
+		this.testType = testType;
+	}
+
 	public Long getSampleStatusId() {
 		return sampleStatusId;
 	}
 
 	public void setSampleStatusId(Long sampleStatusId) {
 		this.sampleStatusId = sampleStatusId;
+	}
+
+	public String getSampleStatus() {
+		return sampleStatus;
+	}
+
+	public void setSampleStatus(String sampleStatus) {
+		this.sampleStatus = sampleStatus;
 	}
 
 	public Long getRemarksId() {
@@ -123,12 +164,28 @@ public class LabTestSampleDto {
 		this.remarksId = remarksId;
 	}
 
+	public String getRemarks() {
+		return remarks;
+	}
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
+	}
+
 	public Long getResultStatusId() {
 		return resultStatusId;
 	}
 
 	public void setResultStatusId(Long resultStatusId) {
 		this.resultStatusId = resultStatusId;
+	}
+
+	public String getResultStatus() {
+		return resultStatus;
+	}
+
+	public void setResultStatus(String resultStatus) {
+		this.resultStatus = resultStatus;
 	}
 
 	public LocalDateTime getSampleCollectedDate() {
@@ -147,7 +204,7 @@ public class LabTestSampleDto {
 		this.sampleDispatchDate = sampleDispatchDate;
 	}
 
-	public LocalDateTime getSampleReceviedDate() {
+	public LocalDateTime getSampleReceivedDate() {
 		return sampleReceivedDate;
 	}
 
@@ -185,6 +242,14 @@ public class LabTestSampleDto {
 
 	public void setResultTypeId(Long resultTypeId) {
 		this.resultTypeId = resultTypeId;
+	}
+
+	public String getResultType() {
+		return resultType;
+	}
+
+	public void setResultType(String resultType) {
+		this.resultType = resultType;
 	}
 
 	public String getResultValue() {
@@ -233,6 +298,14 @@ public class LabTestSampleDto {
 
 	public void setTestMachineId(Long testMachineId) {
 		this.testMachineId = testMachineId;
+	}
+
+	public String getTestMachine() {
+		return testMachine;
+	}
+
+	public void setTestMachine(String testMachine) {
+		this.testMachine = testMachine;
 	}
 
 	public Long getAuthorizerId() {
