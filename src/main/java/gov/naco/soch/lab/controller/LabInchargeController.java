@@ -18,5 +18,7 @@ public class LabInchargeController {
 
 	@Autowired
 	private LabInchargeService labInchargeService;
+	
+
 
 }
