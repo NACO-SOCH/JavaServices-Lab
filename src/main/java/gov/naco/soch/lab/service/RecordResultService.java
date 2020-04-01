@@ -16,7 +16,6 @@ import gov.naco.soch.exception.ServiceException;
 import gov.naco.soch.lab.dto.LabTestSampleDto;
 import gov.naco.soch.lab.dto.VLTestResultDto;
 import gov.naco.soch.lab.mapper.RecordResultMapperUtil;
-import gov.naco.soch.mapper.LabInChargeMapper;
 import gov.naco.soch.repository.LabTestSampleBatchRepository;
 import gov.naco.soch.repository.LabTestSampleRepository;
 @Service
