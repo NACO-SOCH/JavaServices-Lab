@@ -1,5 +1,6 @@
 package gov.naco.soch.lab.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -9,10 +10,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import gov.naco.soch.entity.LabTestSample;
+import gov.naco.soch.entity.LabTestSampleBatch;
 import gov.naco.soch.entity.MasterResultStatus;
 import gov.naco.soch.exception.ServiceException;
 import gov.naco.soch.lab.dto.LabTestSampleDto;
+import gov.naco.soch.lab.dto.VLTestResultDto;
 import gov.naco.soch.lab.mapper.RecordResultMapperUtil;
+import gov.naco.soch.mapper.LabInChargeMapper;
+import gov.naco.soch.repository.LabTestSampleBatchRepository;
 import gov.naco.soch.repository.LabTestSampleRepository;
 @Service
 @Transactional
@@ -21,7 +26,11 @@ public class RecordResultService {
 
 	@Autowired
 	private LabTestSampleRepository labTestSampleRepository;
+//
+	
 
+	@Autowired
+	private LabTestSampleBatchRepository labTestSampleBatchRepository;
 
 	public boolean saveLabSampleResult(LabTestSampleDto labTestSampleDto) {
 
@@ -51,5 +60,14 @@ public class RecordResultService {
 		isSaved=true;	
 		return isSaved;
 	}
+//
+	
 
+	  public List<VLTestResultDto> getRecordResultDetails(Long labId){
+	  List<LabTestSampleBatch> labTestBatchList= labTestSampleBatchRepository.findAllByLabId(labId);
+	  List<VLTestResultDto> vlTestResultDtoList=RecordResultMapperUtil.mapTolabVLTestResultDto(labTestBatchList); 
+	  return vlTestResultDtoList;
+	  
+	  }
+	  
 }
