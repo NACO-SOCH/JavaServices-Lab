@@ -47,6 +47,11 @@ public class VLTestResultMapper {
 
 		vlTestResultDto.setSampleCollectedDate(labTestSample.getSampleCollectedDate());
 		vlTestResultDto.setSampleReceivedDate(labTestSample.getSampleReceivedDate());
+
+		if (labTestSample.getMasterSampleStatus() != null) {
+			vlTestResultDto.setSampleStatusId(labTestSample.getMasterSampleStatus().getId());
+			vlTestResultDto.setSampleStatus(labTestSample.getMasterSampleStatus().getStatus());
+		}
 		vlTestResultDto.setResultReceivedDate(labTestSample.getResultReceivedDate());
 		vlTestResultDto.setTypeOfSpecimen(labTestSample.getTypeOfSpecimen());
 		vlTestResultDto.setResultValue(labTestSample.getResultValue());

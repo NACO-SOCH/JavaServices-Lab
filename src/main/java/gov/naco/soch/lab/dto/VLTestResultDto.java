@@ -23,6 +23,8 @@ public class VLTestResultDto {
 	private String preArtNumber;
 	private LocalDateTime sampleCollectedDate;
 	private LocalDateTime sampleReceivedDate;
+	private Long sampleStatusId;
+	private String sampleStatus;
 	private Long testTypeId;
 	private String testType;
 	private Long resultStatusId;
@@ -181,6 +183,22 @@ public class VLTestResultDto {
 
 	public void setSampleReceivedDate(LocalDateTime sampleReceivedDate) {
 		this.sampleReceivedDate = sampleReceivedDate;
+	}
+
+	public Long getSampleStatusId() {
+		return sampleStatusId;
+	}
+
+	public void setSampleStatusId(Long sampleStatusId) {
+		this.sampleStatusId = sampleStatusId;
+	}
+
+	public String getSampleStatus() {
+		return sampleStatus;
+	}
+
+	public void setSampleStatus(String sampleStatus) {
+		this.sampleStatus = sampleStatus;
 	}
 
 	public Long getTestTypeId() {
