@@ -36,7 +36,7 @@ public class RecieveSamplesController {
 	public LabTestSampleBatchDto saveReceivedSamples(@PathVariable("batchId") Long batchId,
 			@RequestBody LabTestSampleBatchDto labTestSampleBatchDto) {
 		logger.info("saveReceivedSamples method is invoked");
-		labTestSampleBatchDto = receiveSamplesService.saveReceivedSamples(labTestSampleBatchDto);
+		labTestSampleBatchDto = receiveSamplesService.saveReceivedSamples(batchId, labTestSampleBatchDto);
 		return labTestSampleBatchDto;
 	}
 }

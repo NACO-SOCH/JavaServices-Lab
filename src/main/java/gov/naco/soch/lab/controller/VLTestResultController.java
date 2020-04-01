@@ -8,6 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -34,5 +36,17 @@ public class VLTestResultController {
 	public List<VLTestResultDto> fetchVLTestResultsUnderApproval(@PathVariable("labId") Long labId) {
 		logger.info("fetchVLTestResultsUnderApproval is invoked!");
 		return vlTestResultService.fetchVLTestResultsUnderApproval(labId);
+	}
+
+	@PostMapping("/approve")
+	public List<VLTestResultDto> approveVLTestResults(@RequestBody List<VLTestResultDto> vlTestResultList) {
+		logger.info("approveVLTestResults is invoked!");
+		return vlTestResultService.approveVLTestResults(vlTestResultList);
+	}
+
+	@PostMapping("/reject")
+	public List<VLTestResultDto> rejectVLTestResults(@RequestBody List<VLTestResultDto> vlTestResultList) {
+		logger.info("rejectVLTestResults is invoked!");
+		return vlTestResultService.rejectVLTestResults(vlTestResultList);
 	}
 }

@@ -1,5 +1,7 @@
 package gov.naco.soch.lab.mapper;
 
+import org.springframework.util.CollectionUtils;
+
 import gov.naco.soch.entity.LabTestSample;
 import gov.naco.soch.lab.dto.VLTestResultDto;
 
@@ -25,6 +27,23 @@ public class VLTestResultMapper {
 		vlTestResultDto.setBeneficiaryAge(labTestSample.getBeneficiary().getAge());
 		vlTestResultDto.setBeneficiaryGender(labTestSample.getBeneficiary().getGender());
 		vlTestResultDto.setBarcodeNumber(labTestSample.getBarcodeNumber());
+
+		if (!CollectionUtils.isEmpty(labTestSample.getBeneficiary().getArtBeneficiaryDetails())) {
+
+			labTestSample.getBeneficiary().getArtBeneficiaryDetails().forEach(d -> {
+				if (d.getIsDelete() == Boolean.FALSE) {
+					vlTestResultDto.setArtNumber(d.getArtNumber());
+					vlTestResultDto.setPreArtNumber(d.getPreArtNumber());
+					if (!CollectionUtils.isEmpty(d.getArtPatientAssessments())) {
+						d.getArtPatientAssessments().forEach(pa -> {
+							if (pa.getIsDelete() != Boolean.FALSE) {
+								vlTestResultDto.setBeneficiaryHivStatus(pa.getHivStatus());
+							}
+						});
+					}
+				}
+			});
+		}
 
 		vlTestResultDto.setSampleCollectedDate(labTestSample.getSampleCollectedDate());
 		vlTestResultDto.setSampleReceivedDate(labTestSample.getSampleReceivedDate());

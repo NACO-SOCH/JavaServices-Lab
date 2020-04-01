@@ -66,10 +66,10 @@ public class ReceiveSamplesService {
 		return labTestSampleBatchDtoList;
 	}
 
-	public LabTestSampleBatchDto saveReceivedSamples(LabTestSampleBatchDto labTestSampleBatchDto) {
+	public LabTestSampleBatchDto saveReceivedSamples(Long batchId, LabTestSampleBatchDto labTestSampleBatchDto) {
 
 		Optional<LabTestSampleBatch> labTestSampleBatchOpt = labTestSampleBatchRepository
-				.findById(labTestSampleBatchDto.getId());
+				.findById(batchId);
 		if (labTestSampleBatchOpt.isPresent()) {
 			LabTestSampleBatch labTestSampleBatch = labTestSampleBatchOpt.get();
 			labTestSampleBatch.setAcceptedSamples(labTestSampleBatchDto.getAcceptedSamples());

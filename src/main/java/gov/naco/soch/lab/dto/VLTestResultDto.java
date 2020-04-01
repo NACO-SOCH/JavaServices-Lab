@@ -19,6 +19,8 @@ public class VLTestResultDto {
 	private String beneficiaryGender;
 	private String beneficiaryHivStatus;
 	private String barcodeNumber;
+	private String artNumber;
+	private String preArtNumber;
 	private LocalDateTime sampleCollectedDate;
 	private LocalDateTime sampleReceivedDate;
 	private Long testTypeId;
@@ -147,6 +149,22 @@ public class VLTestResultDto {
 
 	public void setBarcodeNumber(String barcodeNumber) {
 		this.barcodeNumber = barcodeNumber;
+	}
+
+	public String getArtNumber() {
+		return artNumber;
+	}
+
+	public void setArtNumber(String artNumber) {
+		this.artNumber = artNumber;
+	}
+
+	public String getPreArtNumber() {
+		return preArtNumber;
+	}
+
+	public void setPreArtNumber(String preArtNumber) {
+		this.preArtNumber = preArtNumber;
 	}
 
 	public LocalDateTime getSampleCollectedDate() {

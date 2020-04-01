@@ -43,7 +43,7 @@ public class VLTestResultService {
 	private MasterBatchStatusRepository masterBatchStatusRepository;
 
 	public List<VLTestResultDto> fetchVLTestResultsList(Long labId) {
-		
+
 		logger.debug("In fetchVLTestResultsList() of VLTestResultService");
 
 		MasterSampleStatus masterSampleStatus = masterSampleStatusRepository.findByStatusAndIsDelete("ACCEPT",
@@ -78,7 +78,7 @@ public class VLTestResultService {
 	}
 
 	public List<VLTestResultDto> fetchVLTestResultsUnderApproval(Long labId) {
-		
+
 		logger.debug("In fetchVLTestResultsUnderApproval() of VLTestResultService");
 
 		MasterSampleStatus masterSampleStatus = masterSampleStatusRepository.findByStatusAndIsDelete("ACCEPT",
@@ -110,5 +110,46 @@ public class VLTestResultService {
 					.collect(Collectors.toList());
 		}
 		return vlTestResultDto;
+	}
+
+	public List<VLTestResultDto> approveVLTestResults(List<VLTestResultDto> vlTestResultList) {
+
+		List<Long> idList = vlTestResultList.stream().map(s -> s.getSampleId()).collect(Collectors.toList());
+
+		List<LabTestSample> labTestSampleList = labTestSampleRepository.findAllById(idList);
+
+		MasterResultStatus masterResultStatus = masterResultStatusRepository.findByStatusAndIsDelete("APPROVED",
+				Boolean.FALSE);
+
+		List<VLTestResultDto> vlTestResultDto = new ArrayList<>();
+		if (!CollectionUtils.isEmpty(labTestSampleList)) {
+			labTestSampleList.forEach(s -> s.setMasterResultStatus(masterResultStatus));
+			labTestSampleList = labTestSampleRepository.saveAll(labTestSampleList);
+
+			vlTestResultDto = labTestSampleList.stream().map(s -> VLTestResultMapper.mapToVLTestResultDto(s))
+					.collect(Collectors.toList());
+		}
+		return vlTestResultDto;
+		// Handle the change of batch status
+	}
+	
+	public List<VLTestResultDto> rejectVLTestResults(List<VLTestResultDto> vlTestResultList) {
+
+		List<Long> idList = vlTestResultList.stream().map(s -> s.getSampleId()).collect(Collectors.toList());
+
+		List<LabTestSample> labTestSampleList = labTestSampleRepository.findAllById(idList);
+
+		MasterResultStatus masterResultStatus = masterResultStatusRepository.findByStatusAndIsDelete("REJECTED",
+				Boolean.FALSE);
+		List<VLTestResultDto> vlTestResultDto = new ArrayList<>();
+		if (!CollectionUtils.isEmpty(labTestSampleList)) {
+			labTestSampleList.forEach(s -> s.setMasterResultStatus(masterResultStatus));
+			labTestSampleList = labTestSampleRepository.saveAll(labTestSampleList);
+
+			vlTestResultDto = labTestSampleList.stream().map(s -> VLTestResultMapper.mapToVLTestResultDto(s))
+					.collect(Collectors.toList());
+		}
+		return vlTestResultDto;
+		// Handle the change of batch status
 	}
 }
