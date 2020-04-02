@@ -1,5 +1,7 @@
 package gov.naco.soch.lab.service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -34,6 +36,8 @@ import gov.naco.soch.repository.MasterSampleStatusRepository;
 public class RecordResultsService {
 
 	private static final Logger logger = LoggerFactory.getLogger(VLTestResultService.class);
+
+	private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
 	@Autowired
 	private LabTestSampleRepository labTestSampleRepository;
@@ -101,7 +105,11 @@ public class RecordResultsService {
 		if (labTestSampleOpt.isPresent()) {
 
 			LabTestSample labTestSample = labTestSampleOpt.get();
-			labTestSample.setResultReceivedDate(labTestSampleDto.getResultReceivedDate());
+			if (labTestSampleDto.getResultReceivedDate() != null) {
+				labTestSample.setResultReceivedDate(
+						LocalDateTime.parse(labTestSampleDto.getResultReceivedDate(), formatter));
+			}
+
 			labTestSample.setResultValue(labTestSampleDto.getResultValue());
 			labTestSample.setLogValue(labTestSample.getLogValue());
 			labTestSample.setIsError(labTestSampleDto.getIsError());

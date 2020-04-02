@@ -1,7 +1,6 @@
 package gov.naco.soch.lab.dto;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class VLTestResultDto {
 
@@ -21,15 +20,16 @@ public class VLTestResultDto {
 	private String barcodeNumber;
 	private String artNumber;
 	private String preArtNumber;
-	private LocalDateTime sampleCollectedDate;
-	private LocalDateTime sampleReceivedDate;
+	private String sampleCollectedDate;
+	private String sampleReceivedDate;
 	private Long sampleStatusId;
 	private String sampleStatus;
 	private Long testTypeId;
 	private String testType;
 	private Long resultStatusId;
 	private String resultStatus;
-	private LocalDateTime resultReceivedDate;
+	private String resultReceivedDate;
+	private String resultDispatchDate;
 	private Long resultTypeId;
 	private String resultType;
 	private String resultValue;
@@ -40,6 +40,14 @@ public class VLTestResultDto {
 	private String logValue;
 	private Boolean isError;
 	private Long errorCode;
+	private Long testMachineId;
+	private String testMachineName;
+	private Long labInChargeId;
+	private String labInChargeName;
+	private Long labTechnicianId;
+	private String labTechnicianName;
+	private String populationType;
+	private String department;
 
 	public Long getBatchId() {
 		return batchId;
@@ -169,19 +177,19 @@ public class VLTestResultDto {
 		this.preArtNumber = preArtNumber;
 	}
 
-	public LocalDateTime getSampleCollectedDate() {
+	public String getSampleCollectedDate() {
 		return sampleCollectedDate;
 	}
 
-	public void setSampleCollectedDate(LocalDateTime sampleCollectedDate) {
+	public void setSampleCollectedDate(String sampleCollectedDate) {
 		this.sampleCollectedDate = sampleCollectedDate;
 	}
 
-	public LocalDateTime getSampleReceivedDate() {
+	public String getSampleReceivedDate() {
 		return sampleReceivedDate;
 	}
 
-	public void setSampleReceivedDate(LocalDateTime sampleReceivedDate) {
+	public void setSampleReceivedDate(String sampleReceivedDate) {
 		this.sampleReceivedDate = sampleReceivedDate;
 	}
 
@@ -233,12 +241,20 @@ public class VLTestResultDto {
 		this.resultStatus = resultStatus;
 	}
 
-	public LocalDateTime getResultReceivedDate() {
+	public String getResultReceivedDate() {
 		return resultReceivedDate;
 	}
 
-	public void setResultReceivedDate(LocalDateTime resultReceivedDate) {
+	public void setResultReceivedDate(String resultReceivedDate) {
 		this.resultReceivedDate = resultReceivedDate;
+	}
+
+	public String getResultDispatchDate() {
+		return resultDispatchDate;
+	}
+
+	public void setResultDispatchDate(String resultDispatchDate) {
+		this.resultDispatchDate = resultDispatchDate;
 	}
 
 	public Long getResultTypeId() {
@@ -319,6 +335,70 @@ public class VLTestResultDto {
 
 	public void setErrorCode(Long errorCode) {
 		this.errorCode = errorCode;
+	}
+
+	public Long getTestMachineId() {
+		return testMachineId;
+	}
+
+	public void setTestMachineId(Long testMachineId) {
+		this.testMachineId = testMachineId;
+	}
+
+	public String getTestMachineName() {
+		return testMachineName;
+	}
+
+	public void setTestMachineName(String testMachineName) {
+		this.testMachineName = testMachineName;
+	}
+
+	public Long getLabInChargeId() {
+		return labInChargeId;
+	}
+
+	public void setLabInChargeId(Long labInChargeId) {
+		this.labInChargeId = labInChargeId;
+	}
+
+	public String getLabInChargeName() {
+		return labInChargeName;
+	}
+
+	public void setLabInChargeName(String labInChargeName) {
+		this.labInChargeName = labInChargeName;
+	}
+
+	public Long getLabTechnicianId() {
+		return labTechnicianId;
+	}
+
+	public void setLabTechnicianId(Long labTechnicianId) {
+		this.labTechnicianId = labTechnicianId;
+	}
+
+	public String getLabTechnicianName() {
+		return labTechnicianName;
+	}
+
+	public void setLabTechnicianName(String labTechnicianName) {
+		this.labTechnicianName = labTechnicianName;
+	}
+
+	public String getPopulationType() {
+		return populationType;
+	}
+
+	public void setPopulationType(String populationType) {
+		this.populationType = populationType;
+	}
+
+	public String getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(String department) {
+		this.department = department;
 	}
 
 }
