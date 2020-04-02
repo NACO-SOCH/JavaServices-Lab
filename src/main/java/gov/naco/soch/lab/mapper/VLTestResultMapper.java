@@ -6,6 +6,7 @@ import org.springframework.util.CollectionUtils;
 
 import gov.naco.soch.entity.LabTestSample;
 import gov.naco.soch.lab.dto.VLTestResultDto;
+import gov.naco.soch.lab.util.LabServiceUtil;
 
 public class VLTestResultMapper {
 
@@ -33,14 +34,14 @@ public class VLTestResultMapper {
 			vlTestResultDto.setArtcLabTechId(labTestSample.getLabTestSampleBatch().getArtcLabTechUser().getId());
 			// change to full name
 			vlTestResultDto
-					.setArtcLabTechName(labTestSample.getLabTestSampleBatch().getArtcLabTechUser().getFirstname());
+					.setArtcLabTechName(LabServiceUtil.getUserName(labTestSample.getLabTestSampleBatch().getArtcLabTechUser()));
 			vlTestResultDto.setArtcLabTechContact(
 					labTestSample.getLabTestSampleBatch().getArtcLabTechUser().getMobileNumber());
 		}
 
 		vlTestResultDto.setBeneficiaryId(labTestSample.getBeneficiary().getId());
 		vlTestResultDto.setBeneficiaryUid(labTestSample.getBeneficiary().getUid());
-		vlTestResultDto.setBeneficiaryName(labTestSample.getBeneficiary().getFirstName());
+		vlTestResultDto.setBeneficiaryName(LabServiceUtil.getBeneficiaryName(labTestSample.getBeneficiary()));
 		vlTestResultDto.setBeneficiaryDob(labTestSample.getBeneficiary().getDateOfBirth());
 		vlTestResultDto.setBeneficiaryAge(labTestSample.getBeneficiary().getAge());
 		vlTestResultDto.setBeneficiaryGender(labTestSample.getBeneficiary().getGender());
@@ -109,13 +110,13 @@ public class VLTestResultMapper {
 
 		if (labTestSample.getLabInCharge() != null) {
 			vlTestResultDto.setLabInChargeId(labTestSample.getLabInCharge().getId());
-			vlTestResultDto.setLabInChargeName(labTestSample.getLabInCharge().getFirstname());
+			vlTestResultDto.setLabInChargeName(LabServiceUtil.getUserName(labTestSample.getLabInCharge()));
 			vlTestResultDto.setLabInChargeContact(labTestSample.getLabInCharge().getMobileNumber());
 		}
 
 		if (labTestSample.getLabTecnician() != null) {
 			vlTestResultDto.setLabTechnicianId(labTestSample.getLabTecnician().getId());
-			vlTestResultDto.setLabTechnicianName(labTestSample.getLabTecnician().getFirstname());
+			vlTestResultDto.setLabTechnicianName(LabServiceUtil.getUserName(labTestSample.getLabTecnician()));
 			vlTestResultDto.setLabTechnicianContact(labTestSample.getLabTecnician().getMobileNumber());
 		}
 

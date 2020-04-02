@@ -9,6 +9,7 @@ import gov.naco.soch.entity.LabTestSample;
 import gov.naco.soch.entity.LabTestSampleBatch;
 import gov.naco.soch.lab.dto.LabTestSampleBatchDto;
 import gov.naco.soch.lab.dto.LabTestSampleDto;
+import gov.naco.soch.lab.util.LabServiceUtil;
 
 public class ReceiveSamplesServiceMapperUtil {
 
@@ -41,13 +42,15 @@ public class ReceiveSamplesServiceMapperUtil {
 		if (labTestSampleBatch.getArtcLabTechUser() != null) {
 			labTestSampleBatchDto.setArtcLabTechId(labTestSampleBatch.getArtcLabTechUser().getId());
 			// change to full name
-			labTestSampleBatchDto.setArtcLabTechName(labTestSampleBatch.getArtcLabTechUser().getFirstname());
+			labTestSampleBatchDto
+					.setArtcLabTechName(LabServiceUtil.getUserName(labTestSampleBatch.getArtcLabTechUser()));
 			labTestSampleBatchDto.setArtcLabTechContact(labTestSampleBatch.getArtcLabTechUser().getMobileNumber());
 		}
 		if (labTestSampleBatch.getVlLabTechUser() != null) {
 			labTestSampleBatchDto.setLabTechnicianId(labTestSampleBatch.getVlLabTechUser().getId());
 			// change to full name
-			labTestSampleBatchDto.setLabTechnicianName(labTestSampleBatch.getVlLabTechUser().getFirstname());
+			labTestSampleBatchDto
+					.setLabTechnicianName(LabServiceUtil.getUserName(labTestSampleBatch.getVlLabTechUser()));
 			labTestSampleBatchDto.setLabTechnicianContact(labTestSampleBatch.getVlLabTechUser().getMobileNumber());
 		}
 		if (!CollectionUtils.isEmpty(labTestSampleBatch.getLabTestSamples())) {
@@ -65,7 +68,7 @@ public class ReceiveSamplesServiceMapperUtil {
 		labTestSampleDto.setSampleId(s.getId());
 		labTestSampleDto.setBatchId(s.getLabTestSampleBatch().getId());
 		labTestSampleDto.setBeneficiaryId(s.getBeneficiary().getId());
-		labTestSampleDto.setBeneficiaryName(s.getBeneficiary().getFirstName());
+		labTestSampleDto.setBeneficiaryName(LabServiceUtil.getBeneficiaryName(s.getBeneficiary()));
 		labTestSampleDto.setBeneficiaryUid(s.getBeneficiary().getUid());
 		labTestSampleDto.setBeneficiaryDob(s.getBeneficiary().getDateOfBirth());
 		labTestSampleDto.setBeneficiaryAge(s.getBeneficiary().getAge());
@@ -124,9 +127,8 @@ public class ReceiveSamplesServiceMapperUtil {
 		}
 		labTestSampleDto.setResultValue(s.getResultValue());
 		labTestSampleDto.setLogValue(s.getLogValue());
-		labTestSampleDto.setIsError(s.getIsError());
 		labTestSampleDto.setErrorCode(s.getErrorCode());
-//		labTestSampleDto.setTestMachineTypeId();
+
 		if (s.getMachine() != null) {
 			labTestSampleDto.setTestMachineId(s.getMachine().getId());
 			labTestSampleDto.setTestMachine(s.getMachine().getMachineName());
@@ -138,13 +140,13 @@ public class ReceiveSamplesServiceMapperUtil {
 		labTestSampleDto.setTypeOfSpecimen(s.getTypeOfSpecimen());
 		if (s.getLabTecnician() != null) {
 			labTestSampleDto.setLabTechnicianId(s.getLabTecnician().getId());
-			labTestSampleDto.setLabTechnicianName(s.getLabTecnician().getFirstname());
+			labTestSampleDto.setLabTechnicianName(LabServiceUtil.getUserName(s.getLabTecnician()));
 			labTestSampleDto.setLabTechnicianContact(s.getLabTecnician().getMobileNumber());
 			labTestSampleDto.setLabTechnicianSignature(s.getLabTechnicianSignature());
 		}
 		if (s.getLabInCharge() != null) {
 			labTestSampleDto.setLabInchargeId(s.getLabInCharge().getId());
-			labTestSampleDto.setLabInchargeName(s.getLabInCharge().getFirstname());
+			labTestSampleDto.setLabInchargeName(LabServiceUtil.getUserName(s.getLabInCharge()));
 			labTestSampleDto.setLabInChargeContact(s.getLabInCharge().getMobileNumber());
 			labTestSampleDto.setLabInchargeSignature(s.getLabInchargeSignature());
 		}
