@@ -63,6 +63,10 @@ public class VLTestResultMapper {
 			});
 		}
 
+		if (labTestSample.getSampleDispatchDate() != null) {
+			vlTestResultDto.setSampleDispatchDate(labTestSample.getSampleDispatchDate().format(formatter));
+		}
+
 		if (labTestSample.getSampleCollectedDate() != null) {
 			vlTestResultDto.setSampleCollectedDate(labTestSample.getSampleCollectedDate().format(formatter));
 		}

@@ -21,6 +21,7 @@ public class VLTestResultDto {
 	private String barcodeNumber;
 	private String artNumber;
 	private String preArtNumber;
+	private String sampleDispatchDate;
 	private String sampleCollectedDate;
 	private String sampleReceivedDate;
 	private Long sampleStatusId;
@@ -187,6 +188,14 @@ public class VLTestResultDto {
 
 	public void setPreArtNumber(String preArtNumber) {
 		this.preArtNumber = preArtNumber;
+	}
+
+	public String getSampleDispatchDate() {
+		return sampleDispatchDate;
+	}
+
+	public void setSampleDispatchDate(String sampleDispatchDate) {
+		this.sampleDispatchDate = sampleDispatchDate;
 	}
 
 	public String getSampleCollectedDate() {
