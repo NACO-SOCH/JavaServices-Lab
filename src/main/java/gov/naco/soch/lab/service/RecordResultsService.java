@@ -111,7 +111,7 @@ public class RecordResultsService {
 			}
 
 			labTestSample.setResultValue(labTestSampleDto.getResultValue());
-			labTestSample.setLogValue(labTestSample.getLogValue());
+			labTestSample.setLogValue(labTestSampleDto.getLogValue());
 			labTestSample.setIsError(labTestSampleDto.getIsError());
 			labTestSample.setErrorCode(labTestSampleDto.getErrorCode());
 			labTestSample.setMasterResultStatus(masterResultStatus);
