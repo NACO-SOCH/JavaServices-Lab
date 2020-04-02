@@ -5,7 +5,7 @@ import java.util.List;
 
 public class LabTestSampleBatchDto {
 
-	private Long id;
+	private Long batchId;
 	private String bdnSerialNumber;
 	private Long artcId;
 	private String artcName;
@@ -16,9 +16,9 @@ public class LabTestSampleBatchDto {
 	private Long labId;
 	private String labName;
 	private String labAddress;
-	private Long labTechId;
-	private String labTechName;
-	private String labTechContact;
+	private Long labTechnicianId;
+	private String labTechnicianName;
+	private String labTechnicianContact;
 	private LocalDateTime dispatchDate;
 	private LocalDateTime receivedDate;
 	private Long num_ofSamples;
@@ -32,12 +32,12 @@ public class LabTestSampleBatchDto {
 		super();
 	}
 
-	public Long getId() {
-		return id;
+	public Long getBatchId() {
+		return batchId;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setBatchId(Long batchId) {
+		this.batchId = batchId;
 	}
 
 	public String getBdnSerialNumber() {
@@ -120,28 +120,28 @@ public class LabTestSampleBatchDto {
 		this.labAddress = labAddress;
 	}
 
-	public Long getLabTechId() {
-		return labTechId;
+	public Long getLabTechnicianId() {
+		return labTechnicianId;
 	}
 
-	public void setLabTechId(Long labTechId) {
-		this.labTechId = labTechId;
+	public void setLabTechnicianId(Long labTechnicianId) {
+		this.labTechnicianId = labTechnicianId;
 	}
 
-	public String getLabTechName() {
-		return labTechName;
+	public String getLabTechnicianName() {
+		return labTechnicianName;
 	}
 
-	public void setLabTechName(String labTechName) {
-		this.labTechName = labTechName;
+	public void setLabTechnicianName(String labTechnicianName) {
+		this.labTechnicianName = labTechnicianName;
 	}
 
-	public String getLabTechContact() {
-		return labTechContact;
+	public String getLabTechnicianContact() {
+		return labTechnicianContact;
 	}
 
-	public void setLabTechContact(String labTechContact) {
-		this.labTechContact = labTechContact;
+	public void setLabTechnicianContact(String labTechnicianContact) {
+		this.labTechnicianContact = labTechnicianContact;
 	}
 
 	public LocalDateTime getDispatchDate() {

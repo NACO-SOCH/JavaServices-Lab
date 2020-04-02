@@ -75,7 +75,7 @@ public class ReceiveSamplesService {
 			labTestSampleBatch.setAcceptedSamples(labTestSampleBatchDto.getAcceptedSamples());
 			labTestSampleBatch.setRejectedSamples(labTestSampleBatchDto.getRejectedSamples());
 			labTestSampleBatch.setReceivedDate(LocalDateTime.now());
-			Optional<UserMaster> labTechUserOpt = userMasterRepository.findById(labTestSampleBatchDto.getLabTechId());
+			Optional<UserMaster> labTechUserOpt = userMasterRepository.findById(labTestSampleBatchDto.getLabTechnicianId());
 			if (labTechUserOpt.isPresent()) {
 				labTestSampleBatch.setVlLabTechUser(labTechUserOpt.get());
 			} else {
@@ -92,7 +92,7 @@ public class ReceiveSamplesService {
 				labTestSampleBatch.getLabTestSamples().forEach(s -> {
 
 					Optional<LabTestSampleDto> sampleOpt = labTestSampleBatchDto.getLabTestSampleDtoList().stream()
-							.filter(ts -> ts.getId() == s.getId()).findFirst();
+							.filter(ts -> ts.getSampleId() == s.getId()).findFirst();
 					if (sampleOpt.isPresent()) {
 						LabTestSampleDto sample = sampleOpt.get();
 

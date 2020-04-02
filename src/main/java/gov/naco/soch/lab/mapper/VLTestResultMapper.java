@@ -24,6 +24,20 @@ public class VLTestResultMapper {
 		vlTestResultDto.setLabName(labTestSample.getLabTestSampleBatch().getLab().getName());
 		vlTestResultDto.setLabAddress(labTestSample.getLabTestSampleBatch().getLab().getAddress().getAddress());
 
+		vlTestResultDto.setDispatchDate(labTestSample.getLabTestSampleBatch().getDispatchDate());
+		vlTestResultDto.setReceivedDate(labTestSample.getLabTestSampleBatch().getReceivedDate());
+		vlTestResultDto.setNum_ofSamples(labTestSample.getLabTestSampleBatch().getNumOfSamples());
+		vlTestResultDto.setAcceptedSamples(labTestSample.getLabTestSampleBatch().getAcceptedSamples());
+
+		if (labTestSample.getLabTestSampleBatch().getArtcLabTechUser() != null) {
+			vlTestResultDto.setArtcLabTechId(labTestSample.getLabTestSampleBatch().getArtcLabTechUser().getId());
+			// change to full name
+			vlTestResultDto
+					.setArtcLabTechName(labTestSample.getLabTestSampleBatch().getArtcLabTechUser().getFirstname());
+			vlTestResultDto.setArtcLabTechContact(
+					labTestSample.getLabTestSampleBatch().getArtcLabTechUser().getMobileNumber());
+		}
+
 		vlTestResultDto.setBeneficiaryId(labTestSample.getBeneficiary().getId());
 		vlTestResultDto.setBeneficiaryUid(labTestSample.getBeneficiary().getUid());
 		vlTestResultDto.setBeneficiaryName(labTestSample.getBeneficiary().getFirstName());
@@ -48,6 +62,7 @@ public class VLTestResultMapper {
 				}
 			});
 		}
+
 		if (labTestSample.getSampleCollectedDate() != null) {
 			vlTestResultDto.setSampleCollectedDate(labTestSample.getSampleCollectedDate().format(formatter));
 		}
@@ -91,11 +106,13 @@ public class VLTestResultMapper {
 		if (labTestSample.getLabInCharge() != null) {
 			vlTestResultDto.setLabInChargeId(labTestSample.getLabInCharge().getId());
 			vlTestResultDto.setLabInChargeName(labTestSample.getLabInCharge().getFirstname());
+			vlTestResultDto.setLabInChargeContact(labTestSample.getLabInCharge().getMobileNumber());
 		}
 
 		if (labTestSample.getLabTecnician() != null) {
 			vlTestResultDto.setLabTechnicianId(labTestSample.getLabTecnician().getId());
 			vlTestResultDto.setLabTechnicianName(labTestSample.getLabTecnician().getFirstname());
+			vlTestResultDto.setLabTechnicianContact(labTestSample.getLabTecnician().getMobileNumber());
 		}
 
 		if (labTestSample.getMachine() != null) {

@@ -1,6 +1,7 @@
 package gov.naco.soch.lab.dto;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class VLTestResultDto {
 
@@ -44,10 +45,21 @@ public class VLTestResultDto {
 	private String testMachineName;
 	private Long labInChargeId;
 	private String labInChargeName;
+	private String labInChargeContact;
 	private Long labTechnicianId;
 	private String labTechnicianName;
+	private String labTechnicianContact;
 	private String populationType;
 	private String department;
+
+	private Long artcLabTechId;
+	private String artcLabTechName;
+	private String artcLabTechContact;
+	private LocalDateTime dispatchDate;
+	private LocalDateTime receivedDate;
+	private Long num_ofSamples;
+	private Long acceptedSamples;
+	private Long rejectedSamples;
 
 	public Long getBatchId() {
 		return batchId;
@@ -369,6 +381,14 @@ public class VLTestResultDto {
 		this.labInChargeName = labInChargeName;
 	}
 
+	public String getLabInChargeContact() {
+		return labInChargeContact;
+	}
+
+	public void setLabInChargeContact(String labInChargeContact) {
+		this.labInChargeContact = labInChargeContact;
+	}
+
 	public Long getLabTechnicianId() {
 		return labTechnicianId;
 	}
@@ -385,6 +405,14 @@ public class VLTestResultDto {
 		this.labTechnicianName = labTechnicianName;
 	}
 
+	public String getLabTechnicianContact() {
+		return labTechnicianContact;
+	}
+
+	public void setLabTechnicianContact(String labTechnicianContact) {
+		this.labTechnicianContact = labTechnicianContact;
+	}
+
 	public String getPopulationType() {
 		return populationType;
 	}
@@ -399,6 +427,70 @@ public class VLTestResultDto {
 
 	public void setDepartment(String department) {
 		this.department = department;
+	}
+
+	public Long getArtcLabTechId() {
+		return artcLabTechId;
+	}
+
+	public void setArtcLabTechId(Long artcLabTechId) {
+		this.artcLabTechId = artcLabTechId;
+	}
+
+	public String getArtcLabTechName() {
+		return artcLabTechName;
+	}
+
+	public void setArtcLabTechName(String artcLabTechName) {
+		this.artcLabTechName = artcLabTechName;
+	}
+
+	public String getArtcLabTechContact() {
+		return artcLabTechContact;
+	}
+
+	public void setArtcLabTechContact(String artcLabTechContact) {
+		this.artcLabTechContact = artcLabTechContact;
+	}
+
+	public LocalDateTime getDispatchDate() {
+		return dispatchDate;
+	}
+
+	public void setDispatchDate(LocalDateTime dispatchDate) {
+		this.dispatchDate = dispatchDate;
+	}
+
+	public LocalDateTime getReceivedDate() {
+		return receivedDate;
+	}
+
+	public void setReceivedDate(LocalDateTime receivedDate) {
+		this.receivedDate = receivedDate;
+	}
+
+	public Long getNum_ofSamples() {
+		return num_ofSamples;
+	}
+
+	public void setNum_ofSamples(Long num_ofSamples) {
+		this.num_ofSamples = num_ofSamples;
+	}
+
+	public Long getAcceptedSamples() {
+		return acceptedSamples;
+	}
+
+	public void setAcceptedSamples(Long acceptedSamples) {
+		this.acceptedSamples = acceptedSamples;
+	}
+
+	public Long getRejectedSamples() {
+		return rejectedSamples;
+	}
+
+	public void setRejectedSamples(Long rejectedSamples) {
+		this.rejectedSamples = rejectedSamples;
 	}
 
 }

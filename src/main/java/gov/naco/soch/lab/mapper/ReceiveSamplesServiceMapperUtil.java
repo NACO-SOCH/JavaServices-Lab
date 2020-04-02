@@ -15,7 +15,7 @@ public class ReceiveSamplesServiceMapperUtil {
 	public static LabTestSampleBatchDto mapToLabTestSampleBatchDto(LabTestSampleBatch labTestSampleBatch) {
 
 		LabTestSampleBatchDto labTestSampleBatchDto = new LabTestSampleBatchDto();
-		labTestSampleBatchDto.setId(labTestSampleBatch.getId());
+		labTestSampleBatchDto.setBatchId(labTestSampleBatch.getId());
 		labTestSampleBatchDto.setBdnSerialNumber(labTestSampleBatch.getBdnSerialNumber());
 		labTestSampleBatchDto.setDispatchDate(labTestSampleBatch.getDispatchDate());
 		labTestSampleBatchDto.setReceivedDate(labTestSampleBatch.getReceivedDate());
@@ -45,10 +45,10 @@ public class ReceiveSamplesServiceMapperUtil {
 			labTestSampleBatchDto.setArtcLabTechContact(labTestSampleBatch.getArtcLabTechUser().getMobileNumber());
 		}
 		if (labTestSampleBatch.getVlLabTechUser() != null) {
-			labTestSampleBatchDto.setLabTechId(labTestSampleBatch.getVlLabTechUser().getId());
+			labTestSampleBatchDto.setLabTechnicianId(labTestSampleBatch.getVlLabTechUser().getId());
 			// change to full name
-			labTestSampleBatchDto.setLabTechName(labTestSampleBatch.getVlLabTechUser().getFirstname());
-			labTestSampleBatchDto.setLabTechContact(labTestSampleBatch.getVlLabTechUser().getMobileNumber());
+			labTestSampleBatchDto.setLabTechnicianName(labTestSampleBatch.getVlLabTechUser().getFirstname());
+			labTestSampleBatchDto.setLabTechnicianContact(labTestSampleBatch.getVlLabTechUser().getMobileNumber());
 		}
 		if (!CollectionUtils.isEmpty(labTestSampleBatch.getLabTestSamples())) {
 			List<LabTestSampleDto> labTestSampleDtoList = new ArrayList<>();
@@ -62,19 +62,39 @@ public class ReceiveSamplesServiceMapperUtil {
 
 	private static LabTestSampleDto mapToLabTestSamplesDTO(LabTestSample s) {
 		LabTestSampleDto labTestSampleDto = new LabTestSampleDto();
-		labTestSampleDto.setId(s.getId());
-		labTestSampleDto.setTestBatchId(s.getLabTestSampleBatch().getId());
+		labTestSampleDto.setSampleId(s.getId());
+		labTestSampleDto.setBatchId(s.getLabTestSampleBatch().getId());
 		labTestSampleDto.setBeneficiaryId(s.getBeneficiary().getId());
 		labTestSampleDto.setBeneficiaryName(s.getBeneficiary().getFirstName());
+		labTestSampleDto.setBeneficiaryUid(s.getBeneficiary().getUid());
 		labTestSampleDto.setBeneficiaryDob(s.getBeneficiary().getDateOfBirth());
 		labTestSampleDto.setBeneficiaryAge(s.getBeneficiary().getAge());
+		labTestSampleDto.setBeneficiaryGender(s.getBeneficiary().getGender());
+
+		if (!CollectionUtils.isEmpty(s.getBeneficiary().getArtBeneficiaryDetails())) {
+
+			s.getBeneficiary().getArtBeneficiaryDetails().forEach(d -> {
+				if (d.getIsDelete() == Boolean.FALSE) {
+					labTestSampleDto.setArtNumber(d.getArtNumber());
+					labTestSampleDto.setPreArtNumber(d.getPreArtNumber());
+					if (!CollectionUtils.isEmpty(d.getArtPatientAssessments())) {
+						d.getArtPatientAssessments().forEach(pa -> {
+							if (pa.getIsDelete() != Boolean.FALSE) {
+								labTestSampleDto.setBeneficiaryHivStatus(pa.getHivStatus());
+							}
+						});
+					}
+				}
+			});
+		}
+
 		s.getBeneficiary().getArtBeneficiaryDetails().forEach(a -> {
 			if (a.getIsDelete() == Boolean.FALSE) {
 				labTestSampleDto.setArtId(a.getId());
 				labTestSampleDto.setArtNo(a.getArtCentreCode());
 			}
 		});
-		
+
 		labTestSampleDto.setBarcodeNumber(s.getBarcodeNumber());
 		if (s.getTestType() != null) {
 			labTestSampleDto.setTestTypeId(s.getTestType().getId());
@@ -119,11 +139,13 @@ public class ReceiveSamplesServiceMapperUtil {
 		if (s.getLabTecnician() != null) {
 			labTestSampleDto.setLabTechnicianId(s.getLabTecnician().getId());
 			labTestSampleDto.setLabTechnicianName(s.getLabTecnician().getFirstname());
+			labTestSampleDto.setLabTechnicianContact(s.getLabTecnician().getMobileNumber());
 			labTestSampleDto.setLabTechnicianSignature(s.getLabTechnicianSignature());
 		}
 		if (s.getLabInCharge() != null) {
 			labTestSampleDto.setLabInchargeId(s.getLabInCharge().getId());
 			labTestSampleDto.setLabInchargeName(s.getLabInCharge().getFirstname());
+			labTestSampleDto.setLabInChargeContact(s.getLabInCharge().getMobileNumber());
 			labTestSampleDto.setLabInchargeSignature(s.getLabInchargeSignature());
 		}
 		labTestSampleDto.setTestRequestFormLink(s.getTestRequestFormLink());

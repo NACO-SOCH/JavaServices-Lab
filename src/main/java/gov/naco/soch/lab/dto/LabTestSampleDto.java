@@ -5,12 +5,17 @@ import java.time.LocalDateTime;
 
 public class LabTestSampleDto {
 
-	private Long id;
-	private Long testBatchId;
+	private Long sampleId;
+	private Long batchId;
 	private Long beneficiaryId;
 	private String beneficiaryName;
+	private String beneficiaryUid;
 	private LocalDate beneficiaryDob;
 	private String beneficiaryAge;
+	private String beneficiaryGender;
+	private String beneficiaryHivStatus;
+	private String artNumber;
+	private String preArtNumber;
 	private Long artId;
 	private String artNo;
 	private String barcodeNumber;
@@ -42,30 +47,35 @@ public class LabTestSampleDto {
 	private String typeOfSpecimen;
 	private Long labTechnicianId;
 	private String labTechnicianName;
+	private String labTechnicianContact;
 	private String labTechnicianSignature;
 	private Long labInchargeId;
 	private String labInchargeName;
+	private String labInChargeContact;
 	private String labInchargeSignature;
 	private String testRequestFormLink;
+
+	private String populationType;
+	private String department;
 
 	public LabTestSampleDto() {
 		super();
 	}
 
-	public Long getId() {
-		return id;
+	public Long getSampleId() {
+		return sampleId;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setSampleId(Long sampleId) {
+		this.sampleId = sampleId;
 	}
 
-	public Long getTestBatchId() {
-		return testBatchId;
+	public Long getBatchId() {
+		return batchId;
 	}
 
-	public void setTestBatchId(Long testBatchId) {
-		this.testBatchId = testBatchId;
+	public void setBatchId(Long batchId) {
+		this.batchId = batchId;
 	}
 
 	public Long getBeneficiaryId() {
@@ -84,6 +94,14 @@ public class LabTestSampleDto {
 		this.beneficiaryName = beneficiaryName;
 	}
 
+	public String getBeneficiaryUid() {
+		return beneficiaryUid;
+	}
+
+	public void setBeneficiaryUid(String beneficiaryUid) {
+		this.beneficiaryUid = beneficiaryUid;
+	}
+
 	public LocalDate getBeneficiaryDob() {
 		return beneficiaryDob;
 	}
@@ -98,6 +116,38 @@ public class LabTestSampleDto {
 
 	public void setBeneficiaryAge(String beneficiaryAge) {
 		this.beneficiaryAge = beneficiaryAge;
+	}
+
+	public String getBeneficiaryGender() {
+		return beneficiaryGender;
+	}
+
+	public void setBeneficiaryGender(String beneficiaryGender) {
+		this.beneficiaryGender = beneficiaryGender;
+	}
+
+	public String getBeneficiaryHivStatus() {
+		return beneficiaryHivStatus;
+	}
+
+	public void setBeneficiaryHivStatus(String beneficiaryHivStatus) {
+		this.beneficiaryHivStatus = beneficiaryHivStatus;
+	}
+
+	public String getArtNumber() {
+		return artNumber;
+	}
+
+	public void setArtNumber(String artNumber) {
+		this.artNumber = artNumber;
+	}
+
+	public String getPreArtNumber() {
+		return preArtNumber;
+	}
+
+	public void setPreArtNumber(String preArtNumber) {
+		this.preArtNumber = preArtNumber;
 	}
 
 	public Long getArtId() {
@@ -348,6 +398,14 @@ public class LabTestSampleDto {
 		this.labTechnicianName = labTechnicianName;
 	}
 
+	public String getLabTechnicianContact() {
+		return labTechnicianContact;
+	}
+
+	public void setLabTechnicianContact(String labTechnicianContact) {
+		this.labTechnicianContact = labTechnicianContact;
+	}
+
 	public String getLabTechnicianSignature() {
 		return labTechnicianSignature;
 	}
@@ -372,6 +430,14 @@ public class LabTestSampleDto {
 		this.labInchargeName = labInchargeName;
 	}
 
+	public String getLabInChargeContact() {
+		return labInChargeContact;
+	}
+
+	public void setLabInChargeContact(String labInChargeContact) {
+		this.labInChargeContact = labInChargeContact;
+	}
+
 	public String getLabInchargeSignature() {
 		return labInchargeSignature;
 	}
@@ -386,6 +452,22 @@ public class LabTestSampleDto {
 
 	public void setTestRequestFormLink(String testRequestFormLink) {
 		this.testRequestFormLink = testRequestFormLink;
+	}
+
+	public String getPopulationType() {
+		return populationType;
+	}
+
+	public void setPopulationType(String populationType) {
+		this.populationType = populationType;
+	}
+
+	public String getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(String department) {
+		this.department = department;
 	}
 
 }
