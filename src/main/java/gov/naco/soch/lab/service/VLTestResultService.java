@@ -2,6 +2,7 @@ package gov.naco.soch.lab.service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -10,6 +11,7 @@ import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -17,12 +19,15 @@ import gov.naco.soch.entity.LabTestSample;
 import gov.naco.soch.entity.MasterBatchStatus;
 import gov.naco.soch.entity.MasterResultStatus;
 import gov.naco.soch.entity.MasterSampleStatus;
+import gov.naco.soch.entity.UserMaster;
+import gov.naco.soch.exception.ServiceException;
 import gov.naco.soch.lab.dto.VLTestResultDto;
 import gov.naco.soch.lab.mapper.VLTestResultMapper;
 import gov.naco.soch.repository.LabTestSampleRepository;
 import gov.naco.soch.repository.MasterBatchStatusRepository;
 import gov.naco.soch.repository.MasterResultStatusRepository;
 import gov.naco.soch.repository.MasterSampleStatusRepository;
+import gov.naco.soch.repository.UserMasterRepository;
 
 @Service
 @Transactional
@@ -41,6 +46,9 @@ public class VLTestResultService {
 
 	@Autowired
 	private MasterBatchStatusRepository masterBatchStatusRepository;
+
+	@Autowired
+	private UserMasterRepository userMasterRepository;
 
 	public List<VLTestResultDto> fetchVLTestResultsList(Long labId) {
 
@@ -112,7 +120,7 @@ public class VLTestResultService {
 		return vlTestResultDto;
 	}
 
-	public List<VLTestResultDto> approveVLTestResults(List<VLTestResultDto> vlTestResultList) {
+	public List<VLTestResultDto> approveVLTestResults(Long labInchargeId, List<VLTestResultDto> vlTestResultList) {
 
 		List<Long> idList = vlTestResultList.stream().map(s -> s.getSampleId()).collect(Collectors.toList());
 
@@ -121,9 +129,21 @@ public class VLTestResultService {
 		MasterResultStatus masterResultStatus = masterResultStatusRepository.findByStatusAndIsDelete("APPROVED",
 				Boolean.FALSE);
 
+		UserMaster labIncharge = null;
+		Optional<UserMaster> labInchargeOpt = userMasterRepository.findById(labInchargeId);
+		if (labInchargeOpt.isPresent()) {
+			labIncharge = labInchargeOpt.get();
+		} else {
+			throw new ServiceException("Invalid User", null, HttpStatus.BAD_REQUEST);
+		}
+
 		List<VLTestResultDto> vlTestResultDto = new ArrayList<>();
 		if (!CollectionUtils.isEmpty(labTestSampleList)) {
-			labTestSampleList.forEach(s -> s.setMasterResultStatus(masterResultStatus));
+			for (LabTestSample s : labTestSampleList) {
+				s.setMasterResultStatus(masterResultStatus);
+				s.setLabInCharge(labIncharge);
+			}
+			;
 			labTestSampleList = labTestSampleRepository.saveAll(labTestSampleList);
 
 			vlTestResultDto = labTestSampleList.stream().map(s -> VLTestResultMapper.mapToVLTestResultDto(s))
@@ -132,8 +152,8 @@ public class VLTestResultService {
 		return vlTestResultDto;
 		// Handle the change of batch status
 	}
-	
-	public List<VLTestResultDto> rejectVLTestResults(List<VLTestResultDto> vlTestResultList) {
+
+	public List<VLTestResultDto> rejectVLTestResults(Long labInchargeId, List<VLTestResultDto> vlTestResultList) {
 
 		List<Long> idList = vlTestResultList.stream().map(s -> s.getSampleId()).collect(Collectors.toList());
 
@@ -141,9 +161,21 @@ public class VLTestResultService {
 
 		MasterResultStatus masterResultStatus = masterResultStatusRepository.findByStatusAndIsDelete("REJECTED",
 				Boolean.FALSE);
+
+		UserMaster labIncharge = null;
+		Optional<UserMaster> labInchargeOpt = userMasterRepository.findById(labInchargeId);
+		if (labInchargeOpt.isPresent()) {
+			labIncharge = labInchargeOpt.get();
+		} else {
+			throw new ServiceException("Invalid User", null, HttpStatus.BAD_REQUEST);
+		}
+
 		List<VLTestResultDto> vlTestResultDto = new ArrayList<>();
 		if (!CollectionUtils.isEmpty(labTestSampleList)) {
-			labTestSampleList.forEach(s -> s.setMasterResultStatus(masterResultStatus));
+			for (LabTestSample s : labTestSampleList) {
+				s.setMasterResultStatus(masterResultStatus);
+				s.setLabInCharge(labIncharge);
+			}
 			labTestSampleList = labTestSampleRepository.saveAll(labTestSampleList);
 
 			vlTestResultDto = labTestSampleList.stream().map(s -> VLTestResultMapper.mapToVLTestResultDto(s))

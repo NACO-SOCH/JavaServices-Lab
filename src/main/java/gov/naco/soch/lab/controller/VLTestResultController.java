@@ -38,15 +38,17 @@ public class VLTestResultController {
 		return vlTestResultService.fetchVLTestResultsUnderApproval(labId);
 	}
 
-	@PostMapping("/approve")
-	public List<VLTestResultDto> approveVLTestResults(@RequestBody List<VLTestResultDto> vlTestResultList) {
+	@PostMapping("/approve/{labInchargeId}")
+	public List<VLTestResultDto> approveVLTestResults(@PathVariable("labInchargeId") Long labInchargeId,
+			@RequestBody List<VLTestResultDto> vlTestResultList) {
 		logger.info("approveVLTestResults is invoked!");
-		return vlTestResultService.approveVLTestResults(vlTestResultList);
+		return vlTestResultService.approveVLTestResults(labInchargeId, vlTestResultList);
 	}
 
-	@PostMapping("/reject")
-	public List<VLTestResultDto> rejectVLTestResults(@RequestBody List<VLTestResultDto> vlTestResultList) {
+	@PostMapping("/reject/{labInchargeId}")
+	public List<VLTestResultDto> rejectVLTestResults(@PathVariable("labInchargeId") Long labInchargeId,
+			@RequestBody List<VLTestResultDto> vlTestResultList) {
 		logger.info("rejectVLTestResults is invoked!");
-		return vlTestResultService.rejectVLTestResults(vlTestResultList);
+		return vlTestResultService.rejectVLTestResults(labInchargeId, vlTestResultList);
 	}
 }

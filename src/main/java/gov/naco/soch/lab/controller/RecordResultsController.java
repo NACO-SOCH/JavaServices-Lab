@@ -41,5 +41,11 @@ public class RecordResultsController {
 		logger.debug("getRecordResultsList is invoked!");
 		return recordResultsService.getRecordResultsList(labId);
 	}
+	
+	@GetMapping("/artclist/{artcId}")
+	public List<VLTestResultDto> getRecordResultsArtcList(@PathVariable("artcId") Long artcId) {
+		logger.debug("getRecordResultsArtcList is invoked!");
+		return recordResultsService.getRecordResultsArtcList(artcId);
+	}
 
 }
