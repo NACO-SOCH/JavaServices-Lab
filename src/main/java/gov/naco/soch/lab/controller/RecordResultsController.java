@@ -47,5 +47,4 @@ public class RecordResultsController {
 		logger.debug("getRecordResultsArtcList is invoked!");
 		return recordResultsService.getRecordResultsArtcList(artcId);
 	}
-
 }

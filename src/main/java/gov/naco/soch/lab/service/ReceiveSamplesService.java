@@ -19,6 +19,7 @@ import gov.naco.soch.entity.LabTestSample;
 import gov.naco.soch.entity.LabTestSampleBatch;
 import gov.naco.soch.entity.MasterBatchStatus;
 import gov.naco.soch.entity.MasterRemark;
+import gov.naco.soch.entity.MasterResultStatus;
 import gov.naco.soch.entity.MasterSampleStatus;
 import gov.naco.soch.entity.UserMaster;
 import gov.naco.soch.exception.ServiceException;
@@ -28,6 +29,7 @@ import gov.naco.soch.lab.mapper.ReceiveSamplesServiceMapperUtil;
 import gov.naco.soch.repository.LabTestSampleBatchRepository;
 import gov.naco.soch.repository.MasterBatchStatusRepository;
 import gov.naco.soch.repository.MasterRemarkRepository;
+import gov.naco.soch.repository.MasterResultStatusRepository;
 import gov.naco.soch.repository.MasterSampleStatusRepository;
 import gov.naco.soch.repository.UserMasterRepository;
 
@@ -58,6 +60,9 @@ public class ReceiveSamplesService {
 
 	@Autowired
 	private MasterBatchStatusRepository masterBatchStatusRepository;
+	
+	@Autowired
+	private MasterResultStatusRepository masterResultStatusRepository;
 
 	@Autowired
 	private MasterRemarkRepository masterRemarkRepository;
@@ -101,6 +106,9 @@ public class ReceiveSamplesService {
 			if (!CollectionUtils.isEmpty(labTestSampleBatch.getLabTestSamples())
 					&& !CollectionUtils.isEmpty(labTestSampleBatchDto.getLabTestSampleDtoList())) {
 
+				MasterResultStatus masterResultStatus = masterResultStatusRepository.findByStatusAndIsDelete("PENDING",
+						Boolean.FALSE);
+				
 				labTestSampleBatch.getLabTestSamples().forEach(s -> {
 
 					Optional<LabTestSampleDto> sampleOpt = labTestSampleBatchDto.getLabTestSampleDtoList().stream()
@@ -126,6 +134,8 @@ public class ReceiveSamplesService {
 								throw new ServiceException("Invalid Status", null, HttpStatus.BAD_REQUEST);
 							}
 						}
+						
+						s.setMasterResultStatus(masterResultStatus);
 					}
 				});
 				String batchStatus = findBatchStatus(labTestSampleBatch.getLabTestSamples());
