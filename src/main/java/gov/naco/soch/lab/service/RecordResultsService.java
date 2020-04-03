@@ -37,7 +37,7 @@ public class RecordResultsService {
 
 	private static final Logger logger = LoggerFactory.getLogger(VLTestResultService.class);
 
-	private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+	private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
 	@Autowired
 	private LabTestSampleRepository labTestSampleRepository;
