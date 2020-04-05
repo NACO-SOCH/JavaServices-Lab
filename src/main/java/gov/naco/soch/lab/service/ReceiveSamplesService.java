@@ -39,9 +39,9 @@ public class ReceiveSamplesService {
 
 	private static String ACCEPT = "ACCEPT";
 
-	private static String REJECT = "ACCEPT";
+	private static String REJECT = "REJECT";
 
-	private static String NOT_RECEIVED = "ACCEPT";
+	private static String NOT_RECEIVED = "NOT RECEIVED";
 
 	private static String RECIEVED = "RECIEVED";
 
@@ -60,7 +60,7 @@ public class ReceiveSamplesService {
 
 	@Autowired
 	private MasterBatchStatusRepository masterBatchStatusRepository;
-	
+
 	@Autowired
 	private MasterResultStatusRepository masterResultStatusRepository;
 
@@ -108,7 +108,7 @@ public class ReceiveSamplesService {
 
 				MasterResultStatus masterResultStatus = masterResultStatusRepository.findByStatusAndIsDelete("PENDING",
 						Boolean.FALSE);
-				
+
 				labTestSampleBatch.getLabTestSamples().forEach(s -> {
 
 					Optional<LabTestSampleDto> sampleOpt = labTestSampleBatchDto.getLabTestSampleDtoList().stream()
@@ -121,6 +121,15 @@ public class ReceiveSamplesService {
 									.findById(sample.getSampleStatusId());
 							if (sampleStatusOpt.isPresent()) {
 								s.setMasterSampleStatus(sampleStatusOpt.get());
+								if (sampleStatusOpt.get().getStatus().equalsIgnoreCase(ACCEPT)) {
+									s.setArtcSampleStatus(RECIEVED);
+								}
+								if (sampleStatusOpt.get().getStatus().equalsIgnoreCase(REJECT)) {
+									s.setArtcSampleStatus(REJECTED);
+								}
+								if (sampleStatusOpt.get().getStatus().equalsIgnoreCase(NOT_RECEIVED)) {
+									s.setArtcSampleStatus(NOT_RECEIVED);
+								}
 							} else {
 								throw new ServiceException("Invalid Status", null, HttpStatus.BAD_REQUEST);
 							}
@@ -134,7 +143,7 @@ public class ReceiveSamplesService {
 								throw new ServiceException("Invalid Status", null, HttpStatus.BAD_REQUEST);
 							}
 						}
-						
+
 						s.setMasterResultStatus(masterResultStatus);
 					}
 				});

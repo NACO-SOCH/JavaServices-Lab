@@ -107,6 +107,9 @@ public class RecordResultsService {
 		MasterResultStatus masterResultStatus = masterResultStatusRepository
 				.findByStatusAndIsDelete("AWAITING APPROVAL", Boolean.FALSE);
 
+		MasterResultStatus masterResultStatusError = masterResultStatusRepository.findByStatusAndIsDelete("ERROR",
+				Boolean.FALSE);
+
 		if (labTestSampleOpt.isPresent()) {
 
 			LabTestSample labTestSample = labTestSampleOpt.get();
@@ -127,6 +130,10 @@ public class RecordResultsService {
 			labTestSample.setIsError(labTestSampleDto.getIsError());
 			labTestSample.setErrorCode(labTestSampleDto.getErrorCode());
 			labTestSample.setMasterResultStatus(masterResultStatus);
+
+			if (labTestSampleDto.getIsError()) {
+				labTestSample.setMasterResultStatus(masterResultStatusError);
+			}
 
 			if (labTestSampleDto.getResultTypeId() != null) {
 				Optional<MasterResultType> resultTypeOpt = masterResultTypeRepository
