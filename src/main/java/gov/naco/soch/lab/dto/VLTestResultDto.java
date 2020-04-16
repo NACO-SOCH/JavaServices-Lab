@@ -74,6 +74,7 @@ public class VLTestResultDto {
 	private Boolean isPreviousTestDone;
 	private String previousTestResult;
 	private String labSpecimenId;
+	private String feedingType;
 
 	public Long getBatchId() {
 		return batchId;
@@ -593,6 +594,14 @@ public class VLTestResultDto {
 
 	public void setLabSpecimenId(String labSpecimenId) {
 		this.labSpecimenId = labSpecimenId;
+	}
+
+	public String getFeedingType() {
+		return feedingType;
+	}
+
+	public void setFeedingType(String feedingType) {
+		this.feedingType = feedingType;
 	}
 
 }

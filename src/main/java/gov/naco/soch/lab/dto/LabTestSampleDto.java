@@ -70,6 +70,7 @@ public class LabTestSampleDto {
 	private Boolean isPreviousTestDone;
 	private String previousTestResult;
 	private String labSpecimenId;
+	private String feedingType;
 
 	public LabTestSampleDto() {
 		super();
@@ -561,6 +562,14 @@ public class LabTestSampleDto {
 
 	public void setLabSpecimenId(String labSpecimenId) {
 		this.labSpecimenId = labSpecimenId;
+	}
+
+	public String getFeedingType() {
+		return feedingType;
+	}
+
+	public void setFeedingType(String feedingType) {
+		this.feedingType = feedingType;
 	}
 
 }
