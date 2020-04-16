@@ -62,6 +62,19 @@ public class VLTestResultDto {
 	private Long acceptedSamples;
 	private Long rejectedSamples;
 
+	private String ictcDnaCode;
+	private String infantDnaCode;
+
+	private Long motherId;
+	private String motherName;
+	private String motherUid;
+	private String motherContact;
+	private String motherAddress;
+
+	private Boolean isPreviousTestDone;
+	private String previousTestResult;
+	private String labSpecimenId;
+
 	public Long getBatchId() {
 		return batchId;
 	}
@@ -500,6 +513,86 @@ public class VLTestResultDto {
 
 	public void setRejectedSamples(Long rejectedSamples) {
 		this.rejectedSamples = rejectedSamples;
+	}
+
+	public String getIctcDnaCode() {
+		return ictcDnaCode;
+	}
+
+	public void setIctcDnaCode(String ictcDnaCode) {
+		this.ictcDnaCode = ictcDnaCode;
+	}
+
+	public String getInfantDnaCode() {
+		return infantDnaCode;
+	}
+
+	public void setInfantDnaCode(String infantDnaCode) {
+		this.infantDnaCode = infantDnaCode;
+	}
+
+	public Long getMotherId() {
+		return motherId;
+	}
+
+	public void setMotherId(Long motherId) {
+		this.motherId = motherId;
+	}
+
+	public String getMotherName() {
+		return motherName;
+	}
+
+	public void setMotherName(String motherName) {
+		this.motherName = motherName;
+	}
+
+	public String getMotherUid() {
+		return motherUid;
+	}
+
+	public void setMotherUid(String motherUid) {
+		this.motherUid = motherUid;
+	}
+
+	public String getMotherContact() {
+		return motherContact;
+	}
+
+	public void setMotherContact(String motherContact) {
+		this.motherContact = motherContact;
+	}
+
+	public String getMotherAddress() {
+		return motherAddress;
+	}
+
+	public void setMotherAddress(String motherAddress) {
+		this.motherAddress = motherAddress;
+	}
+
+	public Boolean getIsPreviousTestDone() {
+		return isPreviousTestDone;
+	}
+
+	public void setIsPreviousTestDone(Boolean isPreviousTestDone) {
+		this.isPreviousTestDone = isPreviousTestDone;
+	}
+
+	public String getPreviousTestResult() {
+		return previousTestResult;
+	}
+
+	public void setPreviousTestResult(String previousTestResult) {
+		this.previousTestResult = previousTestResult;
+	}
+
+	public String getLabSpecimenId() {
+		return labSpecimenId;
+	}
+
+	public void setLabSpecimenId(String labSpecimenId) {
+		this.labSpecimenId = labSpecimenId;
 	}
 
 }
