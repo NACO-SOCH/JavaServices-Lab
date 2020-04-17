@@ -45,20 +45,22 @@ public class InfantTestHistoryService {
 		if (beneficiaryOpt.isPresent()) {
 
 			Beneficiary infant = beneficiaryOpt.get();
-			
+
 			MasterBatchStatus masterBatchStatus = masterBatchStatusRepository.findByStatusAndIsDelete("DISPATCHED",
 					Boolean.FALSE);
 
-			MasterSampleStatus masterSampleStatus = masterSampleStatusRepository.findByStatusAndIsDelete("ACCEPT",
+			MasterSampleStatus masterSampleStatusAccept = masterSampleStatusRepository.findByStatusAndIsDelete("ACCEPT",
 					Boolean.FALSE);
+			MasterSampleStatus masterSampleStatusResultPosted = masterSampleStatusRepository
+					.findByStatusAndIsDelete("RESULT POSTED", Boolean.FALSE);
 
 			Predicate<LabTestSample> checkBatchStatus = s -> s.getLabTestSampleBatch().getMasterBatchStatus()
 					.getId() != masterBatchStatus.getId();
 
 			Predicate<LabTestSample> isSampleInLab = s -> s.getLabTestSampleBatch().getLab().getId() == labId;
 
-			Predicate<LabTestSample> statusAccepted = s -> s.getMasterSampleStatus().getId() == masterSampleStatus
-					.getId();
+			Predicate<LabTestSample> statusAccepted = s -> s.getMasterSampleStatus().getId() == masterSampleStatusAccept
+					.getId() || s.getMasterSampleStatus().getId() == masterSampleStatusResultPosted.getId();
 
 			List<LabTestSample> labTestSampleList = labTestSampleRepository.findByIsDelete(Boolean.FALSE);
 
@@ -88,7 +90,6 @@ public class InfantTestHistoryService {
 				return testHistoryDto;
 			}).collect(Collectors.toList());
 
-			
 			InfantTestHistoryDto infantTestHistoryDto = new InfantTestHistoryDto();
 			infantTestHistoryDto.setBeneficiaryId(infantId);
 			infantTestHistoryDto.setBeneficiaryUid(infant.getUid());
