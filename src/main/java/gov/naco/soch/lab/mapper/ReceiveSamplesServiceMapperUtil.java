@@ -135,8 +135,10 @@ public class ReceiveSamplesServiceMapperUtil {
 		}
 		if (s.getAuthorizer() != null) {
 			labTestSampleDto.setAuthorizerId(s.getAuthorizer().getId());
+			labTestSampleDto.setAuthorizerName(LabServiceUtil.getUserName(s.getAuthorizer()));
+			labTestSampleDto.setAuthorizerSignature(s.getAuthorizerSignature());
 		}
-		labTestSampleDto.setAuthorizerSignature(s.getAuthorizerSignature());
+		
 		labTestSampleDto.setTypeOfSpecimen(s.getTypeOfSpecimen());
 		if (s.getLabTecnician() != null) {
 			labTestSampleDto.setLabTechnicianId(s.getLabTecnician().getId());

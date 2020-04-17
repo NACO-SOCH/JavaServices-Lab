@@ -131,7 +131,7 @@ public class RecordResultsService {
 			labTestSample.setErrorCode(labTestSampleDto.getErrorCode());
 			labTestSample.setMasterResultStatus(masterResultStatus);
 
-			if (labTestSampleDto.getIsError()) {
+			if (labTestSampleDto.getIsError()!=null && labTestSampleDto.getIsError()) {
 				labTestSample.setMasterResultStatus(masterResultStatusError);
 			}
 

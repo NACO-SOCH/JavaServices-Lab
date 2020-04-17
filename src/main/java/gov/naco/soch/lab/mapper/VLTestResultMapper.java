@@ -33,8 +33,8 @@ public class VLTestResultMapper {
 		if (labTestSample.getLabTestSampleBatch().getArtcLabTechUser() != null) {
 			vlTestResultDto.setArtcLabTechId(labTestSample.getLabTestSampleBatch().getArtcLabTechUser().getId());
 			// change to full name
-			vlTestResultDto
-					.setArtcLabTechName(LabServiceUtil.getUserName(labTestSample.getLabTestSampleBatch().getArtcLabTechUser()));
+			vlTestResultDto.setArtcLabTechName(
+					LabServiceUtil.getUserName(labTestSample.getLabTestSampleBatch().getArtcLabTechUser()));
 			vlTestResultDto.setArtcLabTechContact(
 					labTestSample.getLabTestSampleBatch().getArtcLabTechUser().getMobileNumber());
 		}
@@ -118,6 +118,12 @@ public class VLTestResultMapper {
 			vlTestResultDto.setLabTechnicianId(labTestSample.getLabTecnician().getId());
 			vlTestResultDto.setLabTechnicianName(LabServiceUtil.getUserName(labTestSample.getLabTecnician()));
 			vlTestResultDto.setLabTechnicianContact(labTestSample.getLabTecnician().getMobileNumber());
+		}
+
+		if (labTestSample.getAuthorizer() != null) {
+			vlTestResultDto.setAuthorizerId(labTestSample.getAuthorizer().getId());
+			vlTestResultDto.setAuthorizerName(LabServiceUtil.getUserName(labTestSample.getAuthorizer()));
+			vlTestResultDto.setAuthorizerSignature(labTestSample.getAuthorizerSignature());
 		}
 
 		if (labTestSample.getMachine() != null) {
