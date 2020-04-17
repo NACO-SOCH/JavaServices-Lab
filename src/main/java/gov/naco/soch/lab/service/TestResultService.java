@@ -22,8 +22,8 @@ import gov.naco.soch.entity.MasterResultStatus;
 import gov.naco.soch.entity.MasterSampleStatus;
 import gov.naco.soch.entity.UserMaster;
 import gov.naco.soch.exception.ServiceException;
-import gov.naco.soch.lab.dto.VLTestResultDto;
-import gov.naco.soch.lab.mapper.VLTestResultMapper;
+import gov.naco.soch.lab.dto.TestResultDto;
+import gov.naco.soch.lab.mapper.TestResultMapper;
 import gov.naco.soch.repository.LabTestSampleBatchRepository;
 import gov.naco.soch.repository.LabTestSampleRepository;
 import gov.naco.soch.repository.MasterBatchStatusRepository;
@@ -33,9 +33,9 @@ import gov.naco.soch.repository.UserMasterRepository;
 
 @Service
 @Transactional
-public class VLTestResultService {
+public class TestResultService {
 
-	private static final Logger logger = LoggerFactory.getLogger(VLTestResultService.class);
+	private static final Logger logger = LoggerFactory.getLogger(TestResultService.class);
 
 	@Autowired
 	private LabTestSampleRepository labTestSampleRepository;
@@ -55,9 +55,9 @@ public class VLTestResultService {
 	@Autowired
 	private LabTestSampleBatchRepository labTestSampleBatchRepository;
 
-	public List<VLTestResultDto> fetchVLTestResultsList(Long labId) {
+	public List<TestResultDto> fetchTestResultsList(Long labId) {
 
-		logger.debug("In fetchVLTestResultsList() of VLTestResultService");
+		logger.debug("In fetchTestResultsList() of TestResultService");
 
 		MasterSampleStatus masterSampleStatusAccepted = masterSampleStatusRepository.findByStatusAndIsDelete("ACCEPT",
 				Boolean.FALSE);
@@ -82,21 +82,21 @@ public class VLTestResultService {
 		Predicate<LabTestSample> checkResultStatus = s -> s.getMasterResultStatus().getId() != masterResultStatus
 				.getId();
 
-		List<VLTestResultDto> vlTestResultDto = new ArrayList<>();
+		List<TestResultDto> testResultDto = new ArrayList<>();
 		List<LabTestSample> labTestSampleList = labTestSampleRepository.findByIsDelete(Boolean.FALSE);
 		if (!CollectionUtils.isEmpty(labTestSampleList)) {
 			labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
 			labTestSampleList = labTestSampleList.stream()
 					.filter(isSampleInLab.and(sampleStatus).and(checkResultStatus)).collect(Collectors.toList());
-			vlTestResultDto = labTestSampleList.stream().map(s -> VLTestResultMapper.mapToVLTestResultDto(s))
+			testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 					.collect(Collectors.toList());
 		}
-		return vlTestResultDto;
+		return testResultDto;
 	}
 
-	public List<VLTestResultDto> fetchVLTestResultsUnderApproval(Long labId) {
+	public List<TestResultDto> fetchTestResultsUnderApproval(Long labId) {
 
-		logger.debug("In fetchVLTestResultsUnderApproval() of VLTestResultService");
+		logger.debug("In fetchTestResultsUnderApproval() of TestResultService");
 
 		MasterSampleStatus masterSampleStatus = masterSampleStatusRepository.findByStatusAndIsDelete("ACCEPT",
 				Boolean.FALSE);
@@ -117,21 +117,21 @@ public class VLTestResultService {
 		Predicate<LabTestSample> checkResultStatus = s -> s.getMasterResultStatus().getId() == masterResultStatus
 				.getId();
 
-		List<VLTestResultDto> vlTestResultDto = new ArrayList<>();
+		List<TestResultDto> testResultDto = new ArrayList<>();
 		List<LabTestSample> labTestSampleList = labTestSampleRepository.findByIsDelete(Boolean.FALSE);
 		if (!CollectionUtils.isEmpty(labTestSampleList)) {
 			labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
 			labTestSampleList = labTestSampleList.stream()
 					.filter(isSampleInLab.and(statusAccepted).and(checkResultStatus)).collect(Collectors.toList());
-			vlTestResultDto = labTestSampleList.stream().map(s -> VLTestResultMapper.mapToVLTestResultDto(s))
+			testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 					.collect(Collectors.toList());
 		}
-		return vlTestResultDto;
+		return testResultDto;
 	}
 
-	public List<VLTestResultDto> approveVLTestResults(Long labInchargeId, List<VLTestResultDto> vlTestResultList) {
+	public List<TestResultDto> approveTestResults(Long labInchargeId, List<TestResultDto> testResultList) {
 
-		List<Long> idList = vlTestResultList.stream().map(s -> s.getSampleId()).collect(Collectors.toList());
+		List<Long> idList = testResultList.stream().map(s -> s.getSampleId()).collect(Collectors.toList());
 
 		List<LabTestSample> labTestSampleList = labTestSampleRepository.findAllById(idList);
 
@@ -152,7 +152,7 @@ public class VLTestResultService {
 		List<Long> batchIds = labTestSampleList.stream().map(s -> s.getLabTestSampleBatch().getId())
 				.collect(Collectors.toList());
 
-		List<VLTestResultDto> vlTestResultDto = new ArrayList<>();
+		List<TestResultDto> testResultDto = new ArrayList<>();
 		if (!CollectionUtils.isEmpty(labTestSampleList)) {
 			for (LabTestSample s : labTestSampleList) {
 				s.setMasterSampleStatus(masterSampleStatus);
@@ -161,19 +161,19 @@ public class VLTestResultService {
 			}
 			labTestSampleList = labTestSampleRepository.saveAll(labTestSampleList);
 
-			vlTestResultDto = labTestSampleList.stream().map(s -> VLTestResultMapper.mapToVLTestResultDto(s))
+			testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 					.collect(Collectors.toList());
 		}
 
 		// Change the status of batch
 		changeBatchStatus(batchIds);
-		return vlTestResultDto;
+		return testResultDto;
 		// Handle the change of batch status
 	}
 
-	public List<VLTestResultDto> rejectVLTestResults(Long labInchargeId, List<VLTestResultDto> vlTestResultList) {
+	public List<TestResultDto> rejectTestResults(Long labInchargeId, List<TestResultDto> testResultList) {
 
-		List<Long> idList = vlTestResultList.stream().map(s -> s.getSampleId()).collect(Collectors.toList());
+		List<Long> idList = testResultList.stream().map(s -> s.getSampleId()).collect(Collectors.toList());
 
 		List<LabTestSample> labTestSampleList = labTestSampleRepository.findAllById(idList);
 
@@ -188,7 +188,7 @@ public class VLTestResultService {
 			throw new ServiceException("Invalid User", null, HttpStatus.BAD_REQUEST);
 		}
 
-		List<VLTestResultDto> vlTestResultDto = new ArrayList<>();
+		List<TestResultDto> testResultDto = new ArrayList<>();
 		if (!CollectionUtils.isEmpty(labTestSampleList)) {
 			for (LabTestSample s : labTestSampleList) {
 				s.setMasterResultStatus(masterResultStatus);
@@ -197,10 +197,10 @@ public class VLTestResultService {
 			}
 			labTestSampleList = labTestSampleRepository.saveAll(labTestSampleList);
 
-			vlTestResultDto = labTestSampleList.stream().map(s -> VLTestResultMapper.mapToVLTestResultDto(s))
+			testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 					.collect(Collectors.toList());
 		}
-		return vlTestResultDto;
+		return testResultDto;
 		// Handle the change of batch status
 	}
 

@@ -24,8 +24,8 @@ import gov.naco.soch.entity.MasterResultType;
 import gov.naco.soch.entity.MasterSampleStatus;
 import gov.naco.soch.entity.UserMaster;
 import gov.naco.soch.exception.ServiceException;
-import gov.naco.soch.lab.dto.VLTestResultDto;
-import gov.naco.soch.lab.mapper.VLTestResultMapper;
+import gov.naco.soch.lab.dto.TestResultDto;
+import gov.naco.soch.lab.mapper.TestResultMapper;
 import gov.naco.soch.repository.LabTestSampleRepository;
 import gov.naco.soch.repository.MasterBatchStatusRepository;
 import gov.naco.soch.repository.MasterResultStatusRepository;
@@ -37,7 +37,7 @@ import gov.naco.soch.repository.UserMasterRepository;
 @Transactional
 public class RecordResultsService {
 
-	private static final Logger logger = LoggerFactory.getLogger(VLTestResultService.class);
+	private static final Logger logger = LoggerFactory.getLogger(TestResultService.class);
 
 	private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
@@ -62,7 +62,7 @@ public class RecordResultsService {
 //	@Autowired
 //	private LabTestSampleBatchRepository labTestSampleBatchRepository;
 
-	public List<VLTestResultDto> getRecordResultsList(Long labId) {
+	public List<TestResultDto> getRecordResultsList(Long labId) {
 
 		logger.debug("In getRecordResultsList() of RecordResultsService");
 
@@ -85,20 +85,20 @@ public class RecordResultsService {
 		Predicate<LabTestSample> checkResultStatus = s -> s.getMasterResultStatus().getId() == masterResultStatus
 				.getId();
 
-		List<VLTestResultDto> vlTestResultDto = new ArrayList<>();
+		List<TestResultDto> testResultDto = new ArrayList<>();
 		List<LabTestSample> labTestSampleList = labTestSampleRepository.findByIsDelete(Boolean.FALSE);
 		if (!CollectionUtils.isEmpty(labTestSampleList)) {
 			labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
 			labTestSampleList = labTestSampleList.stream()
 					.filter(isSampleInLab.and(statusAccepted).and(checkResultStatus)).collect(Collectors.toList());
-			vlTestResultDto = labTestSampleList.stream().map(s -> VLTestResultMapper.mapToVLTestResultDto(s))
+			testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 					.collect(Collectors.toList());
 		}
-		return vlTestResultDto;
+		return testResultDto;
 
 	}
 
-	public VLTestResultDto saveRecordResult(Long sampleId, VLTestResultDto labTestSampleDto) {
+	public TestResultDto saveRecordResult(Long sampleId, TestResultDto labTestSampleDto) {
 
 		logger.debug("In getRecordResultsList() of RecordResultsService");
 
@@ -144,13 +144,13 @@ public class RecordResultsService {
 			}
 
 			labTestSample = labTestSampleRepository.save(labTestSample);
-			return VLTestResultMapper.mapToVLTestResultDto(labTestSample);
+			return TestResultMapper.mapToTestResultDto(labTestSample);
 		} else {
 			throw new ServiceException("SampleID not present", null, HttpStatus.BAD_REQUEST);
 		}
 	}
 
-	public List<VLTestResultDto> getRecordResultsArtcList(Long artcId) {
+	public List<TestResultDto> getRecordResultsArtcList(Long artcId) {
 
 		logger.debug("In getRecordResultsArtcList() of RecordResultsService");
 
@@ -173,15 +173,15 @@ public class RecordResultsService {
 		Predicate<LabTestSample> checkResultStatus = s -> s.getMasterResultStatus().getId() == masterResultStatus
 				.getId();
 
-		List<VLTestResultDto> vlTestResultDto = new ArrayList<>();
+		List<TestResultDto> testResultDto = new ArrayList<>();
 		List<LabTestSample> labTestSampleList = labTestSampleRepository.findByIsDelete(Boolean.FALSE);
 		if (!CollectionUtils.isEmpty(labTestSampleList)) {
 			labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
 			labTestSampleList = labTestSampleList.stream()
 					.filter(isSampleInLab.and(statusAccepted).and(checkResultStatus)).collect(Collectors.toList());
-			vlTestResultDto = labTestSampleList.stream().map(s -> VLTestResultMapper.mapToVLTestResultDto(s))
+			testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 					.collect(Collectors.toList());
 		}
-		return vlTestResultDto;
+		return testResultDto;
 	}
 }

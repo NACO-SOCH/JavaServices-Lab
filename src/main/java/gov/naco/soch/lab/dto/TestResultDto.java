@@ -3,7 +3,7 @@ package gov.naco.soch.lab.dto;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-public class VLTestResultDto {
+public class TestResultDto {
 
 	private Long batchId;
 	private Long sampleId;

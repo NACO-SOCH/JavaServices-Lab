@@ -5,15 +5,15 @@ import java.time.format.DateTimeFormatter;
 import org.springframework.util.CollectionUtils;
 
 import gov.naco.soch.entity.LabTestSample;
-import gov.naco.soch.lab.dto.VLTestResultDto;
+import gov.naco.soch.lab.dto.TestResultDto;
 import gov.naco.soch.lab.util.LabServiceUtil;
 
-public class VLTestResultMapper {
+public class TestResultMapper {
 
 	private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-	public static VLTestResultDto mapToVLTestResultDto(LabTestSample labTestSample) {
-		VLTestResultDto vlTestResultDto = new VLTestResultDto();
+	public static TestResultDto mapToTestResultDto(LabTestSample labTestSample) {
+		TestResultDto vlTestResultDto = new TestResultDto();
 
 		vlTestResultDto.setBatchId(labTestSample.getLabTestSampleBatch().getId());
 		vlTestResultDto.setSampleId(labTestSample.getId());
