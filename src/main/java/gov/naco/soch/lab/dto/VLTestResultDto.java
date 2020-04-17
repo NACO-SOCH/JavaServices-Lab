@@ -53,6 +53,10 @@ public class VLTestResultDto {
 	private String populationType;
 	private String department;
 
+	private Long authorizerId;
+	private String authorizerName;
+	private String authorizerSignature;
+
 	private Long artcLabTechId;
 	private String artcLabTechName;
 	private String artcLabTechContact;
@@ -450,6 +454,30 @@ public class VLTestResultDto {
 
 	public void setDepartment(String department) {
 		this.department = department;
+	}
+
+	public Long getAuthorizerId() {
+		return authorizerId;
+	}
+
+	public void setAuthorizerId(Long authorizerId) {
+		this.authorizerId = authorizerId;
+	}
+
+	public String getAuthorizerName() {
+		return authorizerName;
+	}
+
+	public void setAuthorizerName(String authorizerName) {
+		this.authorizerName = authorizerName;
+	}
+
+	public String getAuthorizerSignature() {
+		return authorizerSignature;
+	}
+
+	public void setAuthorizerSignature(String authorizerSignature) {
+		this.authorizerSignature = authorizerSignature;
 	}
 
 	public Long getArtcLabTechId() {

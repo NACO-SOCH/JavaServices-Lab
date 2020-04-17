@@ -43,6 +43,7 @@ public class LabTestSampleDto {
 	private Long testMachineId;
 	private String testMachine;
 	private Long authorizerId;
+	private String authorizerName;
 	private String authorizerSignature;
 	private String typeOfSpecimen;
 	private Long labTechnicianId;
@@ -378,6 +379,14 @@ public class LabTestSampleDto {
 
 	public void setAuthorizerId(Long authorizerId) {
 		this.authorizerId = authorizerId;
+	}
+
+	public String getAuthorizerName() {
+		return authorizerName;
+	}
+
+	public void setAuthorizerName(String authorizerName) {
+		this.authorizerName = authorizerName;
 	}
 
 	public String getAuthorizerSignature() {
