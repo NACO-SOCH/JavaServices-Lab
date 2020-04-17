@@ -157,7 +157,9 @@ public class TestResultService {
 			for (LabTestSample s : labTestSampleList) {
 				s.setMasterSampleStatus(masterSampleStatus);
 				s.setMasterResultStatus(masterResultStatus);
+				s.setArtcSampleStatus("RESULT POSTED");
 				s.setLabInCharge(labIncharge);
+				s.setAuthorizer(labIncharge);
 			}
 			labTestSampleList = labTestSampleRepository.saveAll(labTestSampleList);
 
@@ -177,6 +179,9 @@ public class TestResultService {
 
 		List<LabTestSample> labTestSampleList = labTestSampleRepository.findAllById(idList);
 
+		MasterSampleStatus masterSampleStatus = masterSampleStatusRepository.findByStatusAndIsDelete("RESULT POSTED",
+				Boolean.FALSE);
+		
 		MasterResultStatus masterResultStatus = masterResultStatusRepository.findByStatusAndIsDelete("REJECTED",
 				Boolean.FALSE);
 
@@ -191,8 +196,10 @@ public class TestResultService {
 		List<TestResultDto> testResultDto = new ArrayList<>();
 		if (!CollectionUtils.isEmpty(labTestSampleList)) {
 			for (LabTestSample s : labTestSampleList) {
+				s.setMasterSampleStatus(masterSampleStatus);
 				s.setMasterResultStatus(masterResultStatus);
 				s.setLabInCharge(labIncharge);
+				s.setAuthorizer(labIncharge);
 				s.setArtcSampleStatus("RESULT POSTED");
 			}
 			labTestSampleList = labTestSampleRepository.saveAll(labTestSampleList);
