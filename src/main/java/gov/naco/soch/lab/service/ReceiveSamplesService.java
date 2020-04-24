@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
 
@@ -15,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import gov.naco.soch.entity.Facility;
+import gov.naco.soch.entity.IctcSampleCollection;
 import gov.naco.soch.entity.LabTestSample;
 import gov.naco.soch.entity.LabTestSampleBatch;
 import gov.naco.soch.entity.MasterBatchStatus;
@@ -26,6 +29,7 @@ import gov.naco.soch.exception.ServiceException;
 import gov.naco.soch.lab.dto.LabTestSampleBatchDto;
 import gov.naco.soch.lab.dto.LabTestSampleDto;
 import gov.naco.soch.lab.mapper.ReceiveSamplesServiceMapperUtil;
+import gov.naco.soch.repository.IctcSampleCollectionRepository;
 import gov.naco.soch.repository.LabTestSampleBatchRepository;
 import gov.naco.soch.repository.MasterBatchStatusRepository;
 import gov.naco.soch.repository.MasterRemarkRepository;
@@ -66,6 +70,9 @@ public class ReceiveSamplesService {
 
 	@Autowired
 	private MasterRemarkRepository masterRemarkRepository;
+
+	@Autowired
+	private IctcSampleCollectionRepository ictcSampleCollectionRepository;
 
 	private static final Logger logger = LoggerFactory.getLogger(ReceiveSamplesService.class);
 
@@ -156,6 +163,7 @@ public class ReceiveSamplesService {
 			}
 
 			LabTestSampleBatch labTestSampleBatchSaved = labTestSampleBatchRepository.save(labTestSampleBatch);
+			updateIctc(labTestSampleBatchSaved);
 			return ReceiveSamplesServiceMapperUtil.mapToLabTestSampleBatchDto(labTestSampleBatchSaved);
 		} else {
 			// throw error
@@ -186,5 +194,31 @@ public class ReceiveSamplesService {
 			return REJECTED;
 		}
 		return PARTIALLY_RECEIVED;
+	}
+
+	private void updateIctc(LabTestSampleBatch labTestSampleBatch) {
+
+		Facility facility = labTestSampleBatch.getFacility();
+		if (facility != null && facility.getFacilityType() != null
+				&& (facility.getFacilityType().getId() == 11L || facility.getFacilityType().getId() == 13L)) {
+
+			List<String> barcodes = labTestSampleBatch.getLabTestSamples().stream().map(s -> s.getBarcodeNumber())
+					.collect(Collectors.toList());
+
+			List<IctcSampleCollection> samples = ictcSampleCollectionRepository.findBySampleBatchBarcodes(barcodes);
+			if (!CollectionUtils.isEmpty(samples)) {
+				
+				samples.stream().forEach(s -> {
+					Optional<LabTestSample> labSampleOpt = labTestSampleBatch.getLabTestSamples().stream()
+							.filter(ls -> ls.getBarcodeNumber().equalsIgnoreCase(s.getBarcode())).findFirst();
+
+					if (labSampleOpt.isPresent()) {
+						s.setSampleStatus(labSampleOpt.get().getMasterSampleStatus().getStatus());
+						s.getIctcSampleBatch().setBatchStatus(labTestSampleBatch.getMasterBatchStatus().getStatus());
+					}
+				});
+				ictcSampleCollectionRepository.saveAll(samples);
+			}
+		}
 	}
 }

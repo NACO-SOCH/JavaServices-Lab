@@ -15,6 +15,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import gov.naco.soch.entity.Facility;
+import gov.naco.soch.entity.IctcSampleCollection;
 import gov.naco.soch.entity.LabTestSample;
 import gov.naco.soch.entity.LabTestSampleBatch;
 import gov.naco.soch.entity.MasterBatchStatus;
@@ -24,6 +26,7 @@ import gov.naco.soch.entity.UserMaster;
 import gov.naco.soch.exception.ServiceException;
 import gov.naco.soch.lab.dto.TestResultDto;
 import gov.naco.soch.lab.mapper.TestResultMapper;
+import gov.naco.soch.repository.IctcSampleCollectionRepository;
 import gov.naco.soch.repository.LabTestSampleBatchRepository;
 import gov.naco.soch.repository.LabTestSampleRepository;
 import gov.naco.soch.repository.MasterBatchStatusRepository;
@@ -54,6 +57,9 @@ public class TestResultService {
 
 	@Autowired
 	private LabTestSampleBatchRepository labTestSampleBatchRepository;
+
+	@Autowired
+	private IctcSampleCollectionRepository ictcSampleCollectionRepository;
 
 	public List<TestResultDto> fetchTestResultsList(Long labId) {
 
@@ -165,10 +171,11 @@ public class TestResultService {
 
 			testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 					.collect(Collectors.toList());
+			// Change the status of batch
+			changeBatchStatus(batchIds);
+			updateIctc(labTestSampleList);
 		}
 
-		// Change the status of batch
-		changeBatchStatus(batchIds);
 		return testResultDto;
 		// Handle the change of batch status
 	}
@@ -181,7 +188,7 @@ public class TestResultService {
 
 		MasterSampleStatus masterSampleStatus = masterSampleStatusRepository.findByStatusAndIsDelete("RESULT POSTED",
 				Boolean.FALSE);
-		
+
 		MasterResultStatus masterResultStatus = masterResultStatusRepository.findByStatusAndIsDelete("REJECTED",
 				Boolean.FALSE);
 
@@ -206,9 +213,10 @@ public class TestResultService {
 
 			testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 					.collect(Collectors.toList());
+
+			updateIctc(labTestSampleList);
 		}
 		return testResultDto;
-		// Handle the change of batch status
 	}
 
 	private void changeBatchStatus(List<Long> batchIds) {
@@ -243,4 +251,36 @@ public class TestResultService {
 			labTestSampleBatchRepository.saveAll(labTestSampleBatchList);
 		}
 	}
+
+	private void updateIctc(List<LabTestSample> labTestSampleList) {
+
+		List<String> barcodes = labTestSampleList.stream().map(s -> s.getBarcodeNumber()).collect(Collectors.toList());
+
+		List<IctcSampleCollection> samples = ictcSampleCollectionRepository.findBySampleBatchBarcodes(barcodes);
+		if (!CollectionUtils.isEmpty(samples)) {
+
+			labTestSampleList.stream().forEach(labTestSample -> {
+				Facility facility = labTestSample.getLabTestSampleBatch().getFacility();
+				if (facility != null && facility.getFacilityType() != null
+						&& (facility.getFacilityType().getId() == 11L || facility.getFacilityType().getId() == 13L)) {
+
+					Optional<IctcSampleCollection> samplesOpt = samples.stream()
+							.filter(ls -> ls.getBarcode().equalsIgnoreCase(labTestSample.getBarcodeNumber()))
+							.findFirst();
+
+					if (samplesOpt.isPresent()) {
+						IctcSampleCollection sample = samplesOpt.get();
+						sample.setSampleStatus(labTestSample.getMasterSampleStatus().getStatus());
+						sample.setHivStatus(labTestSample.getResultType().getResultType());
+						sample.setResultStatus(labTestSample.getMasterResultStatus().getStatus());
+						sample.setReportReceivedDate(labTestSample.getResultReceivedDate().toLocalDate());
+						sample.getIctcSampleBatch().setBatchStatus(
+								labTestSample.getLabTestSampleBatch().getMasterBatchStatus().getStatus());
+					}
+				}
+			});
+			ictcSampleCollectionRepository.saveAll(samples);
+		}
+	}
+
 }

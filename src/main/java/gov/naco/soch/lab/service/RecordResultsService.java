@@ -17,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import gov.naco.soch.entity.Facility;
+import gov.naco.soch.entity.IctcSampleCollection;
 import gov.naco.soch.entity.LabTestSample;
 import gov.naco.soch.entity.MasterBatchStatus;
 import gov.naco.soch.entity.MasterResultStatus;
@@ -26,6 +28,7 @@ import gov.naco.soch.entity.UserMaster;
 import gov.naco.soch.exception.ServiceException;
 import gov.naco.soch.lab.dto.TestResultDto;
 import gov.naco.soch.lab.mapper.TestResultMapper;
+import gov.naco.soch.repository.IctcSampleCollectionRepository;
 import gov.naco.soch.repository.LabTestSampleRepository;
 import gov.naco.soch.repository.MasterBatchStatusRepository;
 import gov.naco.soch.repository.MasterResultStatusRepository;
@@ -58,6 +61,9 @@ public class RecordResultsService {
 
 	@Autowired
 	private UserMasterRepository userMasterRepository;
+
+	@Autowired
+	private IctcSampleCollectionRepository ictcSampleCollectionRepository;
 
 //	@Autowired
 //	private LabTestSampleBatchRepository labTestSampleBatchRepository;
@@ -131,7 +137,7 @@ public class RecordResultsService {
 			labTestSample.setErrorCode(labTestSampleDto.getErrorCode());
 			labTestSample.setMasterResultStatus(masterResultStatus);
 
-			if (labTestSampleDto.getIsError()!=null && labTestSampleDto.getIsError()) {
+			if (labTestSampleDto.getIsError() != null && labTestSampleDto.getIsError()) {
 				labTestSample.setMasterResultStatus(masterResultStatusError);
 			}
 
@@ -144,6 +150,7 @@ public class RecordResultsService {
 			}
 
 			labTestSample = labTestSampleRepository.save(labTestSample);
+			updateIctc(labTestSample);
 			return TestResultMapper.mapToTestResultDto(labTestSample);
 		} else {
 			throw new ServiceException("SampleID not present", null, HttpStatus.BAD_REQUEST);
@@ -183,5 +190,27 @@ public class RecordResultsService {
 					.collect(Collectors.toList());
 		}
 		return testResultDto;
+	}
+
+	private void updateIctc(LabTestSample labTestSample) {
+		Facility facility = labTestSample.getLabTestSampleBatch().getFacility();
+		if (facility != null && facility.getFacilityType() != null
+				&& (facility.getFacilityType().getId() == 11L || facility.getFacilityType().getId() == 13L)) {
+
+			Optional<IctcSampleCollection> samplesOpt = ictcSampleCollectionRepository
+					.findByBarcode(labTestSample.getBarcodeNumber());
+
+			if (samplesOpt.isPresent()) {
+				IctcSampleCollection sample = samplesOpt.get();
+				sample.setSampleStatus(labTestSample.getMasterSampleStatus().getStatus());
+				sample.setHivStatus(labTestSample.getResultType().getResultType());
+				sample.setResultStatus(labTestSample.getMasterResultStatus().getStatus());
+				sample.setReportReceivedDate(labTestSample.getResultReceivedDate().toLocalDate());
+				sample.getIctcSampleBatch()
+						.setBatchStatus(labTestSample.getLabTestSampleBatch().getMasterBatchStatus().getStatus());
+				ictcSampleCollectionRepository.save(sample);
+			}
+
+		}
 	}
 }
