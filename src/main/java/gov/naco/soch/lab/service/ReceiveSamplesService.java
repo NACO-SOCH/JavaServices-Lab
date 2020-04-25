@@ -3,6 +3,7 @@ package gov.naco.soch.lab.service;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import gov.naco.soch.entity.Facility;
+import gov.naco.soch.entity.IctcBeneficiary;
 import gov.naco.soch.entity.IctcSampleCollection;
 import gov.naco.soch.entity.LabTestSample;
 import gov.naco.soch.entity.LabTestSampleBatch;
@@ -90,6 +92,7 @@ public class ReceiveSamplesService {
 						.mapToLabTestSampleBatchDto(l);
 				labTestSampleBatchDtoList.add(labTestSampleBatchDto);
 			});
+			fetchIctcInfantDetails(labTestSampleBatchDtoList);
 		}
 		return labTestSampleBatchDtoList;
 	}
@@ -207,7 +210,7 @@ public class ReceiveSamplesService {
 
 			List<IctcSampleCollection> samples = ictcSampleCollectionRepository.findBySampleBatchBarcodes(barcodes);
 			if (!CollectionUtils.isEmpty(samples)) {
-				
+
 				samples.stream().forEach(s -> {
 					Optional<LabTestSample> labSampleOpt = labTestSampleBatch.getLabTestSamples().stream()
 							.filter(ls -> ls.getBarcodeNumber().equalsIgnoreCase(s.getBarcode())).findFirst();
@@ -219,6 +222,31 @@ public class ReceiveSamplesService {
 				});
 				ictcSampleCollectionRepository.saveAll(samples);
 			}
+		}
+	}
+
+	private void fetchIctcInfantDetails(List<LabTestSampleBatchDto> labTestSampleBatchDtoList) {
+
+		List<String> barcodes = labTestSampleBatchDtoList.stream().flatMap(b -> b.getLabTestSampleDtoList().stream())
+				.map(s -> s.getBarcodeNumber()).collect(Collectors.toList());
+
+		List<IctcSampleCollection> ictcSamples = ictcSampleCollectionRepository.findBySampleBatchBarcodes(barcodes);
+		if (!CollectionUtils.isEmpty(ictcSamples)) {
+
+			Map<String, IctcBeneficiary> ictcBenificiaryDetailsMap = ictcSamples.stream().collect(
+					Collectors.toMap(IctcSampleCollection::getBarcode, IctcSampleCollection::getIctcBeneficiary));
+
+			labTestSampleBatchDtoList.stream().flatMap(b -> b.getLabTestSampleDtoList().stream()).forEach(s -> {
+
+				IctcBeneficiary ictcBenificiaryDetails = ictcBenificiaryDetailsMap.get(s.getBarcodeNumber());
+				if (ictcBenificiaryDetails != null) {
+					s.setInfantDnaCode(ictcBenificiaryDetails.getInfantCode());
+					s.setInfantPID(ictcBenificiaryDetails.getPid());
+					s.setMotherArtNumber(ictcBenificiaryDetails.getInfantMotherArtNo());
+					s.setMotherPreArtNumber(ictcBenificiaryDetails.getInfantMotherPreArtNo());
+					s.setFeedingType(ictcBenificiaryDetails.getInfantBreastFed());
+				}
+			});
 		}
 	}
 }

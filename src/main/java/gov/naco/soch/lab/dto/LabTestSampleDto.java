@@ -61,12 +61,15 @@ public class LabTestSampleDto {
 
 	private String ictcDnaCode;
 	private String infantDnaCode;
+	private String infantPID;
 
 	private Long motherId;
 	private String motherName;
 	private String motherUid;
 	private String motherContact;
 	private String motherAddress;
+	private String motherArtNumber;
+	private String motherPreArtNumber;
 
 	private Boolean isPreviousTestDone;
 	private String previousTestResult;
@@ -509,6 +512,14 @@ public class LabTestSampleDto {
 		this.infantDnaCode = infantDnaCode;
 	}
 
+	public String getInfantPID() {
+		return infantPID;
+	}
+
+	public void setInfantPID(String infantPID) {
+		this.infantPID = infantPID;
+	}
+
 	public Long getMotherId() {
 		return motherId;
 	}
@@ -547,6 +558,22 @@ public class LabTestSampleDto {
 
 	public void setMotherAddress(String motherAddress) {
 		this.motherAddress = motherAddress;
+	}
+
+	public String getMotherArtNumber() {
+		return motherArtNumber;
+	}
+
+	public void setMotherArtNumber(String motherArtNumber) {
+		this.motherArtNumber = motherArtNumber;
+	}
+
+	public String getMotherPreArtNumber() {
+		return motherPreArtNumber;
+	}
+
+	public void setMotherPreArtNumber(String motherPreArtNumber) {
+		this.motherPreArtNumber = motherPreArtNumber;
 	}
 
 	public Boolean getIsPreviousTestDone() {

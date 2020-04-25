@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import gov.naco.soch.entity.Facility;
+import gov.naco.soch.entity.IctcBeneficiary;
 import gov.naco.soch.entity.IctcSampleCollection;
 import gov.naco.soch.entity.LabTestSample;
 import gov.naco.soch.entity.MasterBatchStatus;
@@ -99,6 +101,8 @@ public class RecordResultsService {
 					.filter(isSampleInLab.and(statusAccepted).and(checkResultStatus)).collect(Collectors.toList());
 			testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 					.collect(Collectors.toList());
+			fetchIctcInfantDetails(testResultDto);
+
 		}
 		return testResultDto;
 
@@ -188,6 +192,7 @@ public class RecordResultsService {
 					.filter(isSampleInLab.and(statusAccepted).and(checkResultStatus)).collect(Collectors.toList());
 			testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 					.collect(Collectors.toList());
+			fetchIctcInfantDetails(testResultDto);
 		}
 		return testResultDto;
 	}
@@ -211,6 +216,30 @@ public class RecordResultsService {
 				ictcSampleCollectionRepository.save(sample);
 			}
 
+		}
+	}
+
+	private void fetchIctcInfantDetails(List<TestResultDto> testResultDto) {
+
+		List<String> barcodes = testResultDto.stream().map(s -> s.getBarcodeNumber()).collect(Collectors.toList());
+
+		List<IctcSampleCollection> ictcSamples = ictcSampleCollectionRepository.findBySampleBatchBarcodes(barcodes);
+		if (!CollectionUtils.isEmpty(ictcSamples)) {
+
+			Map<String, IctcBeneficiary> ictcBenificiaryDetailsMap = ictcSamples.stream().collect(
+					Collectors.toMap(IctcSampleCollection::getBarcode, IctcSampleCollection::getIctcBeneficiary));
+
+			testResultDto.stream().forEach(s -> {
+
+				IctcBeneficiary ictcBenificiaryDetails = ictcBenificiaryDetailsMap.get(s.getBarcodeNumber());
+				if (ictcBenificiaryDetails != null) {
+					s.setInfantDnaCode(ictcBenificiaryDetails.getInfantCode());
+					s.setInfantPID(ictcBenificiaryDetails.getPid());
+					s.setMotherArtNumber(ictcBenificiaryDetails.getInfantMotherArtNo());
+					s.setMotherPreArtNumber(ictcBenificiaryDetails.getInfantMotherPreArtNo());
+					s.setFeedingType(ictcBenificiaryDetails.getInfantBreastFed());
+				}
+			});
 		}
 	}
 }
