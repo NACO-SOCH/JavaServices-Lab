@@ -32,12 +32,15 @@ public class ReceiveSamplesServiceMapperUtil {
 			labTestSampleBatchDto.setArtcId(labTestSampleBatch.getFacility().getId());
 			labTestSampleBatchDto.setArtcName(labTestSampleBatch.getFacility().getName());
 			labTestSampleBatchDto.setArtcAddress(labTestSampleBatch.getFacility().getAddress().getAddress());
+			labTestSampleBatchDto.setArtcCode(labTestSampleBatch.getFacility().getCode());
+			labTestSampleBatchDto.setArtcArtCode(labTestSampleBatch.getFacility().getArtcode());
 		}
 		if (labTestSampleBatch.getLab() != null) {
 			labTestSampleBatchDto.setLabId(labTestSampleBatch.getLab().getId());
 			labTestSampleBatchDto.setLabName(labTestSampleBatch.getLab().getName());
 			// to change address (null check address)
 			labTestSampleBatchDto.setLabAddress(labTestSampleBatch.getLab().getAddress().getAddress());
+			labTestSampleBatchDto.setLabCode(labTestSampleBatch.getLab().getCode());
 		}
 		if (labTestSampleBatch.getArtcLabTechUser() != null) {
 			labTestSampleBatchDto.setArtcLabTechId(labTestSampleBatch.getArtcLabTechUser().getId());
@@ -138,7 +141,7 @@ public class ReceiveSamplesServiceMapperUtil {
 			labTestSampleDto.setAuthorizerName(LabServiceUtil.getUserName(s.getAuthorizer()));
 			labTestSampleDto.setAuthorizerSignature(s.getAuthorizerSignature());
 		}
-		
+
 		labTestSampleDto.setTypeOfSpecimen(s.getTypeOfSpecimen());
 		if (s.getLabTecnician() != null) {
 			labTestSampleDto.setLabTechnicianId(s.getLabTecnician().getId());

@@ -21,9 +21,12 @@ public class TestResultMapper {
 		vlTestResultDto.setArtcId(labTestSample.getLabTestSampleBatch().getFacility().getId());
 		vlTestResultDto.setArtcName(labTestSample.getLabTestSampleBatch().getFacility().getName());
 		vlTestResultDto.setArtcAddress(labTestSample.getLabTestSampleBatch().getFacility().getAddress().getAddress());
+		vlTestResultDto.setArtcCode(labTestSample.getLabTestSampleBatch().getFacility().getCode());
+		vlTestResultDto.setArtcArtCode(labTestSample.getLabTestSampleBatch().getFacility().getArtcode());
 		vlTestResultDto.setLabId(labTestSample.getLabTestSampleBatch().getLab().getId());
 		vlTestResultDto.setLabName(labTestSample.getLabTestSampleBatch().getLab().getName());
 		vlTestResultDto.setLabAddress(labTestSample.getLabTestSampleBatch().getLab().getAddress().getAddress());
+		vlTestResultDto.setLabCode(labTestSample.getLabTestSampleBatch().getLab().getCode());
 
 		vlTestResultDto.setDispatchDate(labTestSample.getLabTestSampleBatch().getDispatchDate());
 		vlTestResultDto.setReceivedDate(labTestSample.getLabTestSampleBatch().getReceivedDate());

@@ -11,6 +11,8 @@ public class TestResultDto {
 	private Long artcId;
 	private String artcName;
 	private String artcAddress;
+	private String artcCode;
+	private String artcArtCode;
 	private Long beneficiaryId;
 	private String beneficiaryUid;
 	private String beneficiaryName;
@@ -38,6 +40,7 @@ public class TestResultDto {
 	private Long labId;
 	private String labName;
 	private String labAddress;
+	private String labCode;
 	private String typeOfSpecimen;
 	private String logValue;
 	private Boolean isError;
@@ -129,6 +132,22 @@ public class TestResultDto {
 
 	public void setArtcAddress(String artcAddress) {
 		this.artcAddress = artcAddress;
+	}
+
+	public String getArtcCode() {
+		return artcCode;
+	}
+
+	public void setArtcCode(String artcCode) {
+		this.artcCode = artcCode;
+	}
+
+	public String getArtcArtCode() {
+		return artcArtCode;
+	}
+
+	public void setArtcArtCode(String artcArtCode) {
+		this.artcArtCode = artcArtCode;
 	}
 
 	public Long getBeneficiaryId() {
@@ -345,6 +364,14 @@ public class TestResultDto {
 
 	public void setLabAddress(String labAddress) {
 		this.labAddress = labAddress;
+	}
+
+	public String getLabCode() {
+		return labCode;
+	}
+
+	public void setLabCode(String labCode) {
+		this.labCode = labCode;
 	}
 
 	public String getTypeOfSpecimen() {

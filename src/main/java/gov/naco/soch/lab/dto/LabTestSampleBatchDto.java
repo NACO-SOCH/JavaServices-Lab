@@ -10,12 +10,15 @@ public class LabTestSampleBatchDto {
 	private Long artcId;
 	private String artcName;
 	private String artcAddress;
+	private String artcCode;
+	private String artcArtCode;
 	private Long artcLabTechId;
 	private String artcLabTechName;
 	private String artcLabTechContact;
 	private Long labId;
 	private String labName;
 	private String labAddress;
+	private String labCode;
 	private Long labTechnicianId;
 	private String labTechnicianName;
 	private String labTechnicianContact;
@@ -72,6 +75,22 @@ public class LabTestSampleBatchDto {
 		this.artcAddress = artcAddress;
 	}
 
+	public String getArtcCode() {
+		return artcCode;
+	}
+
+	public void setArtcCode(String artcCode) {
+		this.artcCode = artcCode;
+	}
+
+	public String getArtcArtCode() {
+		return artcArtCode;
+	}
+
+	public void setArtcArtCode(String artcArtCode) {
+		this.artcArtCode = artcArtCode;
+	}
+
 	public Long getArtcLabTechId() {
 		return artcLabTechId;
 	}
@@ -118,6 +137,14 @@ public class LabTestSampleBatchDto {
 
 	public void setLabAddress(String labAddress) {
 		this.labAddress = labAddress;
+	}
+
+	public String getLabCode() {
+		return labCode;
+	}
+
+	public void setLabCode(String labCode) {
+		this.labCode = labCode;
 	}
 
 	public Long getLabTechnicianId() {
