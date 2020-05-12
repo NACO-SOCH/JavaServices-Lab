@@ -77,7 +77,7 @@ public class ReceiveSamplesServiceMapperUtil {
 		labTestSampleDto.setBeneficiaryAge(s.getBeneficiary().getAge());
 		labTestSampleDto.setBeneficiaryGender(s.getBeneficiary().getGender());
 
-		if (!CollectionUtils.isEmpty(s.getBeneficiary().getArtBeneficiaryDetails())) {
+		/*if (!CollectionUtils.isEmpty(s.getBeneficiary().getArtBeneficiaryDetails())) {
 
 			s.getBeneficiary().getArtBeneficiaryDetails().forEach(d -> {
 				if (d.getIsDelete() == Boolean.FALSE) {
@@ -92,14 +92,14 @@ public class ReceiveSamplesServiceMapperUtil {
 					}
 				}
 			});
-		}
+		}*/
 
-		s.getBeneficiary().getArtBeneficiaryDetails().forEach(a -> {
+		/*s.getBeneficiary().getArtBeneficiaryDetails().forEach(a -> {
 			if (a.getIsDelete() == Boolean.FALSE) {
 				labTestSampleDto.setArtId(a.getId());
 				labTestSampleDto.setArtNo(a.getArtCentreCode());
 			}
-		});
+		});*/
 
 		labTestSampleDto.setBarcodeNumber(s.getBarcodeNumber());
 		if (s.getTestType() != null) {
