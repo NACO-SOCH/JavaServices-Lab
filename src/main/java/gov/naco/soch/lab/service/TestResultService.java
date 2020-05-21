@@ -1,5 +1,6 @@
 package gov.naco.soch.lab.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -179,6 +180,8 @@ public class TestResultService {
 				s.setMasterResultStatus(masterResultStatus);
 				s.setArtcSampleStatus("RESULT POSTED");
 				s.setLabInCharge(labIncharge);
+				s.setResultApprovedDate(LocalDateTime.now());
+				s.setResultDispatchDate(LocalDateTime.now());
 				s.setAuthorizer(labIncharge);
 			}
 			labTestSampleList = labTestSampleRepository.saveAll(labTestSampleList);
@@ -222,6 +225,8 @@ public class TestResultService {
 				s.setLabInCharge(labIncharge);
 				s.setAuthorizer(labIncharge);
 				s.setArtcSampleStatus("RESULT POSTED");
+				s.setResultApprovedDate(LocalDateTime.now());
+				s.setResultDispatchDate(LocalDateTime.now());
 			}
 			labTestSampleList = labTestSampleRepository.saveAll(labTestSampleList);
 

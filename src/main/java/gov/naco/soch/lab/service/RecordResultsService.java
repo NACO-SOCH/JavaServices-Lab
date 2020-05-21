@@ -224,6 +224,7 @@ public class RecordResultsService {
 					IctcTestResult testResult = testResultOpt.get();
 					testResult.setHivStatus(labTestSample.getResultType().getId());
 					testResult.setResultStatus(labTestSample.getMasterResultStatus().getId());
+					testResult.setTestedDate(labTestSample.getResultReceivedDate().toLocalDate());
 					ictcTestResultRepository.save(testResult);
 				}
 			}
