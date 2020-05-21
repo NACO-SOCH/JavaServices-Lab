@@ -212,27 +212,29 @@ public class ReceiveSamplesService {
 
 			List<String> barcodes = labTestSampleBatch.getLabTestSamples().stream().map(s -> s.getBarcodeNumber())
 					.collect(Collectors.toList());
+			if (!CollectionUtils.isEmpty(barcodes)) {
 
-			List<IctcSampleCollection> samples = ictcSampleCollectionRepository.findBySampleBatchBarcodes(barcodes);
-			if (!CollectionUtils.isEmpty(samples)) {
+				List<IctcSampleCollection> samples = ictcSampleCollectionRepository.findBySampleBatchBarcodes(barcodes);
+				if (!CollectionUtils.isEmpty(samples)) {
 
-				samples.stream().forEach(s -> {
-					Optional<LabTestSample> labSampleOpt = labTestSampleBatch.getLabTestSamples().stream()
-							.filter(ls -> ls.getBarcodeNumber().equalsIgnoreCase(s.getBarcode())).findFirst();
+					samples.stream().forEach(s -> {
+						Optional<LabTestSample> labSampleOpt = labTestSampleBatch.getLabTestSamples().stream()
+								.filter(ls -> ls.getBarcodeNumber().equalsIgnoreCase(s.getBarcode())).findFirst();
 
-					if (labSampleOpt.isPresent()) {
+						if (labSampleOpt.isPresent()) {
 
-						Long sampleStatusId = labSampleOpt.get().getMasterSampleStatus().getId();
-						if (sampleStatusId == 1L) {
-							s.setSampleCollectionStatus(3L);
+							Long sampleStatusId = labSampleOpt.get().getMasterSampleStatus().getId();
+							if (sampleStatusId == 1L) {
+								s.setSampleCollectionStatus(3L);
+							}
+							if (sampleStatusId == 2L) {
+								s.setSampleCollectionStatus(4L);
+							}
+							s.getBatch().setBatchStatus(labTestSampleBatch.getMasterBatchStatus().getId());
 						}
-						if (sampleStatusId == 2L) {
-							s.setSampleCollectionStatus(4L);
-						}
-						s.getBatch().setBatchStatus(labTestSampleBatch.getMasterBatchStatus().getId());
-					}
-				});
-				ictcSampleCollectionRepository.saveAll(samples);
+					});
+					ictcSampleCollectionRepository.saveAll(samples);
+				}
 			}
 		}
 	}
@@ -250,13 +252,12 @@ public class ReceiveSamplesService {
 					.findByIsDelete(Boolean.FALSE);
 
 			Map<Long, String> infantBreastStatusMap = infantBreastStatus.stream()
-					.collect(Collectors.toMap(MasterInfantBreastFeed::getId, MasterInfantBreastFeed::getCode));
+					.collect(Collectors.toMap(MasterInfantBreastFeed::getId, MasterInfantBreastFeed::getName));
 
 			Map<String, IctcSampleCollection> ictcBenificiaryDetailsMap = new HashMap<>();
 			for (IctcSampleCollection s : ictcSamples) {
 				ictcBenificiaryDetailsMap.put(s.getBarcode(), s);
 			}
-
 
 			labTestSampleBatchDtoList.stream().flatMap(b -> b.getLabTestSampleDtoList().stream()).forEach(s -> {
 

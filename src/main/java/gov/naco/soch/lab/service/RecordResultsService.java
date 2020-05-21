@@ -235,38 +235,41 @@ public class RecordResultsService {
 
 		List<String> barcodes = testResultDto.stream().map(s -> s.getBarcodeNumber()).collect(Collectors.toList());
 
-		List<IctcSampleCollection> ictcSamples = ictcSampleCollectionRepository.findBySampleBatchBarcodes(barcodes);
-		if (!CollectionUtils.isEmpty(ictcSamples)) {
+		if (!CollectionUtils.isEmpty(barcodes)) {
 
-			List<MasterInfantBreastFeed> infantBreastStatus = masterInfantBreastFeedRepository
-					.findByIsDelete(Boolean.FALSE);
+			List<IctcSampleCollection> ictcSamples = ictcSampleCollectionRepository.findBySampleBatchBarcodes(barcodes);
+			if (!CollectionUtils.isEmpty(ictcSamples)) {
 
-			Map<Long, String> infantBreastStatusMap = infantBreastStatus.stream()
-					.collect(Collectors.toMap(MasterInfantBreastFeed::getId, MasterInfantBreastFeed::getCode));
+				List<MasterInfantBreastFeed> infantBreastStatus = masterInfantBreastFeedRepository
+						.findByIsDelete(Boolean.FALSE);
 
-			Map<String, IctcSampleCollection> ictcBenificiaryDetailsMap = new HashMap<>();
-			for (IctcSampleCollection s : ictcSamples) {
-				ictcBenificiaryDetailsMap.put(s.getBarcode(), s);
-			}
+				Map<Long, String> infantBreastStatusMap = infantBreastStatus.stream()
+						.collect(Collectors.toMap(MasterInfantBreastFeed::getId, MasterInfantBreastFeed::getName));
 
-			testResultDto.stream().forEach(s -> {
+				Map<String, IctcSampleCollection> ictcBenificiaryDetailsMap = new HashMap<>();
+				for (IctcSampleCollection s : ictcSamples) {
+					ictcBenificiaryDetailsMap.put(s.getBarcode(), s);
+				}
 
-				IctcSampleCollection ictcBenificiaryDetails = ictcBenificiaryDetailsMap.get(s.getBarcodeNumber());
-				if (ictcBenificiaryDetails != null) {
-					s.setInfantDnaCode(ictcBenificiaryDetails.getIctcBeneficiary().getInfantCode());
-					s.setInfantPID(ictcBenificiaryDetails.getIctcBeneficiary().getPid());
+				testResultDto.stream().forEach(s -> {
+
+					IctcSampleCollection ictcBenificiaryDetails = ictcBenificiaryDetailsMap.get(s.getBarcodeNumber());
+					if (ictcBenificiaryDetails != null) {
+						s.setInfantDnaCode(ictcBenificiaryDetails.getIctcBeneficiary().getInfantCode());
+						s.setInfantPID(ictcBenificiaryDetails.getIctcBeneficiary().getPid());
 //					if (ictcBenificiaryDetails.getIctcBeneficiary().getArtBeneficiaryDetails() != null) {
 //						s.setMotherArtNumber(
 //								ictcBenificiaryDetails.getIctcBeneficiary().getArtBeneficiaryDetails().getArtNumber());
 //						s.setMotherPreArtNumber(ictcBenificiaryDetails.getIctcBeneficiary().getArtBeneficiaryDetails()
 //								.getPreArtNumber());
 //					}
-					if (ictcBenificiaryDetails.getVisit() != null) {
-						s.setFeedingType(
-								infantBreastStatusMap.get(ictcBenificiaryDetails.getVisit().getInfantBreastFed()));
+						if (ictcBenificiaryDetails.getVisit() != null) {
+							s.setFeedingType(
+									infantBreastStatusMap.get(ictcBenificiaryDetails.getVisit().getInfantBreastFed()));
+						}
 					}
-				}
-			});
+				});
+			}
 		}
 	}
 }

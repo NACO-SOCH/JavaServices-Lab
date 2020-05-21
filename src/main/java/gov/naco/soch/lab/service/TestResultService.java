@@ -69,7 +69,7 @@ public class TestResultService {
 
 	@Autowired
 	private MasterInfantBreastFeedRepository masterInfantBreastFeedRepository;
-	
+
 	@Autowired
 	private IctcTestResultRepository ictcTestResultRepository;
 
@@ -272,26 +272,25 @@ public class TestResultService {
 
 		List<IctcSampleCollection> samples = ictcSampleCollectionRepository.findBySampleBatchBarcodes(barcodes);
 		if (!CollectionUtils.isEmpty(samples)) {
-			
+
 			List<IctcSampleCollection> samplesToSave = new ArrayList<>();
-			
+
 			List<IctcTestResult> testResultToSave = new ArrayList<>();
 
 			List<Long> sampleIds = samples.stream().map(IctcSampleCollection::getId).collect(Collectors.toList());
-			
+
 			List<IctcTestResult> testResult = ictcTestResultRepository.findBySampleIds(sampleIds);
-			
+
 			Map<Long, IctcTestResult> testResultMap = new HashMap<>();
-			for(IctcTestResult t: testResult) {
+			for (IctcTestResult t : testResult) {
 				testResultMap.put(t.getSample().getId(), t);
 			}
-			
+
 			Map<String, IctcSampleCollection> samplesMap = new HashMap<>();
-			for(IctcSampleCollection s: samples) {
+			for (IctcSampleCollection s : samples) {
 				samplesMap.put(s.getBarcode(), s);
 			}
-			
-			
+
 			labTestSampleList.stream().forEach(labTestSample -> {
 				Facility facility = labTestSample.getLabTestSampleBatch().getFacility();
 				if (facility != null && facility.getFacilityType() != null
@@ -299,18 +298,18 @@ public class TestResultService {
 
 					IctcSampleCollection samplesOpt = samplesMap.get(labTestSample.getBarcodeNumber());
 
-					if(samplesOpt!=null) {
-						
+					if (samplesOpt != null) {
+
 						IctcTestResult testResultOpt = testResultMap.get(samplesOpt.getId());
-						
-						if(testResultOpt!=null) {
+
+						if (testResultOpt != null) {
 							samplesOpt.setSampleCollectionStatus(5L);
 							testResultOpt.setResultStatus(labTestSample.getMasterResultStatus().getId());
 							samplesToSave.add(samplesOpt);
 							testResultToSave.add(testResultOpt);
 						}
 					}
-					
+
 				}
 			});
 			ictcSampleCollectionRepository.saveAll(samplesToSave);
@@ -322,39 +321,41 @@ public class TestResultService {
 
 		List<String> barcodes = testResultDto.stream().map(s -> s.getBarcodeNumber()).collect(Collectors.toList());
 
-		List<IctcSampleCollection> ictcSamples = ictcSampleCollectionRepository.findBySampleBatchBarcodes(barcodes);
-		if (!CollectionUtils.isEmpty(ictcSamples)) {
+		if (!CollectionUtils.isEmpty(barcodes)) {
 
-			List<MasterInfantBreastFeed> infantBreastStatus = masterInfantBreastFeedRepository
-					.findByIsDelete(Boolean.FALSE);
+			List<IctcSampleCollection> ictcSamples = ictcSampleCollectionRepository.findBySampleBatchBarcodes(barcodes);
+			if (!CollectionUtils.isEmpty(ictcSamples)) {
 
-			Map<Long, String> infantBreastStatusMap = infantBreastStatus.stream()
-					.collect(Collectors.toMap(MasterInfantBreastFeed::getId, MasterInfantBreastFeed::getCode));
+				List<MasterInfantBreastFeed> infantBreastStatus = masterInfantBreastFeedRepository
+						.findByIsDelete(Boolean.FALSE);
 
+				Map<Long, String> infantBreastStatusMap = infantBreastStatus.stream()
+						.collect(Collectors.toMap(MasterInfantBreastFeed::getId, MasterInfantBreastFeed::getName));
 
-			Map<String, IctcSampleCollection> ictcBenificiaryDetailsMap = new HashMap<>();
-			for (IctcSampleCollection s : ictcSamples) {
-				ictcBenificiaryDetailsMap.put(s.getBarcode(), s);
-			}
+				Map<String, IctcSampleCollection> ictcBenificiaryDetailsMap = new HashMap<>();
+				for (IctcSampleCollection s : ictcSamples) {
+					ictcBenificiaryDetailsMap.put(s.getBarcode(), s);
+				}
 
-			testResultDto.stream().forEach(s -> {
+				testResultDto.stream().forEach(s -> {
 
-				IctcSampleCollection ictcBenificiaryDetails = ictcBenificiaryDetailsMap.get(s.getBarcodeNumber());
-				if (ictcBenificiaryDetails != null) {
-					s.setInfantDnaCode(ictcBenificiaryDetails.getIctcBeneficiary().getInfantCode());
-					s.setInfantPID(ictcBenificiaryDetails.getIctcBeneficiary().getPid());
+					IctcSampleCollection ictcBenificiaryDetails = ictcBenificiaryDetailsMap.get(s.getBarcodeNumber());
+					if (ictcBenificiaryDetails != null) {
+						s.setInfantDnaCode(ictcBenificiaryDetails.getIctcBeneficiary().getInfantCode());
+						s.setInfantPID(ictcBenificiaryDetails.getIctcBeneficiary().getPid());
 //					if (ictcBenificiaryDetails.getIctcBeneficiary().getArtBeneficiaryDetails() != null) {
 //						s.setMotherArtNumber(
 //								ictcBenificiaryDetails.getIctcBeneficiary().getArtBeneficiaryDetails().getArtNumber());
 //						s.setMotherPreArtNumber(ictcBenificiaryDetails.getIctcBeneficiary().getArtBeneficiaryDetails()
 //								.getPreArtNumber());
 //					}
-					if (ictcBenificiaryDetails.getVisit() != null) {
-						s.setFeedingType(
-								infantBreastStatusMap.get(ictcBenificiaryDetails.getVisit().getInfantBreastFed()));
+						if (ictcBenificiaryDetails.getVisit() != null) {
+							s.setFeedingType(
+									infantBreastStatusMap.get(ictcBenificiaryDetails.getVisit().getInfantBreastFed()));
+						}
 					}
-				}
-			});
+				});
+			}
 		}
 	}
 }
