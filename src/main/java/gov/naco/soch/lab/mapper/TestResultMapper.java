@@ -50,7 +50,7 @@ public class TestResultMapper {
 		vlTestResultDto.setBeneficiaryGender(labTestSample.getBeneficiary().getGender());
 		vlTestResultDto.setBarcodeNumber(labTestSample.getBarcodeNumber());
 
-		if (!CollectionUtils.isEmpty(labTestSample.getBeneficiary().getArtBeneficiaryDetails())) {
+		/*if (!CollectionUtils.isEmpty(labTestSample.getBeneficiary().getArtBeneficiaryDetails())) {
 
 			labTestSample.getBeneficiary().getArtBeneficiaryDetails().forEach(d -> {
 				if (d.getIsDelete() == Boolean.FALSE) {
@@ -65,7 +65,7 @@ public class TestResultMapper {
 					}
 				}
 			});
-		}
+		}*/
 
 		if (labTestSample.getSampleDispatchDate() != null) {
 			vlTestResultDto.setSampleDispatchDate(labTestSample.getSampleDispatchDate().format(formatter));
