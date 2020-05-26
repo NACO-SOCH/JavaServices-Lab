@@ -82,8 +82,12 @@ public class InfantTestHistoryService {
 //				testHistoryDto.setFeedingType(feedingType);
 				testHistoryDto.setAgeOnTest(infant.getAge());
 				testHistoryDto.setTestType(s.getTestType().getTestType());
-				testHistoryDto.setResult(s.getResultType().getResultType());
-				testHistoryDto.setResultDate(s.getResultReceivedDate().toLocalDate());
+				if (s.getResultType() != null) {
+					testHistoryDto.setResult(s.getResultType().getResultType());
+				}
+				if (s.getResultReceivedDate() != null) {
+					testHistoryDto.setResultDate(s.getResultReceivedDate().toLocalDate());
+				}
 				testHistoryDto.setResultStatus(s.getMasterResultStatus().getStatus());
 				testHistoryDto.setLabName(s.getLabTestSampleBatch().getFacility().getName());
 
