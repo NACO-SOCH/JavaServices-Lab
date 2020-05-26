@@ -222,7 +222,15 @@ public class RecordResultsService {
 
 				if (testResultOpt.isPresent()) {
 					IctcTestResult testResult = testResultOpt.get();
-					testResult.setHivStatus(labTestSample.getResultType().getId());
+					if (labTestSample.getResultType().getId() == 6L) {
+						testResult.setHivStatus(2L);
+					}
+					if (labTestSample.getResultType().getId() == 7L) {
+						testResult.setHivStatus(1L);
+					}
+					if (labTestSample.getResultType().getId() == 8L) {
+						testResult.setHivStatus(3L);
+					}
 					testResult.setResultStatus(labTestSample.getMasterResultStatus().getId());
 					testResult.setTestedDate(labTestSample.getResultReceivedDate().toLocalDate());
 					ictcTestResultRepository.save(testResult);
