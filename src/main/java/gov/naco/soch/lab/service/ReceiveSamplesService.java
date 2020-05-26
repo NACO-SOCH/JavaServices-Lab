@@ -230,6 +230,9 @@ public class ReceiveSamplesService {
 							if (sampleStatusId == 2L) {
 								s.setSampleCollectionStatus(4L);
 							}
+							if (sampleStatusId == 3L) {
+								s.setSampleCollectionStatus(6L);
+							}
 							s.getBatch().setBatchStatus(labTestSampleBatch.getMasterBatchStatus().getId());
 						}
 					});
