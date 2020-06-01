@@ -3,6 +3,7 @@ package gov.naco.soch.lab.service;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -114,8 +115,8 @@ public class RecordResultsService {
 			fetchIctcInfantDetails(testResultDto);
 
 		}
-		return testResultDto;
-
+		return testResultDto.stream().sorted(Comparator.comparing(TestResultDto::getBatchId).reversed())
+				.collect(Collectors.toList());
 	}
 
 	public TestResultDto saveRecordResult(Long sampleId, TestResultDto labTestSampleDto) {

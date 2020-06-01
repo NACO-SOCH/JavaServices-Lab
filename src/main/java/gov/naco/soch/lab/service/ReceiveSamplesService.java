@@ -2,6 +2,7 @@ package gov.naco.soch.lab.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -99,7 +100,8 @@ public class ReceiveSamplesService {
 			});
 			fetchIctcInfantDetails(labTestSampleBatchDtoList);
 		}
-		return labTestSampleBatchDtoList;
+		return labTestSampleBatchDtoList.stream().sorted(Comparator.comparing(LabTestSampleBatchDto::getBatchId).reversed())
+				.collect(Collectors.toList());
 	}
 
 	public LabTestSampleBatchDto saveReceivedSamples(Long batchId, LabTestSampleBatchDto labTestSampleBatchDto) {

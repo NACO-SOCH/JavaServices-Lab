@@ -2,6 +2,7 @@ package gov.naco.soch.lab.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -111,7 +112,8 @@ public class TestResultService {
 					.collect(Collectors.toList());
 			fetchIctcInfantDetails(testResultDto);
 		}
-		return testResultDto;
+		return testResultDto.stream().sorted(Comparator.comparing(TestResultDto::getBatchId).reversed())
+				.collect(Collectors.toList());
 	}
 
 	public List<TestResultDto> fetchTestResultsUnderApproval(Long labId) {
@@ -147,7 +149,8 @@ public class TestResultService {
 					.collect(Collectors.toList());
 			fetchIctcInfantDetails(testResultDto);
 		}
-		return testResultDto;
+		return testResultDto.stream().sorted(Comparator.comparing(TestResultDto::getBatchId).reversed())
+				.collect(Collectors.toList());
 	}
 
 	public List<TestResultDto> approveTestResults(Long labInchargeId, List<TestResultDto> testResultList) {
