@@ -135,8 +135,10 @@ public class RecordResultsService {
 
 			LabTestSample labTestSample = labTestSampleOpt.get();
 			if (labTestSampleDto.getResultReceivedDate() != null) {
-				labTestSample.setResultReceivedDate(
-						LocalDateTime.parse(labTestSampleDto.getResultReceivedDate(), formatter));
+				LocalDateTime currentTime = LocalDateTime.now();
+				labTestSample
+						.setResultReceivedDate(LocalDateTime.parse(labTestSampleDto.getResultReceivedDate(), formatter)
+								.withHour(currentTime.getHour()).withMinute(currentTime.getMinute()));
 			}
 
 			Optional<UserMaster> labTechUserOpt = userMasterRepository.findById(labTestSampleDto.getLabTechnicianId());
@@ -152,9 +154,9 @@ public class RecordResultsService {
 			labTestSample.setErrorCode(labTestSampleDto.getErrorCode());
 			labTestSample.setMasterResultStatus(masterResultStatus);
 
-			if (labTestSampleDto.getIsError() != null && labTestSampleDto.getIsError()) {
-				labTestSample.setMasterResultStatus(masterResultStatusError);
-			}
+//			if (labTestSampleDto.getIsError() != null && labTestSampleDto.getIsError()) {
+//				labTestSample.setMasterResultStatus(masterResultStatusError);
+//			}
 
 			if (labTestSampleDto.getResultTypeId() != null) {
 				Optional<MasterResultType> resultTypeOpt = masterResultTypeRepository
@@ -223,8 +225,8 @@ public class RecordResultsService {
 
 				if (testResultOpt.isPresent()) {
 					IctcTestResult testResult = testResultOpt.get();
-					if (labTestSample.getResultType()!=null) {
-						
+					if (labTestSample.getResultType() != null) {
+
 						if (labTestSample.getResultType().getId() == 6L) {
 							testResult.setHivStatus(2L);
 						}
