@@ -1,5 +1,6 @@
 package gov.naco.soch.lab.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -313,6 +314,7 @@ public class TestResultService {
 						if (testResultOpt != null) {
 							samplesOpt.setSampleCollectionStatus(5L);
 							testResultOpt.setResultStatus(labTestSample.getMasterResultStatus().getId());
+							testResultOpt.setReportDeliveryDate(LocalDate.now());
 							samplesToSave.add(samplesOpt);
 							testResultToSave.add(testResultOpt);
 						}
