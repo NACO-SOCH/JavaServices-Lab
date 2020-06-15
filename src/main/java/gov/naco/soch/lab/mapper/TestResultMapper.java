@@ -32,6 +32,8 @@ public class TestResultMapper {
 		vlTestResultDto.setReceivedDate(labTestSample.getLabTestSampleBatch().getReceivedDate());
 		vlTestResultDto.setNum_ofSamples(labTestSample.getLabTestSampleBatch().getNumOfSamples());
 		vlTestResultDto.setAcceptedSamples(labTestSample.getLabTestSampleBatch().getAcceptedSamples());
+		vlTestResultDto.setRejectedSamples(labTestSample.getLabTestSampleBatch().getRejectedSamples());
+		
 
 		if (labTestSample.getLabTestSampleBatch().getArtcLabTechUser() != null) {
 			vlTestResultDto.setArtcLabTechId(labTestSample.getLabTestSampleBatch().getArtcLabTechUser().getId());
