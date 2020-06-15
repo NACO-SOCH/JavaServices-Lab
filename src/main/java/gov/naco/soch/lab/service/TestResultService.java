@@ -313,13 +313,13 @@ public class TestResultService {
 
 						if (testResultOpt != null) {
 							samplesOpt.setSampleCollectionStatus(5L);
+							samplesOpt.getVisit().setBeneficiaryStatus(11L);
 							testResultOpt.setResultStatus(labTestSample.getMasterResultStatus().getId());
 							testResultOpt.setReportDeliveryDate(LocalDate.now());
 							samplesToSave.add(samplesOpt);
 							testResultToSave.add(testResultOpt);
 						}
 					}
-
 				}
 			});
 			ictcSampleCollectionRepository.saveAll(samplesToSave);

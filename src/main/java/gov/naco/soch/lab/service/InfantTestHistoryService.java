@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.aspectj.apache.bcel.generic.IINC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -93,6 +94,7 @@ public class InfantTestHistoryService {
 //				testHistoryDto.setVisitDate(s.getSampleCollectedDate().toLocalDate());
 //				testHistoryDto.setFeedingType(feedingType);
 				testHistoryDto.setAgeOnTest(infant.getAge());
+				testHistoryDto.setBeneficiaryDob(infant.getDateOfBirth());
 				testHistoryDto.setTestType(s.getTestType().getTestType());
 				if (s.getResultType() != null) {
 					testHistoryDto.setResult(s.getResultType().getResultType());
