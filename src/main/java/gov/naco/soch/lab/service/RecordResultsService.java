@@ -239,6 +239,7 @@ public class RecordResultsService {
 					}
 					testResult.setResultStatus(labTestSample.getMasterResultStatus().getId());
 					testResult.setTestedDate(labTestSample.getResultReceivedDate().toLocalDate());
+					testResult.setReportReceivedDate(labTestSample.getResultReceivedDate().toLocalDate());
 					ictcTestResultRepository.save(testResult);
 				}
 			}

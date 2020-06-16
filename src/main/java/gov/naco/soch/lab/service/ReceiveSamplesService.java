@@ -100,7 +100,8 @@ public class ReceiveSamplesService {
 			});
 			fetchIctcInfantDetails(labTestSampleBatchDtoList);
 		}
-		return labTestSampleBatchDtoList.stream().sorted(Comparator.comparing(LabTestSampleBatchDto::getBatchId).reversed())
+		return labTestSampleBatchDtoList.stream()
+				.sorted(Comparator.comparing(LabTestSampleBatchDto::getBatchId).reversed())
 				.collect(Collectors.toList());
 	}
 
@@ -132,11 +133,12 @@ public class ReceiveSamplesService {
 							.filter(ts -> ts.getSampleId() == s.getId()).findFirst();
 					if (sampleOpt.isPresent()) {
 						LabTestSampleDto sample = sampleOpt.get();
-
+						s.setLabTecnician(labTechUserOpt.get());
 						if (sample.getSampleStatusId() != null && sample.getSampleStatusId() != 0L) {
 							Optional<MasterSampleStatus> sampleStatusOpt = masterSampleStatusRepository
 									.findById(sample.getSampleStatusId());
 							if (sampleStatusOpt.isPresent()) {
+								s.setSampleReceivedDate(LocalDateTime.now());
 								s.setMasterSampleStatus(sampleStatusOpt.get());
 								if (sampleStatusOpt.get().getStatus().equalsIgnoreCase(ACCEPT)) {
 									s.setArtcSampleStatus(RECIEVED);

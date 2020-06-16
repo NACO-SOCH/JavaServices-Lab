@@ -12,6 +12,8 @@ public class TestHistoryDto {
 	private LocalDate resultDate;
 	private String resultStatus;
 	private String labName;
+	private String barcodeNumber;
+	private LocalDate beneficiaryDob;
 
 	public LocalDate getVisitDate() {
 		return visitDate;
@@ -75,6 +77,22 @@ public class TestHistoryDto {
 
 	public void setLabName(String labName) {
 		this.labName = labName;
+	}
+
+	public String getBarcodeNumber() {
+		return barcodeNumber;
+	}
+
+	public void setBarcodeNumber(String barcodeNumber) {
+		this.barcodeNumber = barcodeNumber;
+	}
+
+	public LocalDate getBeneficiaryDob() {
+		return beneficiaryDob;
+	}
+
+	public void setBeneficiaryDob(LocalDate beneficiaryDob) {
+		this.beneficiaryDob = beneficiaryDob;
 	}
 
 }
