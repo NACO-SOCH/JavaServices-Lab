@@ -97,8 +97,9 @@ public class TestResultService {
 
 		Predicate<LabTestSample> isSampleInLab = s -> s.getLabTestSampleBatch().getLab().getId() == labId;
 
-		Predicate<LabTestSample> sampleStatus = s -> s.getMasterSampleStatus().getId() == masterSampleStatusAccepted
-				.getId() || s.getMasterSampleStatus().getId() == masterSampleStatusResultPosted.getId();
+		Predicate<LabTestSample> sampleStatus = s -> s.getMasterSampleStatus() != null
+				&& (s.getMasterSampleStatus().getId() == masterSampleStatusAccepted.getId()
+						|| s.getMasterSampleStatus().getId() == masterSampleStatusResultPosted.getId());
 
 		Predicate<LabTestSample> checkResultStatus = s -> s.getMasterResultStatus().getId() != masterResultStatus
 				.getId();
@@ -106,9 +107,10 @@ public class TestResultService {
 		List<TestResultDto> testResultDto = new ArrayList<>();
 		List<LabTestSample> labTestSampleList = labTestSampleRepository.findByIsDelete(Boolean.FALSE);
 		if (!CollectionUtils.isEmpty(labTestSampleList)) {
+			labTestSampleList = labTestSampleList.stream().filter(sampleStatus).collect(Collectors.toList());
 			labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
-			labTestSampleList = labTestSampleList.stream()
-					.filter(isSampleInLab.and(sampleStatus).and(checkResultStatus)).collect(Collectors.toList());
+			labTestSampleList = labTestSampleList.stream().filter(isSampleInLab.and(checkResultStatus))
+					.collect(Collectors.toList());
 			testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 					.collect(Collectors.toList());
 			fetchIctcInfantDetails(testResultDto);
@@ -135,7 +137,8 @@ public class TestResultService {
 
 		Predicate<LabTestSample> isSampleInLab = s -> s.getLabTestSampleBatch().getLab().getId() == labId;
 
-		Predicate<LabTestSample> statusAccepted = s -> s.getMasterSampleStatus().getId() == masterSampleStatus.getId();
+		Predicate<LabTestSample> statusAccepted = s -> s.getMasterSampleStatus() != null
+				&& s.getMasterSampleStatus().getId() == masterSampleStatus.getId();
 
 		Predicate<LabTestSample> checkResultStatus = s -> s.getMasterResultStatus().getId() == masterResultStatus
 				.getId();
@@ -143,9 +146,10 @@ public class TestResultService {
 		List<TestResultDto> testResultDto = new ArrayList<>();
 		List<LabTestSample> labTestSampleList = labTestSampleRepository.findByIsDelete(Boolean.FALSE);
 		if (!CollectionUtils.isEmpty(labTestSampleList)) {
+			labTestSampleList = labTestSampleList.stream().filter(statusAccepted).collect(Collectors.toList());
 			labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
-			labTestSampleList = labTestSampleList.stream()
-					.filter(isSampleInLab.and(statusAccepted).and(checkResultStatus)).collect(Collectors.toList());
+			labTestSampleList = labTestSampleList.stream().filter(isSampleInLab.and(checkResultStatus))
+					.collect(Collectors.toList());
 			testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 					.collect(Collectors.toList());
 			fetchIctcInfantDetails(testResultDto);
