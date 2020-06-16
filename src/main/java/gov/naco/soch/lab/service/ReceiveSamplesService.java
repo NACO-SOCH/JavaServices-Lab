@@ -138,7 +138,7 @@ public class ReceiveSamplesService {
 							Optional<MasterSampleStatus> sampleStatusOpt = masterSampleStatusRepository
 									.findById(sample.getSampleStatusId());
 							if (sampleStatusOpt.isPresent()) {
-
+								s.setSampleReceivedDate(LocalDateTime.now());
 								s.setMasterSampleStatus(sampleStatusOpt.get());
 								if (sampleStatusOpt.get().getStatus().equalsIgnoreCase(ACCEPT)) {
 									s.setArtcSampleStatus(RECIEVED);
