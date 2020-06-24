@@ -75,7 +75,25 @@ public class ReceiveSamplesServiceMapperUtil {
 		labTestSampleDto.setBeneficiaryUid(s.getBeneficiary().getUid());
 		labTestSampleDto.setBeneficiaryDob(s.getBeneficiary().getDateOfBirth());
 		labTestSampleDto.setBeneficiaryAge(s.getBeneficiary().getAge());
-		labTestSampleDto.setBeneficiaryGender(s.getBeneficiary().getGender());
+		labTestSampleDto.setArtNo(s.getBeneficiary().getArtNumber());
+		labTestSampleDto.setPreArtNumber(s.getBeneficiary().getPreArtNumber());
+		labTestSampleDto.setIctcDnaCode(s.getLabTestSampleBatch().getFacility().getCode());
+		
+		if(s.getBeneficiary().getGenderId()!=null) {
+			labTestSampleDto.setBeneficiaryGender(s.getBeneficiary().getGenderId().getName());
+		}
+		else{
+			labTestSampleDto.setBeneficiaryGender(s.getBeneficiary().getGender());
+		}
+		
+		if (!CollectionUtils.isEmpty(s.getBeneficiary().getArtBeneficiary())) {
+			if(s.getBeneficiary().getArtBeneficiary().iterator().hasNext()) {
+				labTestSampleDto.setBeneficiaryHivStatus(
+						s.getBeneficiary().getArtBeneficiary().iterator().next().getMasterArtBeneficiaryStatus().getName());
+			}
+		}
+		
+		
 
 		/*if (!CollectionUtils.isEmpty(s.getBeneficiary().getArtBeneficiaryDetails())) {
 

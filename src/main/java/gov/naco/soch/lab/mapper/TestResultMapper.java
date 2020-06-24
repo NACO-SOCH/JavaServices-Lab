@@ -2,8 +2,6 @@ package gov.naco.soch.lab.mapper;
 
 import java.time.format.DateTimeFormatter;
 
-import org.springframework.util.CollectionUtils;
-
 import gov.naco.soch.entity.LabTestSample;
 import gov.naco.soch.lab.dto.TestResultDto;
 import gov.naco.soch.lab.util.LabServiceUtil;
@@ -33,7 +31,6 @@ public class TestResultMapper {
 		vlTestResultDto.setNum_ofSamples(labTestSample.getLabTestSampleBatch().getNumOfSamples());
 		vlTestResultDto.setAcceptedSamples(labTestSample.getLabTestSampleBatch().getAcceptedSamples());
 		vlTestResultDto.setRejectedSamples(labTestSample.getLabTestSampleBatch().getRejectedSamples());
-		
 
 		if (labTestSample.getLabTestSampleBatch().getArtcLabTechUser() != null) {
 			vlTestResultDto.setArtcLabTechId(labTestSample.getLabTestSampleBatch().getArtcLabTechUser().getId());
@@ -49,25 +46,31 @@ public class TestResultMapper {
 		vlTestResultDto.setBeneficiaryName(LabServiceUtil.getBeneficiaryName(labTestSample.getBeneficiary()));
 		vlTestResultDto.setBeneficiaryDob(labTestSample.getBeneficiary().getDateOfBirth());
 		vlTestResultDto.setBeneficiaryAge(labTestSample.getBeneficiary().getAge());
-		vlTestResultDto.setBeneficiaryGender(labTestSample.getBeneficiary().getGender());
+
+		if (labTestSample.getBeneficiary().getGenderId() != null) {
+			vlTestResultDto.setBeneficiaryGender(labTestSample.getBeneficiary().getGenderId().getName());
+		} else {
+			vlTestResultDto.setBeneficiaryGender(labTestSample.getBeneficiary().getGender());
+		}
+
+		vlTestResultDto.setArtNumber(labTestSample.getBeneficiary().getArtNumber());
+		vlTestResultDto.setPreArtNumber(labTestSample.getBeneficiary().getPreArtNumber());
 		vlTestResultDto.setBarcodeNumber(labTestSample.getBarcodeNumber());
+		vlTestResultDto.setIctcDnaCode(labTestSample.getLabTestSampleBatch().getFacility().getCode());
 
-		/*if (!CollectionUtils.isEmpty(labTestSample.getBeneficiary().getArtBeneficiaryDetails())) {
-
-			labTestSample.getBeneficiary().getArtBeneficiaryDetails().forEach(d -> {
-				if (d.getIsDelete() == Boolean.FALSE) {
-					vlTestResultDto.setArtNumber(d.getArtNumber());
-					vlTestResultDto.setPreArtNumber(d.getPreArtNumber());
-					if (!CollectionUtils.isEmpty(d.getArtPatientAssessments())) {
-						d.getArtPatientAssessments().forEach(pa -> {
-							if (pa.getIsDelete() != Boolean.FALSE) {
-								vlTestResultDto.setBeneficiaryHivStatus(pa.getHivStatus());
-							}
-						});
-					}
-				}
-			});
-		}*/
+		/*
+		 * if (!CollectionUtils.isEmpty(labTestSample.getBeneficiary().
+		 * getArtBeneficiaryDetails())) {
+		 * 
+		 * labTestSample.getBeneficiary().getArtBeneficiaryDetails().forEach(d -> { if
+		 * (d.getIsDelete() == Boolean.FALSE) {
+		 * vlTestResultDto.setArtNumber(d.getArtNumber());
+		 * vlTestResultDto.setPreArtNumber(d.getPreArtNumber()); if
+		 * (!CollectionUtils.isEmpty(d.getArtPatientAssessments())) {
+		 * d.getArtPatientAssessments().forEach(pa -> { if (pa.getIsDelete() !=
+		 * Boolean.FALSE) { vlTestResultDto.setBeneficiaryHivStatus(pa.getHivStatus());
+		 * } }); } } }); }
+		 */
 
 		if (labTestSample.getSampleDispatchDate() != null) {
 			vlTestResultDto.setSampleDispatchDate(labTestSample.getSampleDispatchDate().format(formatter));
