@@ -75,12 +75,9 @@ public class InfantTestHistoryService {
 			Predicate<LabTestSample> statusAccepted = s -> s.getMasterSampleStatus().getId() == masterSampleStatusAccept
 					.getId() || s.getMasterSampleStatus().getId() == masterSampleStatusResultPosted.getId();
 
-			List<LabTestSample> labTestSampleList = labTestSampleRepository.findByIsDelete(Boolean.FALSE);
+			List<LabTestSample> labTestSampleList = labTestSampleRepository.findByBeneficiaryId(infantId);
 
 			if (!CollectionUtils.isEmpty(labTestSampleList)) {
-
-				labTestSampleList = labTestSampleList.stream().filter(s -> s.getBeneficiary().getId() == infant.getId())
-						.collect(Collectors.toList());
 				labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
 				labTestSampleList = labTestSampleList.stream().filter(isSampleInLab.and(statusAccepted))
 						.collect(Collectors.toList());
