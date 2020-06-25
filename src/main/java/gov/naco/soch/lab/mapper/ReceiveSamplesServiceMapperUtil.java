@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.util.CollectionUtils;
 
+import gov.naco.soch.entity.ArtBeneficiary;
 import gov.naco.soch.entity.LabTestSample;
 import gov.naco.soch.entity.LabTestSampleBatch;
 import gov.naco.soch.lab.dto.LabTestSampleBatchDto;
@@ -78,46 +79,43 @@ public class ReceiveSamplesServiceMapperUtil {
 		labTestSampleDto.setArtNo(s.getBeneficiary().getArtNumber());
 		labTestSampleDto.setPreArtNumber(s.getBeneficiary().getPreArtNumber());
 		labTestSampleDto.setIctcDnaCode(s.getLabTestSampleBatch().getFacility().getCode());
-		
-		if(s.getBeneficiary().getGenderId()!=null) {
+
+		if (s.getBeneficiary().getGenderId() != null) {
 			labTestSampleDto.setBeneficiaryGender(s.getBeneficiary().getGenderId().getName());
-		}
-		else{
+		} else {
 			labTestSampleDto.setBeneficiaryGender(s.getBeneficiary().getGender());
 		}
-		
+
 		if (!CollectionUtils.isEmpty(s.getBeneficiary().getArtBeneficiary())) {
-			if(s.getBeneficiary().getArtBeneficiary().iterator().hasNext()) {
-				labTestSampleDto.setBeneficiaryHivStatus(
-						s.getBeneficiary().getArtBeneficiary().iterator().next().getMasterArtBeneficiaryStatus().getName());
+			if (s.getBeneficiary().getArtBeneficiary().iterator().hasNext()) {
+
+				ArtBeneficiary artDetails = s.getBeneficiary().getArtBeneficiary().iterator().next();
+				labTestSampleDto.setBeneficiaryHivStatus(artDetails.getMasterArtBeneficiaryStatus().getName());
+				if (artDetails.getMasterRiskFactor() != null) {
+					labTestSampleDto.setPopulationType(artDetails.getMasterRiskFactor().getName());
+				}
 			}
 		}
-		
-		
 
-		/*if (!CollectionUtils.isEmpty(s.getBeneficiary().getArtBeneficiaryDetails())) {
+		/*
+		 * if (!CollectionUtils.isEmpty(s.getBeneficiary().getArtBeneficiaryDetails()))
+		 * {
+		 * 
+		 * s.getBeneficiary().getArtBeneficiaryDetails().forEach(d -> { if
+		 * (d.getIsDelete() == Boolean.FALSE) {
+		 * labTestSampleDto.setArtNumber(d.getArtNumber());
+		 * labTestSampleDto.setPreArtNumber(d.getPreArtNumber()); if
+		 * (!CollectionUtils.isEmpty(d.getArtPatientAssessments())) {
+		 * d.getArtPatientAssessments().forEach(pa -> { if (pa.getIsDelete() !=
+		 * Boolean.FALSE) { labTestSampleDto.setBeneficiaryHivStatus(pa.getHivStatus());
+		 * } }); } } }); }
+		 */
 
-			s.getBeneficiary().getArtBeneficiaryDetails().forEach(d -> {
-				if (d.getIsDelete() == Boolean.FALSE) {
-					labTestSampleDto.setArtNumber(d.getArtNumber());
-					labTestSampleDto.setPreArtNumber(d.getPreArtNumber());
-					if (!CollectionUtils.isEmpty(d.getArtPatientAssessments())) {
-						d.getArtPatientAssessments().forEach(pa -> {
-							if (pa.getIsDelete() != Boolean.FALSE) {
-								labTestSampleDto.setBeneficiaryHivStatus(pa.getHivStatus());
-							}
-						});
-					}
-				}
-			});
-		}*/
-
-		/*s.getBeneficiary().getArtBeneficiaryDetails().forEach(a -> {
-			if (a.getIsDelete() == Boolean.FALSE) {
-				labTestSampleDto.setArtId(a.getId());
-				labTestSampleDto.setArtNo(a.getArtCentreCode());
-			}
-		});*/
+		/*
+		 * s.getBeneficiary().getArtBeneficiaryDetails().forEach(a -> { if
+		 * (a.getIsDelete() == Boolean.FALSE) { labTestSampleDto.setArtId(a.getId());
+		 * labTestSampleDto.setArtNo(a.getArtCentreCode()); } });
+		 */
 
 		labTestSampleDto.setBarcodeNumber(s.getBarcodeNumber());
 		if (s.getTestType() != null) {
