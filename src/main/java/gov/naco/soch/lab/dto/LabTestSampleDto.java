@@ -73,6 +73,7 @@ public class LabTestSampleDto {
 
 	private Boolean isPreviousTestDone;
 	private String previousTestResult;
+	private LocalDate previousTestDate;
 	private String labSpecimenId;
 	private String feedingType;
 
@@ -590,6 +591,14 @@ public class LabTestSampleDto {
 
 	public void setPreviousTestResult(String previousTestResult) {
 		this.previousTestResult = previousTestResult;
+	}
+
+	public LocalDate getPreviousTestDate() {
+		return previousTestDate;
+	}
+
+	public void setPreviousTestDate(LocalDate previousTestDate) {
+		this.previousTestDate = previousTestDate;
 	}
 
 	public String getLabSpecimenId() {

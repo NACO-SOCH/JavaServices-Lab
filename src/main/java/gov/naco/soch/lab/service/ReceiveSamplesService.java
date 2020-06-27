@@ -19,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import gov.naco.soch.dto.LoginResponseDto;
 import gov.naco.soch.entity.Facility;
 import gov.naco.soch.entity.IctcSampleCollection;
 import gov.naco.soch.entity.LabTestSample;
@@ -28,6 +29,7 @@ import gov.naco.soch.entity.MasterInfantBreastFeed;
 import gov.naco.soch.entity.MasterRemark;
 import gov.naco.soch.entity.MasterResultStatus;
 import gov.naco.soch.entity.MasterSampleStatus;
+import gov.naco.soch.entity.Test;
 import gov.naco.soch.entity.UserMaster;
 import gov.naco.soch.exception.ServiceException;
 import gov.naco.soch.lab.dto.LabTestSampleBatchDto;
@@ -35,12 +37,14 @@ import gov.naco.soch.lab.dto.LabTestSampleDto;
 import gov.naco.soch.lab.mapper.ReceiveSamplesServiceMapperUtil;
 import gov.naco.soch.repository.IctcSampleCollectionRepository;
 import gov.naco.soch.repository.LabTestSampleBatchRepository;
+import gov.naco.soch.repository.LabTestSampleRepository;
 import gov.naco.soch.repository.MasterBatchStatusRepository;
 import gov.naco.soch.repository.MasterInfantBreastFeedRepository;
 import gov.naco.soch.repository.MasterRemarkRepository;
 import gov.naco.soch.repository.MasterResultStatusRepository;
 import gov.naco.soch.repository.MasterSampleStatusRepository;
 import gov.naco.soch.repository.UserMasterRepository;
+import gov.naco.soch.util.UserUtils;
 
 @Service
 @Transactional
@@ -60,6 +64,9 @@ public class ReceiveSamplesService {
 
 	@Autowired
 	private LabTestSampleBatchRepository labTestSampleBatchRepository;
+
+	@Autowired
+	private LabTestSampleRepository labTestSampleRepository;
 
 	@Autowired
 	private UserMasterRepository userMasterRepository;
@@ -99,6 +106,7 @@ public class ReceiveSamplesService {
 				labTestSampleBatchDtoList.add(labTestSampleBatchDto);
 			});
 			fetchIctcInfantDetails(labTestSampleBatchDtoList);
+			findPreviousDBSDetails(labTestSampleBatchDtoList);
 		}
 		return labTestSampleBatchDtoList.stream()
 				.sorted(Comparator.comparing(LabTestSampleBatchDto::getBatchId).reversed())
@@ -113,6 +121,7 @@ public class ReceiveSamplesService {
 			labTestSampleBatch.setAcceptedSamples(labTestSampleBatchDto.getAcceptedSamples());
 			labTestSampleBatch.setRejectedSamples(labTestSampleBatchDto.getRejectedSamples());
 			labTestSampleBatch.setReceivedDate(LocalDateTime.now());
+			Facility lab = labTestSampleBatch.getLab();
 			Optional<UserMaster> labTechUserOpt = userMasterRepository
 					.findById(labTestSampleBatchDto.getLabTechnicianId());
 			if (labTechUserOpt.isPresent()) {
@@ -164,6 +173,17 @@ public class ReceiveSamplesService {
 						}
 
 						s.setMasterResultStatus(masterResultStatus);
+
+						if (lab.getFacilityType().getId() == 20L) {
+							Test test = new Test();
+							test.setId(4L);
+							s.setTest(test);
+
+							LoginResponseDto userLoginDetials = UserUtils.getLoggedInUserDetails();
+							Facility dispatedTo = new Facility();
+							dispatedTo.setId(userLoginDetials.getFacilityId());
+							s.setDispatchedToLab(dispatedTo);
+						}
 					}
 				});
 				String batchStatus = findBatchStatus(labTestSampleBatch.getLabTestSamples());
@@ -284,6 +304,36 @@ public class ReceiveSamplesService {
 					}
 				}
 			});
+		}
+	}
+
+	void findPreviousDBSDetails(List<LabTestSampleBatchDto> labTestSampleBatchDtoList) {
+
+		LoginResponseDto userLoginDetials = UserUtils.getLoggedInUserDetails();
+		if (userLoginDetials.getFacilityTypeId() == 20L) {
+			List<LabTestSampleDto> samples = labTestSampleBatchDtoList.stream()
+					.flatMap(b -> b.getLabTestSampleDtoList().stream()).collect(Collectors.toList());
+
+			for (LabTestSampleDto s : samples) {
+
+				List<LabTestSample> previousSamples = labTestSampleRepository.findPreviousDBSDetails(
+						s.getBeneficiaryId(), userLoginDetials.getFacilityId(), s.getSampleId());
+
+				Optional<LabTestSample> previousSample = previousSamples.stream()
+						.sorted(Comparator.comparing(LabTestSample::getId)).findFirst();
+				if (previousSample.isPresent()) {
+
+					s.setIsPreviousTestDone(Boolean.TRUE);
+					if (previousSample.get().getMasterResultStatus() != null
+							&& previousSample.get().getMasterResultStatus().getId() == 3L) {
+						s.setPreviousTestDate(previousSample.get().getResultApprovedDate().toLocalDate());
+						s.setPreviousTestResult(previousSample.get().getResultType().getResultType());
+					}
+
+				} else {
+					s.setIsPreviousTestDone(Boolean.FALSE);
+				}
+			}
 		}
 	}
 }
