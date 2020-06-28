@@ -20,6 +20,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+import gov.naco.soch.dto.LoginResponseDto;
 import gov.naco.soch.entity.Facility;
 import gov.naco.soch.entity.IctcSampleCollection;
 import gov.naco.soch.entity.IctcTestResult;
@@ -31,6 +32,8 @@ import gov.naco.soch.entity.MasterResultType;
 import gov.naco.soch.entity.MasterSampleStatus;
 import gov.naco.soch.entity.UserMaster;
 import gov.naco.soch.exception.ServiceException;
+import gov.naco.soch.lab.dto.LabTestSampleBatchDto;
+import gov.naco.soch.lab.dto.LabTestSampleDto;
 import gov.naco.soch.lab.dto.TestResultDto;
 import gov.naco.soch.lab.mapper.TestResultMapper;
 import gov.naco.soch.repository.IctcSampleCollectionRepository;
@@ -42,6 +45,7 @@ import gov.naco.soch.repository.MasterResultStatusRepository;
 import gov.naco.soch.repository.MasterResultTypeRepository;
 import gov.naco.soch.repository.MasterSampleStatusRepository;
 import gov.naco.soch.repository.UserMasterRepository;
+import gov.naco.soch.util.UserUtils;
 
 @Service
 @Transactional
@@ -115,7 +119,7 @@ public class RecordResultsService {
 			testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 					.collect(Collectors.toList());
 			fetchIctcInfantDetails(testResultDto);
-
+			findPreviousDBSDetails(testResultDto);
 		}
 		return testResultDto.stream().sorted(Comparator.comparing(TestResultDto::getBatchId).reversed())
 				.collect(Collectors.toList());
@@ -287,6 +291,34 @@ public class RecordResultsService {
 						}
 					}
 				});
+			}
+		}
+	}
+	
+	void findPreviousDBSDetails(List<TestResultDto> testDetails) {
+
+		LoginResponseDto userLoginDetials = UserUtils.getLoggedInUserDetails();
+		if (userLoginDetials.getFacilityTypeId() == 20L) {
+
+			for (TestResultDto s : testDetails) {
+
+				List<LabTestSample> previousSamples = labTestSampleRepository.findPreviousDBSDetails(
+						s.getBeneficiaryId(), userLoginDetials.getFacilityId(), s.getSampleId());
+
+				Optional<LabTestSample> previousSample = previousSamples.stream()
+						.sorted(Comparator.comparing(LabTestSample::getId)).findFirst();
+				if (previousSample.isPresent()) {
+
+					s.setIsPreviousTestDone(Boolean.TRUE);
+					if (previousSample.get().getMasterResultStatus() != null
+							&& previousSample.get().getMasterResultStatus().getId() == 3L) {
+						s.setPreviousTestDate(previousSample.get().getResultApprovedDate().toLocalDate());
+						s.setPreviousTestResult(previousSample.get().getResultType().getResultType());
+					}
+
+				} else {
+					s.setIsPreviousTestDone(Boolean.FALSE);
+				}
 			}
 		}
 	}
