@@ -2,6 +2,7 @@ package gov.naco.soch.lab.mapper;
 
 import java.time.format.DateTimeFormatter;
 
+import gov.naco.soch.entity.Address;
 import gov.naco.soch.entity.LabTestSample;
 import gov.naco.soch.lab.dto.TestResultDto;
 import gov.naco.soch.lab.util.LabServiceUtil;
@@ -18,12 +19,22 @@ public class TestResultMapper {
 		vlTestResultDto.setBdnSerialNumber(labTestSample.getLabTestSampleBatch().getBdnSerialNumber());
 		vlTestResultDto.setArtcId(labTestSample.getLabTestSampleBatch().getFacility().getId());
 		vlTestResultDto.setArtcName(labTestSample.getLabTestSampleBatch().getFacility().getName());
-		vlTestResultDto.setArtcAddress(labTestSample.getLabTestSampleBatch().getFacility().getAddress().getAddress());
+		
+		Address facAddress = labTestSample.getLabTestSampleBatch().getFacility().getAddress();
+		String facAddressString = (facAddress.getAddressLineOne() != null ? facAddress.getAddressLineOne() : "")
+				+ (facAddress.getAddressLineTwo() != null ? ", " + facAddress.getAddressLineTwo() : "");
+		
+		vlTestResultDto.setArtcAddress(facAddressString);
 		vlTestResultDto.setArtcCode(labTestSample.getLabTestSampleBatch().getFacility().getCode());
 		vlTestResultDto.setArtcArtCode(labTestSample.getLabTestSampleBatch().getFacility().getArtcode());
 		vlTestResultDto.setLabId(labTestSample.getLabTestSampleBatch().getLab().getId());
 		vlTestResultDto.setLabName(labTestSample.getLabTestSampleBatch().getLab().getName());
-		vlTestResultDto.setLabAddress(labTestSample.getLabTestSampleBatch().getLab().getAddress().getAddress());
+		
+		Address labAddress = labTestSample.getLabTestSampleBatch().getLab().getAddress();
+		String labAddressString = (labAddress.getAddressLineOne() != null ? labAddress.getAddressLineOne() : "")
+				+ (labAddress.getAddressLineTwo() != null ? ", " + labAddress.getAddressLineTwo() : "");
+		
+		vlTestResultDto.setLabAddress(labAddressString);
 		vlTestResultDto.setLabCode(labTestSample.getLabTestSampleBatch().getLab().getCode());
 
 		vlTestResultDto.setDispatchDate(labTestSample.getLabTestSampleBatch().getDispatchDate());
