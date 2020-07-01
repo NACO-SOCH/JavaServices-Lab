@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.util.CollectionUtils;
 
+import gov.naco.soch.entity.Address;
 import gov.naco.soch.entity.ArtBeneficiary;
 import gov.naco.soch.entity.LabTestSample;
 import gov.naco.soch.entity.LabTestSampleBatch;
@@ -32,7 +33,12 @@ public class ReceiveSamplesServiceMapperUtil {
 		if (labTestSampleBatch.getFacility() != null) {
 			labTestSampleBatchDto.setArtcId(labTestSampleBatch.getFacility().getId());
 			labTestSampleBatchDto.setArtcName(labTestSampleBatch.getFacility().getName());
-			labTestSampleBatchDto.setArtcAddress(labTestSampleBatch.getFacility().getAddress().getAddress());
+
+			Address labAddress = labTestSampleBatch.getFacility().getAddress();
+			String labAddressString = (labAddress.getAddressLineOne() != null ? labAddress.getAddressLineOne() : "")
+					+ (labAddress.getAddressLineTwo() != null ? ", " + labAddress.getAddressLineTwo() : "");
+
+			labTestSampleBatchDto.setArtcAddress(labAddressString);
 			labTestSampleBatchDto.setArtcCode(labTestSampleBatch.getFacility().getCode());
 			labTestSampleBatchDto.setArtcArtCode(labTestSampleBatch.getFacility().getArtcode());
 		}
@@ -40,7 +46,12 @@ public class ReceiveSamplesServiceMapperUtil {
 			labTestSampleBatchDto.setLabId(labTestSampleBatch.getLab().getId());
 			labTestSampleBatchDto.setLabName(labTestSampleBatch.getLab().getName());
 			// to change address (null check address)
-			labTestSampleBatchDto.setLabAddress(labTestSampleBatch.getLab().getAddress().getAddress());
+
+			Address labAddress = labTestSampleBatch.getLab().getAddress();
+			String labAddressString = (labAddress.getAddressLineOne() != null ? labAddress.getAddressLineOne() : "")
+					+ (labAddress.getAddressLineTwo() != null ? ", " + labAddress.getAddressLineTwo() : "");
+
+			labTestSampleBatchDto.setLabAddress(labAddressString);
 			labTestSampleBatchDto.setLabCode(labTestSampleBatch.getLab().getCode());
 		}
 		if (labTestSampleBatch.getArtcLabTechUser() != null) {
