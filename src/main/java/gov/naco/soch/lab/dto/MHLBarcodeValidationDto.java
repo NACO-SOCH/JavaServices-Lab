@@ -1,10 +1,9 @@
 package gov.naco.soch.lab.dto;
 
-public class RecordResultDto {
+public class MHLBarcodeValidationDto {
 
 	private String auth_key;
 	private String barcode;
-	private String result_value;
 
 	public String getAuth_key() {
 		return auth_key;
@@ -20,14 +19,6 @@ public class RecordResultDto {
 
 	public void setBarcode(String barcode) {
 		this.barcode = barcode;
-	}
-
-	public String getResult_value() {
-		return result_value;
-	}
-
-	public void setResult_value(String result_value) {
-		this.result_value = result_value;
 	}
 
 }

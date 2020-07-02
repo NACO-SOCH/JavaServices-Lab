@@ -5,23 +5,32 @@ import java.util.List;
 
 public class PatientLoadDto {
 
-	private List<LocalDate> localDate;
-	private List<String> clientCode;
+	private String auth_key;
+	private List<LocalDate> load_date;
+	private List<String> client_code;
 
-	public List<LocalDate> getLocalDate() {
-		return localDate;
+	public String getAuth_key() {
+		return auth_key;
 	}
 
-	public void setLocalDate(List<LocalDate> localDate) {
-		this.localDate = localDate;
+	public void setAuth_key(String auth_key) {
+		this.auth_key = auth_key;
 	}
 
-	public List<String> getClientCode() {
-		return clientCode;
+	public List<LocalDate> getLoad_date() {
+		return load_date;
 	}
 
-	public void setClientCode(List<String> clientCode) {
-		this.clientCode = clientCode;
+	public void setLoad_date(List<LocalDate> load_date) {
+		this.load_date = load_date;
+	}
+
+	public List<String> getClient_code() {
+		return client_code;
+	}
+
+	public void setClient_code(List<String> client_code) {
+		this.client_code = client_code;
 	}
 
 }
