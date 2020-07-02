@@ -17,6 +17,8 @@ import org.springframework.util.CollectionUtils;
 
 import gov.naco.soch.entity.Facility;
 import gov.naco.soch.entity.LabTestSample;
+import gov.naco.soch.entity.LabTestSampleBatch;
+import gov.naco.soch.entity.MasterBatchStatus;
 import gov.naco.soch.entity.MasterRemark;
 import gov.naco.soch.entity.MasterResultStatus;
 import gov.naco.soch.entity.MasterResultType;
@@ -32,6 +34,7 @@ import gov.naco.soch.lab.dto.ResultDto;
 import gov.naco.soch.lab.mapper.MHLMapper;
 import gov.naco.soch.repository.FacilityRepository;
 import gov.naco.soch.repository.LabTestSampleRepository;
+import gov.naco.soch.repository.MasterBatchStatusRepository;
 
 @Service
 @Transactional
@@ -45,6 +48,9 @@ public class MHLService {
 
 	@Autowired
 	private FacilityRepository facilityRepository;
+
+	@Autowired
+	private MasterBatchStatusRepository masterBatchStatusRepository;
 
 	public ResponseEntity<Object> getViralLoadSampleDetail(@Valid MHLBarcodeValidationDto mhlBarcodeValidationDto) {
 		System.out.println(mhlBarcodeValidationDto.getAuth_key());
@@ -121,8 +127,7 @@ public class MHLService {
 				patientLoadResponseDto.setSuccess(true);
 				patientLoadResponseDto.setResult(clientDetailsDtos);
 				return new ResponseEntity<Object>(patientLoadResponseDto, HttpStatus.OK);
-			}
-			else {
+			} else {
 				return responseManager(null, "Authentication failed!", true);
 			}
 		} else {
@@ -277,6 +282,7 @@ public class MHLService {
 						labTestSample.setMasterRemark(masterRemark);
 					}
 					try {
+						changeBatchStatus(labTestSample);
 						labTestSampleRepository.save(labTestSample);
 						responseDto.setCode(200);
 						responseDto.setMsg("Success");
@@ -301,4 +307,30 @@ public class MHLService {
 
 	}
 
+	private void changeBatchStatus(LabTestSample labTestSample) {
+
+		MasterBatchStatus masterBatchStatus = masterBatchStatusRepository.findByStatusAndIsDelete("RESULT POSTED",
+				Boolean.FALSE);
+
+		LabTestSampleBatch labTestSampleBatchList = labTestSample.getLabTestSampleBatch();
+		if (labTestSampleBatchList != null) {
+
+			Boolean accepted = Boolean.FALSE;
+			int acceptCount = 0;
+			if (!CollectionUtils.isEmpty(labTestSampleBatchList.getLabTestSamples())) {
+				for (LabTestSample s : labTestSampleBatchList.getLabTestSamples()) {
+					if (s.getMasterResultStatus().getStatus().equalsIgnoreCase("APPROVED")) {
+						acceptCount++;
+					}
+				}
+				if (acceptCount == labTestSampleBatchList.getLabTestSamples().size()) {
+					accepted = Boolean.TRUE;
+				}
+			}
+			if (accepted) {
+				labTestSampleBatchList.setMasterBatchStatus(masterBatchStatus);
+			}
+
+		}
+	}
 }
