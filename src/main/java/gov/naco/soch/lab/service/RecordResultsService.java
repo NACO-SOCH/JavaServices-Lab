@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -50,6 +51,14 @@ import gov.naco.soch.util.UserUtils;
 @Service
 @Transactional
 public class RecordResultsService {
+
+	private static String RECIEVED = "RECIEVED";
+
+	private static String REJECTED = "REJECTED";
+
+	private static String PARTIALLY_RECEIVED = "PARTIALLY RECEIVED";
+
+	private static String RESULT_POSTED = "RESULT POSTED";
 
 	private static final Logger logger = LoggerFactory.getLogger(TestResultService.class);
 
@@ -134,8 +143,8 @@ public class RecordResultsService {
 		MasterResultStatus masterResultStatus = masterResultStatusRepository
 				.findByStatusAndIsDelete("AWAITING APPROVAL", Boolean.FALSE);
 
-		MasterResultStatus masterResultStatusError = masterResultStatusRepository.findByStatusAndIsDelete("ERROR",
-				Boolean.FALSE);
+//		MasterResultStatus masterResultStatusError = masterResultStatusRepository.findByStatusAndIsDelete("ERROR",
+//				Boolean.FALSE);
 
 		if (labTestSampleOpt.isPresent()) {
 
@@ -175,13 +184,7 @@ public class RecordResultsService {
 			// Block to handle case of MHL Labs
 			if (labTestSample.getDispatchedToLab().getFacilityType().getId() == FacilityTypeEnum.VL_PRIVATE
 					.getFacilityType()) {
-				LocalDateTime currentTime = LocalDateTime.now();
-				labTestSample.setResultApprovedDate(currentTime);
-				labTestSample.setResultDispatchDate(currentTime);
-				MasterResultStatus status = new MasterResultStatus();
-				status.setId(4L);
-				labTestSample.setMasterResultStatus(status);
-				changeBatchStatus(labTestSample);
+				handleMHLFacilityTest(labTestSample, labTestSampleDto);
 			}
 
 			labTestSample = labTestSampleRepository.save(labTestSample);
@@ -335,19 +338,74 @@ public class RecordResultsService {
 		}
 	}
 
+	private void handleMHLFacilityTest(LabTestSample labTestSample, TestResultDto labTestSampleDto) {
+
+		MasterSampleStatus sampleStatus = new MasterSampleStatus();
+		MasterResultStatus resultStatus = new MasterResultStatus();
+
+		if (labTestSampleDto.getResultTypeId() == 11L) {
+			sampleStatus.setId(4L);
+			resultStatus.setId(3L);
+			labTestSample.setArtcSampleStatus(RESULT_POSTED);
+		}
+		if (labTestSampleDto.getResultTypeId() == 12L) {
+			sampleStatus.setId(4L);
+			resultStatus.setId(3L);
+			labTestSample.setArtcSampleStatus(RESULT_POSTED);
+		}
+		if (labTestSampleDto.getResultTypeId() == 13L) {
+			sampleStatus.setId(4L);
+			resultStatus.setId(3L);
+			labTestSample.setArtcSampleStatus(RESULT_POSTED);
+		}
+		if (labTestSampleDto.getResultTypeId() == 14L) {
+			sampleStatus.setId(4L);
+			resultStatus.setId(3L);
+			labTestSample.setResultValue(labTestSampleDto.getResultValue());
+			labTestSample.setLogValue(labTestSampleDto.getLogValue());
+			labTestSample.setArtcSampleStatus(RESULT_POSTED);
+		}
+		if (labTestSampleDto.getResultTypeId() == 15L) {
+			sampleStatus.setId(2L);
+			resultStatus.setId(5L);
+			labTestSample.setArtcSampleStatus(REJECTED);
+		}
+		if (labTestSampleDto.getResultTypeId() == 16L) {
+			sampleStatus.setId(2L);
+			resultStatus.setId(5L);
+			labTestSample.setArtcSampleStatus(REJECTED);
+		}
+
+		labTestSample.setMasterSampleStatus(sampleStatus);
+		labTestSample.setMasterResultStatus(resultStatus);
+
+		LocalDateTime currentTime = LocalDateTime.now();
+		labTestSample.setSampleReceivedDate(currentTime);
+		labTestSample.setResultApprovedDate(currentTime);
+		labTestSample.setResultDispatchDate(currentTime);
+
+		changeBatchStatus(labTestSample);
+	}
+
 	private void changeBatchStatus(LabTestSample labTestSample) {
 
-		MasterBatchStatus masterBatchStatus = masterBatchStatusRepository.findByStatusAndIsDelete("RESULT POSTED",
-				Boolean.FALSE);
-
 		LabTestSampleBatch labTestSampleBatchList = labTestSample.getLabTestSampleBatch();
+
 		if (labTestSampleBatchList != null) {
+
+			String batchStatus = findBatchStatus(labTestSampleBatchList.getLabTestSamples());
+			MasterBatchStatus masterBatchStatus = masterBatchStatusRepository.findByStatusAndIsDelete(batchStatus,
+					Boolean.FALSE);
+
+			if (labTestSampleBatchList.getReceivedDate() == null) {
+				labTestSampleBatchList.setReceivedDate(LocalDateTime.now());
+			}
 
 			Boolean accepted = Boolean.FALSE;
 			int acceptCount = 0;
 			if (!CollectionUtils.isEmpty(labTestSampleBatchList.getLabTestSamples())) {
 				for (LabTestSample s : labTestSampleBatchList.getLabTestSamples()) {
-					if (s.getMasterResultStatus().getStatus().equalsIgnoreCase("APPROVED")) {
+					if (s.getMasterResultStatus().getId() == 4L) {
 						acceptCount++;
 					}
 				}
@@ -359,5 +417,30 @@ public class RecordResultsService {
 				labTestSampleBatchList.setMasterBatchStatus(masterBatchStatus);
 			}
 		}
+	}
+
+	private String findBatchStatus(Set<LabTestSample> labTestSamples) {
+		int acceptCount = 0;
+		int rejectCount = 0;
+		int notRecievedCount = 0;
+		int samplesCount = labTestSamples.size();
+		for (LabTestSample s : labTestSamples) {
+			if (s.getMasterSampleStatus().getId() == 1L) {
+				acceptCount++;
+			}
+			if (s.getMasterSampleStatus().getId() == 2L) {
+				rejectCount++;
+			}
+			if (s.getMasterSampleStatus().getId() == 3L) {
+				notRecievedCount++;
+			}
+		}
+		if (acceptCount == samplesCount) {
+			return RECIEVED;
+		}
+		if (rejectCount == samplesCount || notRecievedCount == samplesCount) {
+			return REJECTED;
+		}
+		return PARTIALLY_RECEIVED;
 	}
 }

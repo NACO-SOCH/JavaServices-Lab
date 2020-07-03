@@ -1,9 +1,11 @@
 package gov.naco.soch.lab.service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -39,6 +41,14 @@ import gov.naco.soch.repository.MasterBatchStatusRepository;
 @Service
 @Transactional
 public class MHLService {
+
+	private static String RECIEVED = "RECIEVED";
+
+	private static String REJECTED = "REJECTED";
+
+	private static String PARTIALLY_RECEIVED = "PARTIALLY RECEIVED";
+	
+	private static String RESULT_POSTED = "RESULT POSTED";
 
 	@Value("${mhl.auth_key}")
 	private String authKey;
@@ -181,6 +191,7 @@ public class MHLService {
 					Long resultStatusId = 0L;
 					Long sampleStatusId = 0L;
 					Long remarkId = 0L;
+					String status = "";
 					boolean numeric = true;
 					try {
 						num = Double.parseDouble(recordResultDto.getResult_value());
@@ -197,68 +208,76 @@ public class MHLService {
 						resultTypeId = 14L;
 						resultStatusId = 3L;
 						sampleStatusId = 4L;
+						status = RESULT_POSTED;
 					} else {
 						switch (recordResultDto.getResult_value()) {
 						case "target not detected":
-						case "tnd": {
+						case "tnd":
 							resultTypeId = 12L;
 							resultStatusId = 3L;
 							sampleStatusId = 4L;
-						}
+							status = RESULT_POSTED;
 							break;
-						case "<20": {
+
+						case "<20":
 							resultTypeId = 11L;
 							resultStatusId = 3L;
 							sampleStatusId = 4L;
+							status = RESULT_POSTED;
 							break;
-						}
-						case ">10000000": {
+
+						case ">10000000":
 							resultTypeId = 13L;
 							resultStatusId = 3L;
 							sampleStatusId = 4L;
+							status = RESULT_POSTED;
 							break;
-						}
+
 						case "quantity not sufficient":
 						case "quantity not sufficient for testing":
-						case "qns": {
+						case "qns":
 							resultTypeId = 15L;
 							resultStatusId = 5L;
 							sampleStatusId = 2L;
 							remarkId = 4L;
+							status = REJECTED;
 							break;
-						}
+
 						case "sample haemolysed":
 						case "sample grossly haemolysed":
-						case "haemolysed": {
+						case "haemolysed":
 							resultTypeId = 15L;
 							resultStatusId = 5L;
 							sampleStatusId = 2L;
 							remarkId = 1L;
+							status = REJECTED;
 							break;
-						}
+
 						case "fibrin clot":
 						case "clotted sample":
-						case "sample clotted": {
+						case "sample clotted":
 							resultTypeId = 15L;
 							resultStatusId = 5L;
 							sampleStatusId = 2L;
 							remarkId = 11L;
+							status = REJECTED;
 							break;
-						}
-						case "labelling issue": {
+
+						case "labelling issue":
 							resultTypeId = 15L;
 							resultStatusId = 5L;
 							sampleStatusId = 2L;
 							remarkId = 6L;
+							status = REJECTED;
 							break;
-						}
-						case "qs invalid": {
+
+						case "qs invalid":
 							resultTypeId = 15L;
 							resultStatusId = 5L;
 							sampleStatusId = 2L;
 							remarkId = 12L;
+							status = REJECTED;
 							break;
-						}
 
 						default:
 							break;
@@ -282,12 +301,19 @@ public class MHLService {
 						labTestSample.setMasterRemark(masterRemark);
 					}
 					try {
+						labTestSample.setArtcSampleStatus(status);
+						LocalDateTime currentTime = LocalDateTime.now();
+						labTestSample.setSampleReceivedDate(currentTime);
+						labTestSample.setResultApprovedDate(currentTime);
+						labTestSample.setResultDispatchDate(currentTime);
+						labTestSample.setResultReceivedDate(currentTime);
 						changeBatchStatus(labTestSample);
 						labTestSampleRepository.save(labTestSample);
 						responseDto.setCode(200);
 						responseDto.setMsg("Success");
 						responseDto.setSuccess(true);
 					} catch (Exception e) {
+						e.printStackTrace();
 						responseDto.setCode(400);
 						responseDto.setMsg("Invalid data!");
 						responseDto.setSuccess(false);
@@ -309,17 +335,22 @@ public class MHLService {
 
 	private void changeBatchStatus(LabTestSample labTestSample) {
 
-		MasterBatchStatus masterBatchStatus = masterBatchStatusRepository.findByStatusAndIsDelete("RESULT POSTED",
-				Boolean.FALSE);
-
 		LabTestSampleBatch labTestSampleBatchList = labTestSample.getLabTestSampleBatch();
 		if (labTestSampleBatchList != null) {
+
+			String batchStatus = findBatchStatus(labTestSampleBatchList.getLabTestSamples());
+			MasterBatchStatus masterBatchStatus = masterBatchStatusRepository.findByStatusAndIsDelete(batchStatus,
+					Boolean.FALSE);
+
+			if (labTestSampleBatchList.getReceivedDate() == null) {
+				labTestSampleBatchList.setReceivedDate(LocalDateTime.now());
+			}
 
 			Boolean accepted = Boolean.FALSE;
 			int acceptCount = 0;
 			if (!CollectionUtils.isEmpty(labTestSampleBatchList.getLabTestSamples())) {
 				for (LabTestSample s : labTestSampleBatchList.getLabTestSamples()) {
-					if (s.getMasterResultStatus().getStatus().equalsIgnoreCase("APPROVED")) {
+					if (s.getMasterResultStatus().getId() == 3L) {
 						acceptCount++;
 					}
 				}
@@ -332,5 +363,30 @@ public class MHLService {
 			}
 
 		}
+	}
+
+	private String findBatchStatus(Set<LabTestSample> labTestSamples) {
+		int acceptCount = 0;
+		int rejectCount = 0;
+		int notRecievedCount = 0;
+		int samplesCount = labTestSamples.size();
+		for (LabTestSample s : labTestSamples) {
+			if (s.getMasterSampleStatus().getId() == 1L) {
+				acceptCount++;
+			}
+			if (s.getMasterSampleStatus().getId() == 2L) {
+				rejectCount++;
+			}
+			if (s.getMasterSampleStatus().getId() == 3L) {
+				notRecievedCount++;
+			}
+		}
+		if (acceptCount == samplesCount) {
+			return RECIEVED;
+		}
+		if (rejectCount == samplesCount || notRecievedCount == samplesCount) {
+			return REJECTED;
+		}
+		return PARTIALLY_RECEIVED;
 	}
 }
