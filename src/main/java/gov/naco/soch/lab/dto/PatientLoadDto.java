@@ -1,12 +1,11 @@
 package gov.naco.soch.lab.dto;
 
-import java.time.LocalDate;
 import java.util.List;
 
 public class PatientLoadDto {
 
 	private String auth_key;
-	private List<LocalDate> load_date;
+	private List<String> load_date;
 	private List<String> client_code;
 
 	public String getAuth_key() {
@@ -17,11 +16,11 @@ public class PatientLoadDto {
 		this.auth_key = auth_key;
 	}
 
-	public List<LocalDate> getLoad_date() {
+	public List<String> getLoad_date() {
 		return load_date;
 	}
 
-	public void setLoad_date(List<LocalDate> load_date) {
+	public void setLoad_date(List<String> load_date) {
 		this.load_date = load_date;
 	}
 

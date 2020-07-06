@@ -2,6 +2,7 @@ package gov.naco.soch.lab.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -47,8 +48,10 @@ public class MHLService {
 	private static String REJECTED = "REJECTED";
 
 	private static String PARTIALLY_RECEIVED = "PARTIALLY RECEIVED";
-	
+
 	private static String RESULT_POSTED = "RESULT POSTED";
+
+	static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
 	@Value("${mhl.auth_key}")
 	private String authKey;
@@ -114,7 +117,10 @@ public class MHLService {
 				PatientLoadResponseDto patientLoadResponseDto = new PatientLoadResponseDto();
 				List<ClientDetailsDto> clientDetailsDtos = new ArrayList<>();
 				if (!CollectionUtils.isEmpty(patientLoadDto.getLoad_date())) {
-					for (LocalDate date : patientLoadDto.getLoad_date()) {
+					for (String stringDate : patientLoadDto.getLoad_date()) {
+
+						LocalDate date = LocalDate.parse(stringDate, formatter);
+
 						for (String facilityCode : patientLoadDto.getClient_code()) {
 							Optional<Facility> facilityOptional = facilityRepository.findByCode(facilityCode);
 							if (facilityOptional.isPresent()) {
