@@ -38,7 +38,7 @@ public class LabTestSampleDto {
 	private String resultValue;
 	private String logValue;
 	private Boolean isError;
-	private Long errorCode;
+	private String errorCode;
 	private Long testMachineTypeId;
 	private Long testMachineId;
 	private String testMachine;
@@ -345,11 +345,11 @@ public class LabTestSampleDto {
 		this.isError = isError;
 	}
 
-	public Long getErrorCode() {
+	public String getErrorCode() {
 		return errorCode;
 	}
 
-	public void setErrorCode(Long errorCode) {
+	public void setErrorCode(String errorCode) {
 		this.errorCode = errorCode;
 	}
 
