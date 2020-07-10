@@ -336,4 +336,27 @@ public class ReceiveSamplesService {
 			}
 		}
 	}
+
+	public List<LabTestSampleBatchDto> getReceiveSamplesListByAdvanceSearch(Long labId,
+			Map<String, String> searchValue) {
+		List<LabTestSampleBatchDto> labTestSampleBatchDtoList = new ArrayList<>();
+		List<String> searchQuery = ReceiveSamplesServiceMapperUtil.queryCreaterForAdvanceSearch(labId, searchValue);
+		if (!searchQuery.isEmpty()) {
+			List<LabTestSampleBatch> labTestSampleBatchList = labTestSampleBatchRepository
+					.getReceiveSamplesListByAdvanceSearch(searchQuery.get(0));
+			if (!CollectionUtils.isEmpty(labTestSampleBatchList)) {
+
+				labTestSampleBatchList.forEach(l -> {
+					LabTestSampleBatchDto labTestSampleBatchDto = ReceiveSamplesServiceMapperUtil
+							.mapToLabTestSampleBatchDto(l);
+					labTestSampleBatchDtoList.add(labTestSampleBatchDto);
+				});
+				fetchIctcInfantDetails(labTestSampleBatchDtoList);
+				findPreviousDBSDetails(labTestSampleBatchDtoList);
+			}
+		}
+		return labTestSampleBatchDtoList.stream()
+				.sorted(Comparator.comparing(LabTestSampleBatchDto::getBatchId).reversed())
+				.collect(Collectors.toList());
+	}
 }
