@@ -196,7 +196,7 @@ public class ReceiveSamplesServiceMapperUtil {
 
 		List<String> searchQueryList = new ArrayList<>();
 
-		String searchQuery = "select * form soch.lab_test_sample_batch as lts where ";
+		String searchQuery = "select * from soch.lab_test_sample_batch as lts where ";
 
 		if (status != null && status != " ") {
 			Long sampleStatus = Long.valueOf(status);
@@ -207,14 +207,14 @@ public class ReceiveSamplesServiceMapperUtil {
 			searchQuery = searchQuery.concat(" lts.artc_id= " + byFacility + " and ");
 		}
 		if (fromDate != null && fromDate != " " && (toDate == null || toDate == " ")) {
-			searchQuery = searchQuery.concat(" lts.dispatch_date >= '" + fromDate + "' and ");
+			searchQuery = searchQuery.concat(" cast(lts.dispatch_date as date) >= '" + fromDate + "' and ");
 		}
 		if (toDate != null && toDate != " " && (fromDate == null || fromDate == " ")) {
-			searchQuery = searchQuery.concat(" lts.dispatch_date <= '" + toDate + "' and ");
+			searchQuery = searchQuery.concat(" cast(lts.dispatch_date as date) <= '" + toDate + "' and ");
 		}
 		
-		if (fromDate != null && fromDate != " " && toDate != null || toDate != " ") {
-			searchQuery = searchQuery.concat(" lts.dispatch_date >= '" + fromDate + "' and lts.dispatch_date <= '" + fromDate + "' and ");
+		if (fromDate != null && fromDate != " " && toDate != null && toDate != " ") {
+			searchQuery = searchQuery.concat(" cast(lts.dispatch_date as date) >= '" + fromDate + "' and cast(lts.dispatch_date as date) <= '" + toDate + "' and ");
 		}
 		
 		searchQuery = searchQuery.concat(" lts.is_delete = false and lts.lab_id= " + labId);
