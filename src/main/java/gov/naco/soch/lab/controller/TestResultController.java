@@ -59,4 +59,9 @@ public class TestResultController {
 		logger.info("inside record results list by advance search");
 		return testResultService.getTestResultsListByAdvanceSearch(labId,searchValue);
 	}
+	
+	@GetMapping("/underapproval/advance/search/{labId}")
+	public List<TestResultDto> getRecordResultsUnderApprovalAdvanceSearch(@PathVariable("labId") Long labId,@RequestParam Map<String, String> searchValue) {
+		return testResultService.getRecordResultsUnderApprovalAdvanceSearch(labId,searchValue);
+	}
 }

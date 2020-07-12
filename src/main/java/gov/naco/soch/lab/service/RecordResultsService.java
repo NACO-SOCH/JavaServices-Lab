@@ -469,7 +469,7 @@ public class RecordResultsService {
 
 		List<TestResultDto> testResultDto = new ArrayList<>();
 		List<String> searchQuery = AdvanceSearchMapperUtil.queryCreaterForAdvanceSearchRecordResultsList(labId,
-				searchValue, Boolean.FALSE);
+				searchValue);
 		if (!searchQuery.isEmpty()) {
 
 			List<LabTestSample> labTestSampleList = labTestSampleRepository.getRecordResultsListByAdvanceSearch(searchQuery.get(0));

@@ -434,12 +434,55 @@ public class TestResultService {
 
 		List<TestResultDto> testResultDto = new ArrayList<>();
 		
-		List<String> searchQuery = AdvanceSearchMapperUtil.queryCreaterForAdvanceSearchRecordResultsList(labId,
-				searchValue,Boolean.TRUE);
+		List<String> searchQuery = AdvanceSearchMapperUtil.queryCreaterForAdvanceSearchResultsList(labId,
+				searchValue,Boolean.TRUE,Boolean.FALSE);
 		if (!searchQuery.isEmpty()) {
 			List<LabTestSample> labTestSampleList = labTestSampleRepository.getRecordResultsListByAdvanceSearch(searchQuery.get(0));
 			if (!CollectionUtils.isEmpty(labTestSampleList)) {
 				labTestSampleList = labTestSampleList.stream().filter(sampleStatus).collect(Collectors.toList());
+				labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
+				labTestSampleList = labTestSampleList.stream().filter(isSampleInLab.and(checkResultStatus))
+						.collect(Collectors.toList());
+				testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
+						.collect(Collectors.toList());
+				fetchIctcInfantDetails(testResultDto);
+				findPreviousDBSDetails(testResultDto);
+			}
+			
+		}
+		return testResultDto.stream().sorted(Comparator.comparing(TestResultDto::getBatchId).reversed())
+				.collect(Collectors.toList());
+	}
+
+	public List<TestResultDto> getRecordResultsUnderApprovalAdvanceSearch(Long labId, Map<String, String> searchValue) {
+		
+		MasterSampleStatus masterSampleStatus = masterSampleStatusRepository.findByStatusAndIsDelete("ACCEPT",
+				Boolean.FALSE);
+
+		MasterResultStatus masterResultStatus = masterResultStatusRepository
+				.findByStatusAndIsDelete("AWAITING APPROVAL", Boolean.FALSE);
+
+		MasterBatchStatus masterBatchStatus = masterBatchStatusRepository.findByStatusAndIsDelete("DISPATCHED",
+				Boolean.FALSE);
+
+		Predicate<LabTestSample> checkBatchStatus = s -> s.getLabTestSampleBatch().getMasterBatchStatus()
+				.getId() != masterBatchStatus.getId();
+
+		Predicate<LabTestSample> isSampleInLab = s -> s.getLabTestSampleBatch().getLab().getId() == labId;
+
+		Predicate<LabTestSample> statusAccepted = s -> s.getMasterSampleStatus() != null
+				&& s.getMasterSampleStatus().getId() == masterSampleStatus.getId();
+
+		Predicate<LabTestSample> checkResultStatus = s -> s.getMasterResultStatus().getId() == masterResultStatus
+				.getId();
+
+		List<TestResultDto> testResultDto = new ArrayList<>();
+		List<String> searchQuery = AdvanceSearchMapperUtil.queryCreaterForAdvanceSearchResultsList(labId,
+				searchValue,Boolean.TRUE,Boolean.TRUE);
+		if (!searchQuery.isEmpty()) {
+			List<LabTestSample> labTestSampleList = labTestSampleRepository.getRecordResultsListByAdvanceSearch(searchQuery.get(0));
+			if (!CollectionUtils.isEmpty(labTestSampleList)) {
+				labTestSampleList = labTestSampleList.stream().filter(statusAccepted).collect(Collectors.toList());
 				labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
 				labTestSampleList = labTestSampleList.stream().filter(isSampleInLab.and(checkResultStatus))
 						.collect(Collectors.toList());
