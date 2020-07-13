@@ -1,6 +1,7 @@
 package gov.naco.soch.lab.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -46,5 +48,11 @@ public class RecordResultsController {
 	public List<TestResultDto> getRecordResultsArtcList(@PathVariable("artcId") Long artcId) {
 		logger.debug("getRecordResultsArtcList is invoked!");
 		return recordResultsService.getRecordResultsArtcList(artcId);
+	}
+	
+	@GetMapping("advance/search/{labId}")
+	public List<TestResultDto> getRecordResultsListByAdvanceSearch(@PathVariable("labId") Long labId,@RequestParam Map<String, String> searchValue) {
+		logger.info("inside record results list by advance search");
+		return recordResultsService.getRecordResultsListByAdvanceSearch(labId,searchValue);
 	}
 }

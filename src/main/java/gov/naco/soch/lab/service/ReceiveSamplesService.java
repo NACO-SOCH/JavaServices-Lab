@@ -34,6 +34,7 @@ import gov.naco.soch.entity.UserMaster;
 import gov.naco.soch.exception.ServiceException;
 import gov.naco.soch.lab.dto.LabTestSampleBatchDto;
 import gov.naco.soch.lab.dto.LabTestSampleDto;
+import gov.naco.soch.lab.mapper.AdvanceSearchMapperUtil;
 import gov.naco.soch.lab.mapper.ReceiveSamplesServiceMapperUtil;
 import gov.naco.soch.repository.IctcSampleCollectionRepository;
 import gov.naco.soch.repository.LabTestSampleBatchRepository;
@@ -335,5 +336,28 @@ public class ReceiveSamplesService {
 				}
 			}
 		}
+	}
+
+	public List<LabTestSampleBatchDto> getReceiveSamplesListByAdvanceSearch(Long labId,
+			Map<String, String> searchValue) {
+		List<LabTestSampleBatchDto> labTestSampleBatchDtoList = new ArrayList<>();
+		List<String> searchQuery = AdvanceSearchMapperUtil.queryCreaterForAdvanceSearchReceiveSampleList(labId, searchValue);
+		if (!searchQuery.isEmpty()) {
+			List<LabTestSampleBatch> labTestSampleBatchList = labTestSampleBatchRepository
+					.getReceiveSamplesListByAdvanceSearch(searchQuery.get(0));
+			if (!CollectionUtils.isEmpty(labTestSampleBatchList)) {
+
+				labTestSampleBatchList.forEach(l -> {
+					LabTestSampleBatchDto labTestSampleBatchDto = ReceiveSamplesServiceMapperUtil
+							.mapToLabTestSampleBatchDto(l);
+					labTestSampleBatchDtoList.add(labTestSampleBatchDto);
+				});
+				fetchIctcInfantDetails(labTestSampleBatchDtoList);
+				findPreviousDBSDetails(labTestSampleBatchDtoList);
+			}
+		}
+		return labTestSampleBatchDtoList.stream()
+				.sorted(Comparator.comparing(LabTestSampleBatchDto::getBatchId).reversed())
+				.collect(Collectors.toList());
 	}
 }

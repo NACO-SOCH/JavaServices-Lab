@@ -36,6 +36,7 @@ import gov.naco.soch.entity.UserMaster;
 import gov.naco.soch.enums.FacilityTypeEnum;
 import gov.naco.soch.exception.ServiceException;
 import gov.naco.soch.lab.dto.TestResultDto;
+import gov.naco.soch.lab.mapper.AdvanceSearchMapperUtil;
 import gov.naco.soch.lab.mapper.TestResultMapper;
 import gov.naco.soch.repository.IctcSampleCollectionRepository;
 import gov.naco.soch.repository.IctcTestResultRepository;
@@ -442,5 +443,49 @@ public class RecordResultsService {
 			return REJECTED;
 		}
 		return PARTIALLY_RECEIVED;
+	}
+
+	public List<TestResultDto> getRecordResultsListByAdvanceSearch(Long labId, Map<String, String> searchValue) {
+		
+		MasterSampleStatus masterSampleStatus = masterSampleStatusRepository.findByStatusAndIsDelete("ACCEPT",
+				Boolean.FALSE);
+
+		MasterResultStatus masterResultStatus = masterResultStatusRepository.findByStatusAndIsDelete("PENDING",
+				Boolean.FALSE);
+
+		MasterBatchStatus masterBatchStatus = masterBatchStatusRepository.findByStatusAndIsDelete("DISPATCHED",
+				Boolean.FALSE);
+
+		Predicate<LabTestSample> checkBatchStatus = s -> s.getLabTestSampleBatch().getMasterBatchStatus()
+				.getId() != masterBatchStatus.getId();
+
+		Predicate<LabTestSample> isSampleInLab = s -> s.getLabTestSampleBatch().getLab().getId() == labId;
+
+		Predicate<LabTestSample> statusAccepted = s -> s.getMasterSampleStatus() != null
+				&& s.getMasterSampleStatus().getId() == masterSampleStatus.getId();
+
+		Predicate<LabTestSample> checkResultStatus = s -> s.getMasterResultStatus().getId() == masterResultStatus
+				.getId();
+
+		List<TestResultDto> testResultDto = new ArrayList<>();
+		List<String> searchQuery = AdvanceSearchMapperUtil.queryCreaterForAdvanceSearchRecordResultsList(labId,
+				searchValue);
+		if (!searchQuery.isEmpty()) {
+
+			List<LabTestSample> labTestSampleList = labTestSampleRepository.getRecordResultsListByAdvanceSearch(searchQuery.get(0));
+			if (!CollectionUtils.isEmpty(labTestSampleList)) {
+				labTestSampleList = labTestSampleList.stream().filter(statusAccepted).collect(Collectors.toList());
+				labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
+				labTestSampleList = labTestSampleList.stream().filter(isSampleInLab.and(checkResultStatus))
+						.collect(Collectors.toList());
+				testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
+						.collect(Collectors.toList());
+				fetchIctcInfantDetails(testResultDto);
+				findPreviousDBSDetails(testResultDto);
+			}
+
+		}
+		return testResultDto.stream().sorted(Comparator.comparing(TestResultDto::getBatchId).reversed())
+				.collect(Collectors.toList());
 	}
 }

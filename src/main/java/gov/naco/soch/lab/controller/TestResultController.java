@@ -1,6 +1,7 @@
 package gov.naco.soch.lab.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import gov.naco.soch.lab.dto.TestResultDto;
@@ -50,5 +52,16 @@ public class TestResultController {
 			@RequestBody List<TestResultDto> testResultList) {
 		logger.info("rejectTestResults is invoked!");
 		return testResultService.rejectTestResults(labInchargeId, testResultList);
+	}
+	
+	@GetMapping("advance/search/{labId}")
+	public List<TestResultDto> getRecordResultsListByAdvanceSearch(@PathVariable("labId") Long labId,@RequestParam Map<String, String> searchValue) {
+		logger.info("inside record results list by advance search");
+		return testResultService.getTestResultsListByAdvanceSearch(labId,searchValue);
+	}
+	
+	@GetMapping("/underapproval/advance/search/{labId}")
+	public List<TestResultDto> getRecordResultsUnderApprovalAdvanceSearch(@PathVariable("labId") Long labId,@RequestParam Map<String, String> searchValue) {
+		return testResultService.getRecordResultsUnderApprovalAdvanceSearch(labId,searchValue);
 	}
 }
