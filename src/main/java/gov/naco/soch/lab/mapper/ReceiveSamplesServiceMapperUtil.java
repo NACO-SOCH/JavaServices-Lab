@@ -2,7 +2,6 @@ package gov.naco.soch.lab.mapper;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.util.CollectionUtils;
 
@@ -160,10 +159,11 @@ public class ReceiveSamplesServiceMapperUtil {
 		labTestSampleDto.setLogValue(s.getLogValue());
 		labTestSampleDto.setErrorCode(s.getErrorCode());
 
-		if (s.getMachine() != null) {
-			labTestSampleDto.setTestMachineId(s.getMachine().getId());
-			labTestSampleDto.setTestMachine(s.getMachine().getMachineName());
+		if (s.getDispatchedToLab() != null && s.getDispatchedToLab().getMachine() != null) {
+			labTestSampleDto.setTestMachineId(s.getDispatchedToLab().getMachine().getId());
+			labTestSampleDto.setTestMachine(s.getDispatchedToLab().getMachine().getMachineName());
 		}
+
 		if (s.getAuthorizer() != null) {
 			labTestSampleDto.setAuthorizerId(s.getAuthorizer().getId());
 			labTestSampleDto.setAuthorizerName(LabServiceUtil.getUserName(s.getAuthorizer()));

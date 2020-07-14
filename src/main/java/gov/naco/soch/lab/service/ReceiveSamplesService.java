@@ -18,8 +18,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import gov.naco.soch.dto.LoginResponseDto;
+import gov.naco.soch.entity.Address;
+import gov.naco.soch.entity.Beneficiary;
+import gov.naco.soch.entity.BeneficiaryFamilyDetail;
 import gov.naco.soch.entity.Facility;
 import gov.naco.soch.entity.IctcSampleCollection;
 import gov.naco.soch.entity.LabTestSample;
@@ -36,6 +40,7 @@ import gov.naco.soch.lab.dto.LabTestSampleBatchDto;
 import gov.naco.soch.lab.dto.LabTestSampleDto;
 import gov.naco.soch.lab.mapper.AdvanceSearchMapperUtil;
 import gov.naco.soch.lab.mapper.ReceiveSamplesServiceMapperUtil;
+import gov.naco.soch.repository.BeneficiaryFamilyDetailRepository;
 import gov.naco.soch.repository.IctcSampleCollectionRepository;
 import gov.naco.soch.repository.LabTestSampleBatchRepository;
 import gov.naco.soch.repository.LabTestSampleRepository;
@@ -89,6 +94,9 @@ public class ReceiveSamplesService {
 
 	@Autowired
 	private IctcSampleCollectionRepository ictcSampleCollectionRepository;
+
+	@Autowired
+	private BeneficiaryFamilyDetailRepository beneficiaryFamilyDetailRepository;
 
 	private static final Logger logger = LoggerFactory.getLogger(ReceiveSamplesService.class);
 
@@ -293,12 +301,32 @@ public class ReceiveSamplesService {
 				if (ictcBenificiaryDetails != null) {
 					s.setInfantDnaCode(ictcBenificiaryDetails.getIctcBeneficiary().getInfantCode());
 					s.setInfantPID(ictcBenificiaryDetails.getIctcBeneficiary().getPid());
-//					if (ictcBenificiaryDetails.getIctcBeneficiary().getArtBeneficiaryDetails() != null) {
-//						s.setMotherArtNumber(
-//								ictcBenificiaryDetails.getIctcBeneficiary().getArtBeneficiaryDetails().getArtNumber());
-//						s.setMotherPreArtNumber(ictcBenificiaryDetails.getIctcBeneficiary().getArtBeneficiaryDetails()
-//								.getPreArtNumber());
-//					}
+
+					Optional<BeneficiaryFamilyDetail> motherDetilsOpt = beneficiaryFamilyDetailRepository
+							.findByBeneficiaryIdAndRelationshipId(
+									ictcBenificiaryDetails.getIctcBeneficiary().getBeneficiary().getId(), 4L);
+					if (motherDetilsOpt.isPresent()) {
+						Beneficiary motherDetils = motherDetilsOpt.get().getPartnerBeneficiary();
+
+						s.setMotherId(motherDetils.getId());
+						s.setMotherName(motherDetils.getFirstName() + " "
+								+ (motherDetils.getLastName() != null ? motherDetils.getLastName() : ""));
+						s.setMotherArtNumber(motherDetils.getArtNumber());
+						s.setMotherPreArtNumber(motherDetils.getPreArtNumber());
+						s.setMotherContact(motherDetils.getMobileNumber());
+						if (motherDetils.getIctcBeneficiary() != null) {
+							s.setMotherUid(motherDetils.getIctcBeneficiary().getPid());
+						}
+
+						Address motherAddress = motherDetils.getAddress();
+						String motherAddressString = (motherAddress.getAddressLineOne() != null
+								? motherAddress.getAddressLineOne()
+								: "")
+								+ (StringUtils.isEmpty(motherAddress.getAddressLineTwo()) ? "": ", " + motherAddress.getAddressLineTwo());
+						s.setMotherAddress(motherAddressString);
+					}
+
+
 					if (ictcBenificiaryDetails.getVisit() != null) {
 						s.setFeedingType(
 								infantBreastStatusMap.get(ictcBenificiaryDetails.getVisit().getInfantBreastFed()));
@@ -341,7 +369,8 @@ public class ReceiveSamplesService {
 	public List<LabTestSampleBatchDto> getReceiveSamplesListByAdvanceSearch(Long labId,
 			Map<String, String> searchValue) {
 		List<LabTestSampleBatchDto> labTestSampleBatchDtoList = new ArrayList<>();
-		List<String> searchQuery = AdvanceSearchMapperUtil.queryCreaterForAdvanceSearchReceiveSampleList(labId, searchValue);
+		List<String> searchQuery = AdvanceSearchMapperUtil.queryCreaterForAdvanceSearchReceiveSampleList(labId,
+				searchValue);
 		if (!searchQuery.isEmpty()) {
 			List<LabTestSampleBatch> labTestSampleBatchList = labTestSampleBatchRepository
 					.getReceiveSamplesListByAdvanceSearch(searchQuery.get(0));

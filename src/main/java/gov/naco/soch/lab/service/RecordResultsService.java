@@ -20,8 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import gov.naco.soch.dto.LoginResponseDto;
+import gov.naco.soch.entity.Address;
+import gov.naco.soch.entity.Beneficiary;
+import gov.naco.soch.entity.BeneficiaryFamilyDetail;
 import gov.naco.soch.entity.Facility;
 import gov.naco.soch.entity.IctcSampleCollection;
 import gov.naco.soch.entity.IctcTestResult;
@@ -38,6 +42,7 @@ import gov.naco.soch.exception.ServiceException;
 import gov.naco.soch.lab.dto.TestResultDto;
 import gov.naco.soch.lab.mapper.AdvanceSearchMapperUtil;
 import gov.naco.soch.lab.mapper.TestResultMapper;
+import gov.naco.soch.repository.BeneficiaryFamilyDetailRepository;
 import gov.naco.soch.repository.IctcSampleCollectionRepository;
 import gov.naco.soch.repository.IctcTestResultRepository;
 import gov.naco.soch.repository.LabTestSampleRepository;
@@ -91,6 +96,9 @@ public class RecordResultsService {
 
 	@Autowired
 	private IctcTestResultRepository ictcTestResultRepository;
+
+	@Autowired
+	private BeneficiaryFamilyDetailRepository beneficiaryFamilyDetailRepository;
 
 //	@Autowired
 //	private LabTestSampleBatchRepository labTestSampleBatchRepository;
@@ -295,12 +303,32 @@ public class RecordResultsService {
 					if (ictcBenificiaryDetails != null) {
 						s.setInfantDnaCode(ictcBenificiaryDetails.getIctcBeneficiary().getInfantCode());
 						s.setInfantPID(ictcBenificiaryDetails.getIctcBeneficiary().getPid());
-//					if (ictcBenificiaryDetails.getIctcBeneficiary().getArtBeneficiaryDetails() != null) {
-//						s.setMotherArtNumber(
-//								ictcBenificiaryDetails.getIctcBeneficiary().getArtBeneficiaryDetails().getArtNumber());
-//						s.setMotherPreArtNumber(ictcBenificiaryDetails.getIctcBeneficiary().getArtBeneficiaryDetails()
-//								.getPreArtNumber());
-//					}
+
+						Optional<BeneficiaryFamilyDetail> motherDetilsOpt = beneficiaryFamilyDetailRepository
+								.findByBeneficiaryIdAndRelationshipId(
+										ictcBenificiaryDetails.getIctcBeneficiary().getBeneficiary().getId(), 4L);
+						if (motherDetilsOpt.isPresent()) {
+							Beneficiary motherDetils = motherDetilsOpt.get().getPartnerBeneficiary();
+
+							s.setMotherId(motherDetils.getId());
+							s.setMotherName(motherDetils.getFirstName() + " "
+									+ (motherDetils.getLastName() != null ? motherDetils.getLastName() : ""));
+							s.setMotherArtNumber(motherDetils.getArtNumber());
+							s.setMotherPreArtNumber(motherDetils.getPreArtNumber());
+							s.setMotherContact(motherDetils.getMobileNumber());
+							if (motherDetils.getIctcBeneficiary() != null) {
+								s.setMotherUid(motherDetils.getIctcBeneficiary().getPid());
+							}
+
+							Address motherAddress = motherDetils.getAddress();
+							String motherAddressString = (motherAddress.getAddressLineOne() != null
+									? motherAddress.getAddressLineOne()
+									: "")
+									+ (StringUtils.isEmpty(motherAddress.getAddressLineTwo()) ? ""
+											: ", " + motherAddress.getAddressLineTwo());
+							s.setMotherAddress(motherAddressString);
+						}
+
 						if (ictcBenificiaryDetails.getVisit() != null) {
 							s.setFeedingType(
 									infantBreastStatusMap.get(ictcBenificiaryDetails.getVisit().getInfantBreastFed()));
@@ -446,7 +474,7 @@ public class RecordResultsService {
 	}
 
 	public List<TestResultDto> getRecordResultsListByAdvanceSearch(Long labId, Map<String, String> searchValue) {
-		
+
 		MasterSampleStatus masterSampleStatus = masterSampleStatusRepository.findByStatusAndIsDelete("ACCEPT",
 				Boolean.FALSE);
 
@@ -472,7 +500,8 @@ public class RecordResultsService {
 				searchValue);
 		if (!searchQuery.isEmpty()) {
 
-			List<LabTestSample> labTestSampleList = labTestSampleRepository.getRecordResultsListByAdvanceSearch(searchQuery.get(0));
+			List<LabTestSample> labTestSampleList = labTestSampleRepository
+					.getRecordResultsListByAdvanceSearch(searchQuery.get(0));
 			if (!CollectionUtils.isEmpty(labTestSampleList)) {
 				labTestSampleList = labTestSampleList.stream().filter(statusAccepted).collect(Collectors.toList());
 				labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());

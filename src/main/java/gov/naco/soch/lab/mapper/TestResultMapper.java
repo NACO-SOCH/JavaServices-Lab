@@ -19,21 +19,21 @@ public class TestResultMapper {
 		vlTestResultDto.setBdnSerialNumber(labTestSample.getLabTestSampleBatch().getBdnSerialNumber());
 		vlTestResultDto.setArtcId(labTestSample.getLabTestSampleBatch().getFacility().getId());
 		vlTestResultDto.setArtcName(labTestSample.getLabTestSampleBatch().getFacility().getName());
-		
+
 		Address facAddress = labTestSample.getLabTestSampleBatch().getFacility().getAddress();
 		String facAddressString = (facAddress.getAddressLineOne() != null ? facAddress.getAddressLineOne() : "")
 				+ (facAddress.getAddressLineTwo() != null ? ", " + facAddress.getAddressLineTwo() : "");
-		
+
 		vlTestResultDto.setArtcAddress(facAddressString);
 		vlTestResultDto.setArtcCode(labTestSample.getLabTestSampleBatch().getFacility().getCode());
 		vlTestResultDto.setArtcArtCode(labTestSample.getLabTestSampleBatch().getFacility().getArtcode());
 		vlTestResultDto.setLabId(labTestSample.getLabTestSampleBatch().getLab().getId());
 		vlTestResultDto.setLabName(labTestSample.getLabTestSampleBatch().getLab().getName());
-		
+
 		Address labAddress = labTestSample.getLabTestSampleBatch().getLab().getAddress();
 		String labAddressString = (labAddress.getAddressLineOne() != null ? labAddress.getAddressLineOne() : "")
 				+ (labAddress.getAddressLineTwo() != null ? ", " + labAddress.getAddressLineTwo() : "");
-		
+
 		vlTestResultDto.setLabAddress(labAddressString);
 		vlTestResultDto.setLabCode(labTestSample.getLabTestSampleBatch().getLab().getCode());
 
@@ -68,6 +68,11 @@ public class TestResultMapper {
 		vlTestResultDto.setPreArtNumber(labTestSample.getBeneficiary().getPreArtNumber());
 		vlTestResultDto.setBarcodeNumber(labTestSample.getBarcodeNumber());
 		vlTestResultDto.setIctcDnaCode(labTestSample.getLabTestSampleBatch().getFacility().getCode());
+
+		if (labTestSample.getDispatchedToLab() != null && labTestSample.getDispatchedToLab().getMachine() != null) {
+			vlTestResultDto.setTestMachineId(labTestSample.getDispatchedToLab().getMachine().getId());
+			vlTestResultDto.setTestMachineName(labTestSample.getDispatchedToLab().getMachine().getMachineName());
+		}
 
 		/*
 		 * if (!CollectionUtils.isEmpty(labTestSample.getBeneficiary().
