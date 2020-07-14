@@ -507,7 +507,7 @@ public class TestResultService {
 
 		List<TestResultDto> testResultDto = new ArrayList<>();
 		List<String> searchQuery = AdvanceSearchMapperUtil.queryCreaterForAdvanceSearchResultsList(labId, searchValue,
-				Boolean.TRUE, Boolean.TRUE);
+				Boolean.FALSE, Boolean.TRUE);
 		if (!searchQuery.isEmpty()) {
 			List<LabTestSample> labTestSampleList = labTestSampleRepository
 					.getRecordResultsListByAdvanceSearch(searchQuery.get(0));
