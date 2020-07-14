@@ -45,7 +45,7 @@ public class AdvanceSearchMapperUtil {
 
 	public static List<String> queryCreaterForAdvanceSearchRecordResultsList(Long labId,Map<String, String> searchValue) {
 		
-		String resultStatus = searchValue.get("resultStatus");
+		String testType = searchValue.get("testType");
 		String facility = searchValue.get("facility");
 		String fromDate = searchValue.get("fromDate");
 		String toDate = searchValue.get("toDate");
@@ -54,9 +54,9 @@ public class AdvanceSearchMapperUtil {
 
 		String searchQuery = "select * from soch.lab_test_sample as lts where ";
 
-		if (resultStatus != null && resultStatus != "") {
-			Long status = Long.valueOf(resultStatus);
-			searchQuery = searchQuery.concat(" lts.result_status_id= " + status + " and ");
+		if (testType != null && testType != "") {
+			Long test = Long.valueOf(testType);
+			searchQuery = searchQuery.concat(" lts.test_type_id= " + test + " and ");
 		}
 		if (facility != null && facility != "") {
 			Long byFacility = Long.valueOf(facility);
