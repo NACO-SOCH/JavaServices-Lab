@@ -15,9 +15,9 @@ public class LabServiceUtil {
 
 	public static String getBeneficiaryName(Beneficiary beneficiary) {
 		String firstName = beneficiary.getFirstName() != null ? beneficiary.getFirstName().concat(" ") : "";
-		String middleName = beneficiary.getMiddleName() != null ? beneficiary.getMiddleName().concat(" ") : "";
+//		String middleName = beneficiary.getMiddleName() != null ? beneficiary.getMiddleName().concat(" ") : "";
 		String lastName = beneficiary.getLastName() != null ? beneficiary.getLastName() : "";
-		String name = firstName + middleName + lastName;
+		String name = firstName + lastName;
 		return name.replaceAll("\\s+", " ");
 	}
 }
