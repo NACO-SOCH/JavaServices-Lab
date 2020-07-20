@@ -9,23 +9,23 @@ import org.springframework.stereotype.Service;
 
 import gov.naco.soch.lab.dto.BeneficiaryTestDetailsDto;
 import gov.naco.soch.lab.dto.VLTestCountDetailsDto;
-import gov.naco.soch.projection.ArtBeneficiaryTestCountProjection;
-import gov.naco.soch.repository.ArtBeneficiaryTestDetailsRepository;
+import gov.naco.soch.projection.TestCountProjection;
+import gov.naco.soch.repository.TestDetailsGraphRepository;
 
 @Service
 public class TestDetailsGraphService {
 	
 	@Autowired
-	private ArtBeneficiaryTestDetailsRepository artBeneficiaryTestDetailsRepository;
+	private TestDetailsGraphRepository testDetailsGraphRepository;
 
 	public BeneficiaryTestDetailsDto getBeneficiaryTestDetails(Long beneficiaryId, Long facilityId) {
 		
 		BeneficiaryTestDetailsDto beneficiaryTestDetailsDto = new BeneficiaryTestDetailsDto();
-		List<ArtBeneficiaryTestCountProjection> artBeneficiaryTestCountProjection = 
-				artBeneficiaryTestDetailsRepository.getVLTestCountDetails(beneficiaryId,facilityId);
+		List<TestCountProjection> artBeneficiaryTestCountProjection = 
+				testDetailsGraphRepository.getVLTestCountDetails(beneficiaryId,facilityId);
 		if(artBeneficiaryTestCountProjection !=null && artBeneficiaryTestCountProjection.size()>0 ) {
 			List<VLTestCountDetailsDto> vlTestCountDetailsDtoList = new ArrayList<VLTestCountDetailsDto>();
-			for(ArtBeneficiaryTestCountProjection vlTestCount:artBeneficiaryTestCountProjection) {
+			for(TestCountProjection vlTestCount:artBeneficiaryTestCountProjection) {
 				VLTestCountDetailsDto vlTestCountDetailsDto = new VLTestCountDetailsDto();
 				vlTestCountDetailsDto.setYear(vlTestCount.getYear());
 				vlTestCountDetailsDto.setCount(vlTestCount.getValue());
@@ -34,11 +34,11 @@ public class TestDetailsGraphService {
 			beneficiaryTestDetailsDto.setVlTestCountDetails(vlTestCountDetailsDtoList);
 		}
 
-		List<ArtBeneficiaryTestCountProjection> artBeneficiaryCDFourTestCountProjection =
-				artBeneficiaryTestDetailsRepository.getCDFourTestCountDetails(beneficiaryId,facilityId);
+		List<TestCountProjection> artBeneficiaryCDFourTestCountProjection =
+				testDetailsGraphRepository.getCDFourTestCountDetails(beneficiaryId,facilityId);
 		if(artBeneficiaryCDFourTestCountProjection !=null && artBeneficiaryCDFourTestCountProjection.size()>0 ) {
 			List<CDFourTestCountDetailsDto> cdFourTestCountDetailsDtoList = new ArrayList<CDFourTestCountDetailsDto>();
-			for(ArtBeneficiaryTestCountProjection vlTestCount:artBeneficiaryCDFourTestCountProjection) {
+			for(TestCountProjection vlTestCount:artBeneficiaryCDFourTestCountProjection) {
 				CDFourTestCountDetailsDto cdFourTestCountDetailsDto = new CDFourTestCountDetailsDto();
 				cdFourTestCountDetailsDto.setYear(vlTestCount.getYear());
 				cdFourTestCountDetailsDto.setCount(vlTestCount.getValue());
