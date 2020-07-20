@@ -5,12 +5,17 @@ import java.time.LocalDateTime;
 
 public class LabTestSampleDto {
 
-	private Long id;
-	private Long testBatchId;
+	private Long sampleId;
+	private Long batchId;
 	private Long beneficiaryId;
 	private String beneficiaryName;
+	private String beneficiaryUid;
 	private LocalDate beneficiaryDob;
 	private String beneficiaryAge;
+	private String beneficiaryGender;
+	private String beneficiaryHivStatus;
+	private String artNumber;
+	private String preArtNumber;
 	private Long artId;
 	private String artNo;
 	private String barcodeNumber;
@@ -33,39 +38,63 @@ public class LabTestSampleDto {
 	private String resultValue;
 	private String logValue;
 	private Boolean isError;
-	private Long errorCode;
+	private String errorCode;
 	private Long testMachineTypeId;
 	private Long testMachineId;
 	private String testMachine;
 	private Long authorizerId;
+	private String authorizerName;
 	private String authorizerSignature;
 	private String typeOfSpecimen;
 	private Long labTechnicianId;
 	private String labTechnicianName;
+	private String labTechnicianContact;
 	private String labTechnicianSignature;
 	private Long labInchargeId;
 	private String labInchargeName;
+	private String labInChargeContact;
 	private String labInchargeSignature;
 	private String testRequestFormLink;
+
+	private String populationType;
+	private String department;
+
+	private String ictcDnaCode;
+	private String infantDnaCode;
+	private String infantPID;
+
+	private Long motherId;
+	private String motherName;
+	private String motherUid;
+	private String motherContact;
+	private String motherAddress;
+	private String motherArtNumber;
+	private String motherPreArtNumber;
+
+	private Boolean isPreviousTestDone;
+	private String previousTestResult;
+	private LocalDate previousTestDate;
+	private String labSpecimenId;
+	private String feedingType;
 
 	public LabTestSampleDto() {
 		super();
 	}
 
-	public Long getId() {
-		return id;
+	public Long getSampleId() {
+		return sampleId;
 	}
 
-	public void setId(Long id) {
-		this.id = id;
+	public void setSampleId(Long sampleId) {
+		this.sampleId = sampleId;
 	}
 
-	public Long getTestBatchId() {
-		return testBatchId;
+	public Long getBatchId() {
+		return batchId;
 	}
 
-	public void setTestBatchId(Long testBatchId) {
-		this.testBatchId = testBatchId;
+	public void setBatchId(Long batchId) {
+		this.batchId = batchId;
 	}
 
 	public Long getBeneficiaryId() {
@@ -84,6 +113,14 @@ public class LabTestSampleDto {
 		this.beneficiaryName = beneficiaryName;
 	}
 
+	public String getBeneficiaryUid() {
+		return beneficiaryUid;
+	}
+
+	public void setBeneficiaryUid(String beneficiaryUid) {
+		this.beneficiaryUid = beneficiaryUid;
+	}
+
 	public LocalDate getBeneficiaryDob() {
 		return beneficiaryDob;
 	}
@@ -98,6 +135,38 @@ public class LabTestSampleDto {
 
 	public void setBeneficiaryAge(String beneficiaryAge) {
 		this.beneficiaryAge = beneficiaryAge;
+	}
+
+	public String getBeneficiaryGender() {
+		return beneficiaryGender;
+	}
+
+	public void setBeneficiaryGender(String beneficiaryGender) {
+		this.beneficiaryGender = beneficiaryGender;
+	}
+
+	public String getBeneficiaryHivStatus() {
+		return beneficiaryHivStatus;
+	}
+
+	public void setBeneficiaryHivStatus(String beneficiaryHivStatus) {
+		this.beneficiaryHivStatus = beneficiaryHivStatus;
+	}
+
+	public String getArtNumber() {
+		return artNumber;
+	}
+
+	public void setArtNumber(String artNumber) {
+		this.artNumber = artNumber;
+	}
+
+	public String getPreArtNumber() {
+		return preArtNumber;
+	}
+
+	public void setPreArtNumber(String preArtNumber) {
+		this.preArtNumber = preArtNumber;
 	}
 
 	public Long getArtId() {
@@ -276,11 +345,11 @@ public class LabTestSampleDto {
 		this.isError = isError;
 	}
 
-	public Long getErrorCode() {
+	public String getErrorCode() {
 		return errorCode;
 	}
 
-	public void setErrorCode(Long errorCode) {
+	public void setErrorCode(String errorCode) {
 		this.errorCode = errorCode;
 	}
 
@@ -316,6 +385,14 @@ public class LabTestSampleDto {
 		this.authorizerId = authorizerId;
 	}
 
+	public String getAuthorizerName() {
+		return authorizerName;
+	}
+
+	public void setAuthorizerName(String authorizerName) {
+		this.authorizerName = authorizerName;
+	}
+
 	public String getAuthorizerSignature() {
 		return authorizerSignature;
 	}
@@ -348,6 +425,14 @@ public class LabTestSampleDto {
 		this.labTechnicianName = labTechnicianName;
 	}
 
+	public String getLabTechnicianContact() {
+		return labTechnicianContact;
+	}
+
+	public void setLabTechnicianContact(String labTechnicianContact) {
+		this.labTechnicianContact = labTechnicianContact;
+	}
+
 	public String getLabTechnicianSignature() {
 		return labTechnicianSignature;
 	}
@@ -372,6 +457,14 @@ public class LabTestSampleDto {
 		this.labInchargeName = labInchargeName;
 	}
 
+	public String getLabInChargeContact() {
+		return labInChargeContact;
+	}
+
+	public void setLabInChargeContact(String labInChargeContact) {
+		this.labInChargeContact = labInChargeContact;
+	}
+
 	public String getLabInchargeSignature() {
 		return labInchargeSignature;
 	}
@@ -386,6 +479,142 @@ public class LabTestSampleDto {
 
 	public void setTestRequestFormLink(String testRequestFormLink) {
 		this.testRequestFormLink = testRequestFormLink;
+	}
+
+	public String getPopulationType() {
+		return populationType;
+	}
+
+	public void setPopulationType(String populationType) {
+		this.populationType = populationType;
+	}
+
+	public String getDepartment() {
+		return department;
+	}
+
+	public void setDepartment(String department) {
+		this.department = department;
+	}
+
+	public String getIctcDnaCode() {
+		return ictcDnaCode;
+	}
+
+	public void setIctcDnaCode(String ictcDnaCode) {
+		this.ictcDnaCode = ictcDnaCode;
+	}
+
+	public String getInfantDnaCode() {
+		return infantDnaCode;
+	}
+
+	public void setInfantDnaCode(String infantDnaCode) {
+		this.infantDnaCode = infantDnaCode;
+	}
+
+	public String getInfantPID() {
+		return infantPID;
+	}
+
+	public void setInfantPID(String infantPID) {
+		this.infantPID = infantPID;
+	}
+
+	public Long getMotherId() {
+		return motherId;
+	}
+
+	public void setMotherId(Long motherId) {
+		this.motherId = motherId;
+	}
+
+	public String getMotherName() {
+		return motherName;
+	}
+
+	public void setMotherName(String motherName) {
+		this.motherName = motherName;
+	}
+
+	public String getMotherUid() {
+		return motherUid;
+	}
+
+	public void setMotherUid(String motherUid) {
+		this.motherUid = motherUid;
+	}
+
+	public String getMotherContact() {
+		return motherContact;
+	}
+
+	public void setMotherContact(String motherContact) {
+		this.motherContact = motherContact;
+	}
+
+	public String getMotherAddress() {
+		return motherAddress;
+	}
+
+	public void setMotherAddress(String motherAddress) {
+		this.motherAddress = motherAddress;
+	}
+
+	public String getMotherArtNumber() {
+		return motherArtNumber;
+	}
+
+	public void setMotherArtNumber(String motherArtNumber) {
+		this.motherArtNumber = motherArtNumber;
+	}
+
+	public String getMotherPreArtNumber() {
+		return motherPreArtNumber;
+	}
+
+	public void setMotherPreArtNumber(String motherPreArtNumber) {
+		this.motherPreArtNumber = motherPreArtNumber;
+	}
+
+	public Boolean getIsPreviousTestDone() {
+		return isPreviousTestDone;
+	}
+
+	public void setIsPreviousTestDone(Boolean isPreviousTestDone) {
+		this.isPreviousTestDone = isPreviousTestDone;
+	}
+
+	public String getPreviousTestResult() {
+		return previousTestResult;
+	}
+
+	public void setPreviousTestResult(String previousTestResult) {
+		this.previousTestResult = previousTestResult;
+	}
+
+	public LocalDate getPreviousTestDate() {
+		return previousTestDate;
+	}
+
+	public void setPreviousTestDate(LocalDate previousTestDate) {
+		this.previousTestDate = previousTestDate;
+	}
+
+	public String getLabSpecimenId() {
+		return labSpecimenId;
+	}
+
+	public void setLabSpecimenId(String labSpecimenId) {
+		this.labSpecimenId = labSpecimenId;
+	}
+
+	public String getFeedingType() {
+		return feedingType;
+	}
+
+	public void setFeedingType(String feedingType) {
+		this.feedingType = feedingType;
 	}
 
 }

@@ -1,6 +1,7 @@
 package gov.naco.soch.lab.controller;
 
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import gov.naco.soch.lab.dto.LabTestSampleBatchDto;
@@ -36,7 +38,13 @@ public class RecieveSamplesController {
 	public LabTestSampleBatchDto saveReceivedSamples(@PathVariable("batchId") Long batchId,
 			@RequestBody LabTestSampleBatchDto labTestSampleBatchDto) {
 		logger.info("saveReceivedSamples method is invoked");
-		labTestSampleBatchDto = receiveSamplesService.saveReceivedSamples(labTestSampleBatchDto);
+		labTestSampleBatchDto = receiveSamplesService.saveReceivedSamples(batchId, labTestSampleBatchDto);
 		return labTestSampleBatchDto;
+	}
+	
+	@GetMapping("advance/search/{labId}")
+	public List<LabTestSampleBatchDto> getReceiveSamplesListByAdvanceSearch(@PathVariable("labId") Long labId,@RequestParam Map<String, String> searchValue) {
+		logger.info("inside receive sample list by advance search");
+		return receiveSamplesService.getReceiveSamplesListByAdvanceSearch(labId,searchValue);
 	}
 }
