@@ -7,6 +7,7 @@ import gov.naco.soch.lab.dto.CDFourTestCountDetailsDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import gov.naco.soch.lab.dto.AdherenceDetailsDto;
 import gov.naco.soch.lab.dto.BeneficiaryTestDetailsDto;
 import gov.naco.soch.lab.dto.VLTestCountDetailsDto;
 import gov.naco.soch.projection.TestCountProjection;
@@ -46,6 +47,20 @@ public class TestDetailsGraphService {
 			}
 			beneficiaryTestDetailsDto.setCdfourTestCountDetails(cdFourTestCountDetailsDtoList);
 		}
+		
+		List<TestCountProjection> adherenceTestCountProjection = 
+				testDetailsGraphRepository.getAdherenceCountDetails(beneficiaryId,facilityId);
+		if(artBeneficiaryTestCountProjection !=null && artBeneficiaryTestCountProjection.size()>0 ) {
+			List<AdherenceDetailsDto> adherenceDetailsDtoList = new ArrayList<AdherenceDetailsDto>();
+			for(TestCountProjection adherenceCount:adherenceTestCountProjection) {
+				AdherenceDetailsDto adherenceDetailsDto = new AdherenceDetailsDto();
+				adherenceDetailsDto.setYear(adherenceCount.getYear());
+				adherenceDetailsDto.setCount(adherenceCount.getValue());
+				adherenceDetailsDtoList.add(adherenceDetailsDto);
+			}
+			beneficiaryTestDetailsDto.setAdherenceDetails(adherenceDetailsDtoList);
+		}
+		
 		
 		return beneficiaryTestDetailsDto;
 	}
