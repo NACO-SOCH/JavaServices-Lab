@@ -4,12 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import gov.naco.soch.lab.dto.CDFourTestCountDetailsDto;
+import gov.naco.soch.lab.dto.TestDetailsHeaderDto;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import gov.naco.soch.lab.dto.BeneficiaryTestDetailsDto;
 import gov.naco.soch.lab.dto.VLTestCountDetailsDto;
 import gov.naco.soch.projection.ArtBeneficiaryTestCountProjection;
+import gov.naco.soch.projection.TestCountDetailsProjection;
 import gov.naco.soch.repository.ArtBeneficiaryTestDetailsRepository;
 
 @Service
@@ -21,6 +24,7 @@ public class TestDetailsGraphService {
 	public BeneficiaryTestDetailsDto getBeneficiaryTestDetails(Long beneficiaryId, Long facilityId) {
 		
 		BeneficiaryTestDetailsDto beneficiaryTestDetailsDto = new BeneficiaryTestDetailsDto();
+		
 		List<ArtBeneficiaryTestCountProjection> artBeneficiaryTestCountProjection = 
 				artBeneficiaryTestDetailsRepository.getVLTestCountDetails(beneficiaryId,facilityId);
 		if(artBeneficiaryTestCountProjection !=null && artBeneficiaryTestCountProjection.size()>0 ) {
@@ -46,6 +50,13 @@ public class TestDetailsGraphService {
 			}
 			beneficiaryTestDetailsDto.setCdfourTestCountDetails(cdFourTestCountDetailsDtoList);
 		}
+		
+		TestCountDetailsProjection testResultHeaderObject = artBeneficiaryTestDetailsRepository.getGraphHeaderCounts(beneficiaryId,facilityId);
+		if(!testResultHeaderObject.equals(null) ) {
+			
+			
+		}
+		
 		
 		return beneficiaryTestDetailsDto;
 	}
