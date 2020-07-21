@@ -31,6 +31,8 @@ import gov.naco.soch.entity.IctcTestResult;
 import gov.naco.soch.entity.LabTestSample;
 import gov.naco.soch.entity.LabTestSampleBatch;
 import gov.naco.soch.entity.MasterBatchStatus;
+import gov.naco.soch.entity.MasterHivStatus;
+import gov.naco.soch.entity.MasterHivType;
 import gov.naco.soch.entity.MasterInfantBreastFeed;
 import gov.naco.soch.entity.MasterResultStatus;
 import gov.naco.soch.entity.MasterSampleStatus;
@@ -39,7 +41,9 @@ import gov.naco.soch.exception.ServiceException;
 import gov.naco.soch.lab.dto.TestResultDto;
 import gov.naco.soch.lab.mapper.AdvanceSearchMapperUtil;
 import gov.naco.soch.lab.mapper.TestResultMapper;
+import gov.naco.soch.projection.IctcTestResultProjection;
 import gov.naco.soch.repository.BeneficiaryFamilyDetailRepository;
+import gov.naco.soch.repository.BeneficiaryRepository;
 import gov.naco.soch.repository.IctcSampleCollectionRepository;
 import gov.naco.soch.repository.IctcTestResultRepository;
 import gov.naco.soch.repository.LabTestSampleBatchRepository;
@@ -86,6 +90,9 @@ public class TestResultService {
 
 	@Autowired
 	private BeneficiaryFamilyDetailRepository beneficiaryFamilyDetailRepository;
+
+	@Autowired
+	private BeneficiaryRepository beneficiaryRepository;
 
 	public List<TestResultDto> fetchTestResultsList(Long labId) {
 
@@ -340,8 +347,77 @@ public class TestResultService {
 				}
 			});
 			ictcSampleCollectionRepository.saveAll(samplesToSave);
-			ictcTestResultRepository.saveAll(testResultToSave);
+			List<IctcTestResult> currentTestResults = ictcTestResultRepository.saveAll(testResultToSave);
+
+			if (!CollectionUtils.isEmpty(currentTestResults)) {
+
+				List<Beneficiary> updateBeneficiaryList = new ArrayList<Beneficiary>();
+
+				for (IctcTestResult ictcTestResult : currentTestResults) {
+
+					if ((ictcTestResult.getSample() != null)
+							&& (ictcTestResult.getSample().getTestType() == 5L
+									|| ictcTestResult.getSample().getTestType() == 6L
+									|| ictcTestResult.getSample().getTestType() == 7L)
+							&& ((ictcTestResult.getHivStatus() != null) && (ictcTestResult.getHivStatus() == 1L))) {
+						Beneficiary beneficiary = updateBenficiaryHIVStatus(ictcTestResult);
+						updateBeneficiaryList.add(beneficiary);
+					} else if ((ictcTestResult.getSample() != null)
+							&& (ictcTestResult.getSample().getTestType() == 8L
+									|| ictcTestResult.getSample().getTestType() == 9L
+									|| ictcTestResult.getSample().getTestType() == 10L)
+							&& ((ictcTestResult.getHivStatus() != null) && (ictcTestResult.getHivStatus() == 2L))) {
+						Beneficiary beneficiary = updateBenficiaryHIVStatus(ictcTestResult);
+						updateBeneficiaryList.add(beneficiary);
+					} else if ((ictcTestResult.getSample() != null)
+							&& (ictcTestResult.getSample().getTestType() == 8L
+									|| ictcTestResult.getSample().getTestType() == 9L
+									|| ictcTestResult.getSample().getTestType() == 10L)
+							&& ((ictcTestResult.getHivStatus() != null) && (ictcTestResult.getHivStatus() == 1L))) {
+
+						List<IctcTestResultProjection> previousTests = ictcTestResultRepository
+								.findAllCDBSTestByIctcBenficiaryId(ictcTestResult.getIctcBeneficiary().getId());
+
+						if ((!CollectionUtils.isEmpty(previousTests)) && previousTests.size() > 1) {
+
+							boolean isNegetive = true;
+							for (IctcTestResultProjection test : previousTests) {
+								if (test.getHivStatus() != null && test.getHivStatus() == 2L) {
+									isNegetive = false;
+								}
+							}
+							if (isNegetive) {
+								Beneficiary beneficiary = updateBenficiaryHIVStatus(ictcTestResult);
+								updateBeneficiaryList.add(beneficiary);
+							}
+						}
+					}
+				}
+
+				if (!CollectionUtils.isEmpty(updateBeneficiaryList)) {
+					beneficiaryRepository.saveAll(updateBeneficiaryList);
+				}
+			}
+
 		}
+	}
+
+	private Beneficiary updateBenficiaryHIVStatus(IctcTestResult ictcTest) {
+
+		Beneficiary beneficiary = ictcTest.getIctcBeneficiary().getBeneficiary();
+
+		if (ictcTest.getHivStatus() != null) {
+			MasterHivStatus hivStatus = new MasterHivStatus();
+			hivStatus.setId(ictcTest.getHivStatus());
+			beneficiary.setHivStatusId(hivStatus);
+		}
+		if (ictcTest.getHivType() != null) {
+			MasterHivType hivType = new MasterHivType();
+			hivType.setId(ictcTest.getHivType());
+			beneficiary.setHivTypeId(hivType);
+		}
+
+		return beneficiary;
 	}
 
 	private void fetchIctcInfantDetails(List<TestResultDto> testResultDto) {
