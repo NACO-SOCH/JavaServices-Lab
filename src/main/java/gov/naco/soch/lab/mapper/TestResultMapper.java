@@ -33,8 +33,9 @@ public class TestResultMapper {
 		Address labAddress = labTestSample.getLabTestSampleBatch().getLab().getAddress();
 		String labAddressString = (labAddress.getAddressLineOne() != null ? labAddress.getAddressLineOne() : "")
 				+ (labAddress.getAddressLineTwo() != null ? ", " + labAddress.getAddressLineTwo() : "");
-
-		vlTestResultDto.setLabAddress(labAddressString);
+		if(!labAddressString.equals(", ")) {
+			vlTestResultDto.setLabAddress(labAddressString);
+		}
 		vlTestResultDto.setLabCode(labTestSample.getLabTestSampleBatch().getLab().getCode());
 
 		vlTestResultDto.setDispatchDate(labTestSample.getLabTestSampleBatch().getDispatchDate());
