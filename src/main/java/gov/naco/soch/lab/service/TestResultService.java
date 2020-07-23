@@ -98,38 +98,38 @@ public class TestResultService {
 
 		logger.debug("In fetchTestResultsList() of TestResultService");
 
-		MasterSampleStatus masterSampleStatusAccepted = masterSampleStatusRepository.findByStatusAndIsDelete("ACCEPT",
-				Boolean.FALSE);
-
-		MasterSampleStatus masterSampleStatusResultPosted = masterSampleStatusRepository
-				.findByStatusAndIsDelete("RESULT POSTED", Boolean.FALSE);
-
-		MasterResultStatus masterResultStatus = masterResultStatusRepository.findByStatusAndIsDelete("PENDING",
-				Boolean.FALSE);
-
-		MasterBatchStatus masterBatchStatus = masterBatchStatusRepository.findByStatusAndIsDelete("DISPATCHED",
-				Boolean.FALSE);
-
-		Predicate<LabTestSample> checkBatchStatus = s -> s.getLabTestSampleBatch().getMasterBatchStatus()
-				.getId() != masterBatchStatus.getId();
-
-		Predicate<LabTestSample> isSampleInLab = s -> (s.getLabTestSampleBatch() != null)
-				&& (s.getLabTestSampleBatch().getLab().getId() == labId);
-
-		Predicate<LabTestSample> sampleStatus = s -> s.getMasterSampleStatus() != null
-				&& (s.getMasterSampleStatus().getId() == masterSampleStatusAccepted.getId()
-						|| s.getMasterSampleStatus().getId() == masterSampleStatusResultPosted.getId());
-
-		Predicate<LabTestSample> checkResultStatus = s -> s.getMasterResultStatus().getId() != masterResultStatus
-				.getId();
+//		MasterSampleStatus masterSampleStatusAccepted = masterSampleStatusRepository.findByStatusAndIsDelete("ACCEPT",
+//				Boolean.FALSE);
+//
+//		MasterSampleStatus masterSampleStatusResultPosted = masterSampleStatusRepository
+//				.findByStatusAndIsDelete("RESULT POSTED", Boolean.FALSE);
+//
+//		MasterResultStatus masterResultStatus = masterResultStatusRepository.findByStatusAndIsDelete("PENDING",
+//				Boolean.FALSE);
+//
+//		MasterBatchStatus masterBatchStatus = masterBatchStatusRepository.findByStatusAndIsDelete("DISPATCHED",
+//				Boolean.FALSE);
+//
+//		Predicate<LabTestSample> checkBatchStatus = s -> s.getLabTestSampleBatch().getMasterBatchStatus()
+//				.getId() != masterBatchStatus.getId();
+//
+//		Predicate<LabTestSample> isSampleInLab = s -> (s.getLabTestSampleBatch() != null)
+//				&& (s.getLabTestSampleBatch().getLab().getId() == labId);
+//
+//		Predicate<LabTestSample> sampleStatus = s -> s.getMasterSampleStatus() != null
+//				&& (s.getMasterSampleStatus().getId() == masterSampleStatusAccepted.getId()
+//						|| s.getMasterSampleStatus().getId() == masterSampleStatusResultPosted.getId());
+//
+//		Predicate<LabTestSample> checkResultStatus = s -> s.getMasterResultStatus().getId() != masterResultStatus
+//				.getId();
 
 		List<TestResultDto> testResultDto = new ArrayList<>();
-		List<LabTestSample> labTestSampleList = labTestSampleRepository.findByIsDelete(Boolean.FALSE);
+		List<LabTestSample> labTestSampleList = labTestSampleRepository.findSamplesTestResults(labId);
 		if (!CollectionUtils.isEmpty(labTestSampleList)) {
-			labTestSampleList = labTestSampleList.stream().filter(isSampleInLab).collect(Collectors.toList());
-			labTestSampleList = labTestSampleList.stream().filter(sampleStatus).collect(Collectors.toList());
-			labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
-			labTestSampleList = labTestSampleList.stream().filter(checkResultStatus).collect(Collectors.toList());
+//			labTestSampleList = labTestSampleList.stream().filter(isSampleInLab).collect(Collectors.toList());
+//			labTestSampleList = labTestSampleList.stream().filter(sampleStatus).collect(Collectors.toList());
+//			labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
+//			labTestSampleList = labTestSampleList.stream().filter(checkResultStatus).collect(Collectors.toList());
 			testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 					.collect(Collectors.toList());
 			fetchIctcInfantDetails(testResultDto);
@@ -143,33 +143,33 @@ public class TestResultService {
 
 		logger.debug("In fetchTestResultsUnderApproval() of TestResultService");
 
-		MasterSampleStatus masterSampleStatus = masterSampleStatusRepository.findByStatusAndIsDelete("ACCEPT",
-				Boolean.FALSE);
-
-		MasterResultStatus masterResultStatus = masterResultStatusRepository
-				.findByStatusAndIsDelete("AWAITING APPROVAL", Boolean.FALSE);
-
-		MasterBatchStatus masterBatchStatus = masterBatchStatusRepository.findByStatusAndIsDelete("DISPATCHED",
-				Boolean.FALSE);
-
-		Predicate<LabTestSample> checkBatchStatus = s -> s.getLabTestSampleBatch().getMasterBatchStatus()
-				.getId() != masterBatchStatus.getId();
-
-		Predicate<LabTestSample> isSampleInLab = s -> s.getLabTestSampleBatch().getLab().getId() == labId;
-
-		Predicate<LabTestSample> statusAccepted = s -> s.getMasterSampleStatus() != null
-				&& s.getMasterSampleStatus().getId() == masterSampleStatus.getId();
-
-		Predicate<LabTestSample> checkResultStatus = s -> s.getMasterResultStatus().getId() == masterResultStatus
-				.getId();
+//		MasterSampleStatus masterSampleStatus = masterSampleStatusRepository.findByStatusAndIsDelete("ACCEPT",
+//				Boolean.FALSE);
+//
+//		MasterResultStatus masterResultStatus = masterResultStatusRepository
+//				.findByStatusAndIsDelete("AWAITING APPROVAL", Boolean.FALSE);
+//
+//		MasterBatchStatus masterBatchStatus = masterBatchStatusRepository.findByStatusAndIsDelete("DISPATCHED",
+//				Boolean.FALSE);
+//
+//		Predicate<LabTestSample> checkBatchStatus = s -> s.getLabTestSampleBatch().getMasterBatchStatus()
+//				.getId() != masterBatchStatus.getId();
+//
+//		Predicate<LabTestSample> isSampleInLab = s -> s.getLabTestSampleBatch().getLab().getId() == labId;
+//
+//		Predicate<LabTestSample> statusAccepted = s -> s.getMasterSampleStatus() != null
+//				&& s.getMasterSampleStatus().getId() == masterSampleStatus.getId();
+//
+//		Predicate<LabTestSample> checkResultStatus = s -> s.getMasterResultStatus().getId() == masterResultStatus
+//				.getId();
 
 		List<TestResultDto> testResultDto = new ArrayList<>();
-		List<LabTestSample> labTestSampleList = labTestSampleRepository.findByIsDelete(Boolean.FALSE);
+		List<LabTestSample> labTestSampleList = labTestSampleRepository.findSamplesForApproval(labId);
 		if (!CollectionUtils.isEmpty(labTestSampleList)) {
-			labTestSampleList = labTestSampleList.stream().filter(statusAccepted).collect(Collectors.toList());
-			labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
-			labTestSampleList = labTestSampleList.stream().filter(isSampleInLab.and(checkResultStatus))
-					.collect(Collectors.toList());
+//			labTestSampleList = labTestSampleList.stream().filter(statusAccepted).collect(Collectors.toList());
+//			labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
+//			labTestSampleList = labTestSampleList.stream().filter(isSampleInLab.and(checkResultStatus))
+//					.collect(Collectors.toList());
 			testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 					.collect(Collectors.toList());
 			fetchIctcInfantDetails(testResultDto);
@@ -513,42 +513,41 @@ public class TestResultService {
 
 	public List<TestResultDto> getTestResultsListByAdvanceSearch(Long labId, Map<String, String> searchValue) {
 
-		MasterSampleStatus masterSampleStatusAccepted = masterSampleStatusRepository.findByStatusAndIsDelete("ACCEPT",
-				Boolean.FALSE);
-
-		MasterSampleStatus masterSampleStatusResultPosted = masterSampleStatusRepository
-				.findByStatusAndIsDelete("RESULT POSTED", Boolean.FALSE);
-
-		MasterResultStatus masterResultStatus = masterResultStatusRepository.findByStatusAndIsDelete("PENDING",
-				Boolean.FALSE);
-
-		MasterBatchStatus masterBatchStatus = masterBatchStatusRepository.findByStatusAndIsDelete("DISPATCHED",
-				Boolean.FALSE);
-
-		Predicate<LabTestSample> checkBatchStatus = s -> s.getLabTestSampleBatch().getMasterBatchStatus()
-				.getId() != masterBatchStatus.getId();
-
-		Predicate<LabTestSample> isSampleInLab = s -> s.getLabTestSampleBatch().getLab().getId() == labId;
-
-		Predicate<LabTestSample> sampleStatus = s -> s.getMasterSampleStatus() != null
-				&& (s.getMasterSampleStatus().getId() == masterSampleStatusAccepted.getId()
-						|| s.getMasterSampleStatus().getId() == masterSampleStatusResultPosted.getId());
-
-		Predicate<LabTestSample> checkResultStatus = s -> s.getMasterResultStatus().getId() != masterResultStatus
-				.getId();
+//		MasterSampleStatus masterSampleStatusAccepted = masterSampleStatusRepository.findByStatusAndIsDelete("ACCEPT",
+//				Boolean.FALSE);
+//
+//		MasterSampleStatus masterSampleStatusResultPosted = masterSampleStatusRepository
+//				.findByStatusAndIsDelete("RESULT POSTED", Boolean.FALSE);
+//
+//		MasterResultStatus masterResultStatus = masterResultStatusRepository.findByStatusAndIsDelete("PENDING",
+//				Boolean.FALSE);
+//
+//		MasterBatchStatus masterBatchStatus = masterBatchStatusRepository.findByStatusAndIsDelete("DISPATCHED",
+//				Boolean.FALSE);
+//
+//		Predicate<LabTestSample> checkBatchStatus = s -> s.getLabTestSampleBatch().getMasterBatchStatus()
+//				.getId() != masterBatchStatus.getId();
+//
+//		Predicate<LabTestSample> isSampleInLab = s -> s.getLabTestSampleBatch().getLab().getId() == labId;
+//
+//		Predicate<LabTestSample> sampleStatus = s -> s.getMasterSampleStatus() != null
+//				&& (s.getMasterSampleStatus().getId() == masterSampleStatusAccepted.getId()
+//						|| s.getMasterSampleStatus().getId() == masterSampleStatusResultPosted.getId());
+//
+//		Predicate<LabTestSample> checkResultStatus = s -> s.getMasterResultStatus().getId() != masterResultStatus
+//				.getId();
 
 		List<TestResultDto> testResultDto = new ArrayList<>();
-
 		List<String> searchQuery = AdvanceSearchMapperUtil.queryCreaterForAdvanceSearchResultsList(labId, searchValue,
 				Boolean.TRUE, Boolean.FALSE);
 		if (!searchQuery.isEmpty()) {
 			List<LabTestSample> labTestSampleList = labTestSampleRepository
 					.getRecordResultsListByAdvanceSearch(searchQuery.get(0));
 			if (!CollectionUtils.isEmpty(labTestSampleList)) {
-				labTestSampleList = labTestSampleList.stream().filter(sampleStatus).collect(Collectors.toList());
-				labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
-				labTestSampleList = labTestSampleList.stream().filter(isSampleInLab.and(checkResultStatus))
-						.collect(Collectors.toList());
+//				labTestSampleList = labTestSampleList.stream().filter(sampleStatus).collect(Collectors.toList());
+//				labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
+//				labTestSampleList = labTestSampleList.stream().filter(isSampleInLab.and(checkResultStatus))
+//						.collect(Collectors.toList());
 				testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 						.collect(Collectors.toList());
 				fetchIctcInfantDetails(testResultDto);
@@ -562,25 +561,25 @@ public class TestResultService {
 
 	public List<TestResultDto> getRecordResultsUnderApprovalAdvanceSearch(Long labId, Map<String, String> searchValue) {
 
-		MasterSampleStatus masterSampleStatus = masterSampleStatusRepository.findByStatusAndIsDelete("ACCEPT",
-				Boolean.FALSE);
-
-		MasterResultStatus masterResultStatus = masterResultStatusRepository
-				.findByStatusAndIsDelete("AWAITING APPROVAL", Boolean.FALSE);
-
-		MasterBatchStatus masterBatchStatus = masterBatchStatusRepository.findByStatusAndIsDelete("DISPATCHED",
-				Boolean.FALSE);
-
-		Predicate<LabTestSample> checkBatchStatus = s -> s.getLabTestSampleBatch().getMasterBatchStatus()
-				.getId() != masterBatchStatus.getId();
-
-		Predicate<LabTestSample> isSampleInLab = s -> s.getLabTestSampleBatch().getLab().getId() == labId;
-
-		Predicate<LabTestSample> statusAccepted = s -> s.getMasterSampleStatus() != null
-				&& s.getMasterSampleStatus().getId() == masterSampleStatus.getId();
-
-		Predicate<LabTestSample> checkResultStatus = s -> s.getMasterResultStatus().getId() == masterResultStatus
-				.getId();
+//		MasterSampleStatus masterSampleStatus = masterSampleStatusRepository.findByStatusAndIsDelete("ACCEPT",
+//				Boolean.FALSE);
+//
+//		MasterResultStatus masterResultStatus = masterResultStatusRepository
+//				.findByStatusAndIsDelete("AWAITING APPROVAL", Boolean.FALSE);
+//
+//		MasterBatchStatus masterBatchStatus = masterBatchStatusRepository.findByStatusAndIsDelete("DISPATCHED",
+//				Boolean.FALSE);
+//
+//		Predicate<LabTestSample> checkBatchStatus = s -> s.getLabTestSampleBatch().getMasterBatchStatus()
+//				.getId() != masterBatchStatus.getId();
+//
+//		Predicate<LabTestSample> isSampleInLab = s -> s.getLabTestSampleBatch().getLab().getId() == labId;
+//
+//		Predicate<LabTestSample> statusAccepted = s -> s.getMasterSampleStatus() != null
+//				&& s.getMasterSampleStatus().getId() == masterSampleStatus.getId();
+//
+//		Predicate<LabTestSample> checkResultStatus = s -> s.getMasterResultStatus().getId() == masterResultStatus
+//				.getId();
 
 		List<TestResultDto> testResultDto = new ArrayList<>();
 		List<String> searchQuery = AdvanceSearchMapperUtil.queryCreaterForAdvanceSearchResultsList(labId, searchValue,
@@ -589,10 +588,10 @@ public class TestResultService {
 			List<LabTestSample> labTestSampleList = labTestSampleRepository
 					.getRecordResultsListByAdvanceSearch(searchQuery.get(0));
 			if (!CollectionUtils.isEmpty(labTestSampleList)) {
-				labTestSampleList = labTestSampleList.stream().filter(statusAccepted).collect(Collectors.toList());
-				labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
-				labTestSampleList = labTestSampleList.stream().filter(isSampleInLab.and(checkResultStatus))
-						.collect(Collectors.toList());
+//				labTestSampleList = labTestSampleList.stream().filter(statusAccepted).collect(Collectors.toList());
+//				labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
+//				labTestSampleList = labTestSampleList.stream().filter(isSampleInLab.and(checkResultStatus))
+//						.collect(Collectors.toList());
 				testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 						.collect(Collectors.toList());
 				fetchIctcInfantDetails(testResultDto);
