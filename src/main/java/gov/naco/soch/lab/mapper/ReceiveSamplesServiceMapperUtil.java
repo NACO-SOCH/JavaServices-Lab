@@ -101,7 +101,9 @@ public class ReceiveSamplesServiceMapperUtil {
 			if (s.getBeneficiary().getArtBeneficiary().iterator().hasNext()) {
 
 				ArtBeneficiary artDetails = s.getBeneficiary().getArtBeneficiary().iterator().next();
-				labTestSampleDto.setBeneficiaryHivStatus(artDetails.getMasterArtBeneficiaryStatus().getName());
+				if(artDetails.getMasterArtBeneficiaryStatus()!=null) {
+					labTestSampleDto.setBeneficiaryHivStatus(artDetails.getMasterArtBeneficiaryStatus().getName());
+				}
 				if (artDetails.getMasterRiskFactor() != null) {
 					labTestSampleDto.setPopulationType(artDetails.getMasterRiskFactor().getName());
 				}
