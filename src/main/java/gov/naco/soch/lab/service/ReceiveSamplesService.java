@@ -266,6 +266,7 @@ public class ReceiveSamplesService {
 							if (sampleStatusId == 3L) {
 								s.setSampleCollectionStatus(6L);
 							}
+							s.setSampleReceivedDate(labSampleOpt.get().getSampleReceivedDate());
 							s.getBatch().setBatchStatus(labTestSampleBatch.getMasterBatchStatus().getId());
 						}
 					});

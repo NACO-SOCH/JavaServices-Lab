@@ -2,7 +2,10 @@ package gov.naco.soch.lab.mapper;
 
 import java.time.format.DateTimeFormatter;
 
+import org.springframework.util.CollectionUtils;
+
 import gov.naco.soch.entity.Address;
+import gov.naco.soch.entity.ArtBeneficiary;
 import gov.naco.soch.entity.LabTestSample;
 import gov.naco.soch.lab.dto.TestResultDto;
 import gov.naco.soch.lab.util.LabServiceUtil;
@@ -33,8 +36,9 @@ public class TestResultMapper {
 		Address labAddress = labTestSample.getLabTestSampleBatch().getLab().getAddress();
 		String labAddressString = (labAddress.getAddressLineOne() != null ? labAddress.getAddressLineOne() : "")
 				+ (labAddress.getAddressLineTwo() != null ? ", " + labAddress.getAddressLineTwo() : "");
-
-		vlTestResultDto.setLabAddress(labAddressString);
+		if (!labAddressString.equals(", ")) {
+			vlTestResultDto.setLabAddress(labAddressString);
+		}
 		vlTestResultDto.setLabCode(labTestSample.getLabTestSampleBatch().getLab().getCode());
 
 		vlTestResultDto.setDispatchDate(labTestSample.getLabTestSampleBatch().getDispatchDate());
@@ -68,6 +72,19 @@ public class TestResultMapper {
 		vlTestResultDto.setPreArtNumber(labTestSample.getBeneficiary().getPreArtNumber());
 		vlTestResultDto.setBarcodeNumber(labTestSample.getBarcodeNumber());
 		vlTestResultDto.setIctcDnaCode(labTestSample.getLabTestSampleBatch().getFacility().getCode());
+
+		if (!CollectionUtils.isEmpty(labTestSample.getBeneficiary().getArtBeneficiary())) {
+			if (labTestSample.getBeneficiary().getArtBeneficiary().iterator().hasNext()) {
+
+				ArtBeneficiary artDetails = labTestSample.getBeneficiary().getArtBeneficiary().iterator().next();
+				if (artDetails.getMasterArtBeneficiaryStatus() != null) {
+					vlTestResultDto.setBeneficiaryHivStatus(artDetails.getMasterArtBeneficiaryStatus().getName());
+				}
+				if (artDetails.getMasterRiskFactor() != null) {
+					vlTestResultDto.setPopulationType(artDetails.getMasterRiskFactor().getName());
+				}
+			}
+		}
 
 		if (labTestSample.getDispatchedToLab() != null && labTestSample.getDispatchedToLab().getMachine() != null) {
 			vlTestResultDto.setTestMachineId(labTestSample.getDispatchedToLab().getMachine().getId());
