@@ -20,7 +20,7 @@ public class VlCd4TestDetailsGraphController {
 	@Autowired
 	private TestDetailsGraphService artBeneficiaryTestDetailsService;
 	
-	@GetMapping("/get/testdetails/{beneficiaryId}/{facilityId}")
+	@GetMapping("/testdetailsgraph/{beneficiaryId}/{facilityId}")
 	public ResponseEntity<BeneficiaryTestDetailsDto> getBeneficiaryTestDetails(
 			@PathVariable("beneficiaryId") Long beneficiaryId, @PathVariable("facilityId") Long facilityId) {
 		BeneficiaryTestDetailsDto beneficiaryTestDetailsDto = new BeneficiaryTestDetailsDto();

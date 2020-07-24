@@ -4,27 +4,27 @@ import java.util.List;
 
 public class BeneficiaryTestDetailsDto {
 	
-	private List<AdherenceDetailsDto> adherenceDetails;
-	private List<CDFourTestCountDetailsDto> cdfourTestCountDetails;
-	private List<VLTestCountDetailsDto> vlTestCountDetails;
 	private TestDetailsHeaderDto testDetailsHeaderDto;
+	private List<TestDetailsBodyDto> adherenceDetails;
+	private List<TestDetailsBodyDto> cdfourTestCountDetails;
+	private List<TestDetailsBodyDto> vlTestCountDetails;
 	
-	public List<AdherenceDetailsDto> getAdherenceDetails() {
+	public List<TestDetailsBodyDto> getAdherenceDetails() {
 		return adherenceDetails;
 	}
-	public void setAdherenceDetails(List<AdherenceDetailsDto> adherenceDetails) {
+	public void setAdherenceDetails(List<TestDetailsBodyDto> adherenceDetails) {
 		this.adherenceDetails = adherenceDetails;
 	}
-	public List<CDFourTestCountDetailsDto> getCdfourTestCountDetails() {
+	public List<TestDetailsBodyDto> getCdfourTestCountDetails() {
 		return cdfourTestCountDetails;
 	}
-	public void setCdfourTestCountDetails(List<CDFourTestCountDetailsDto> cdfourTestCountDetails) {
+	public void setCdfourTestCountDetails(List<TestDetailsBodyDto> cdfourTestCountDetails) {
 		this.cdfourTestCountDetails = cdfourTestCountDetails;
 	}
-	public List<VLTestCountDetailsDto> getVlTestCountDetails() {
+	public List<TestDetailsBodyDto> getVlTestCountDetails() {
 		return vlTestCountDetails;
 	}
-	public void setVlTestCountDetails(List<VLTestCountDetailsDto> vlTestCountDetails) {
+	public void setVlTestCountDetails(List<TestDetailsBodyDto> vlTestCountDetails) {
 		this.vlTestCountDetails = vlTestCountDetails;
 	}
 	public TestDetailsHeaderDto getTestDetailsHeaderDto() {
@@ -33,5 +33,6 @@ public class BeneficiaryTestDetailsDto {
 	public void setTestDetailsHeaderDto(TestDetailsHeaderDto testDetailsHeaderDto) {
 		this.testDetailsHeaderDto = testDetailsHeaderDto;
 	}
+	
 
 }

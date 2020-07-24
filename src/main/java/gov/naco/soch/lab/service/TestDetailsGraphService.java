@@ -1,17 +1,14 @@
 package gov.naco.soch.lab.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
-import gov.naco.soch.lab.dto.CDFourTestCountDetailsDto;
 import gov.naco.soch.lab.dto.TestDetailsHeaderDto;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import gov.naco.soch.lab.dto.AdherenceDetailsDto;
+import gov.naco.soch.lab.dto.TestDetailsBodyDto;
 import gov.naco.soch.lab.dto.BeneficiaryTestDetailsDto;
-import gov.naco.soch.lab.dto.VLTestCountDetailsDto;
 import gov.naco.soch.projection.TestCountHeaderProjection;
 import gov.naco.soch.projection.TestCountProjection;
 import gov.naco.soch.repository.TestDetailsGraphRepository;
@@ -29,9 +26,9 @@ public class TestDetailsGraphService {
 		List<TestCountProjection> artBeneficiaryTestCountProjection = 
 				testDetailsGraphRepository.getVLTestCountDetails(beneficiaryId,facilityId);
 		if(artBeneficiaryTestCountProjection !=null && artBeneficiaryTestCountProjection.size()>0 ) {
-			List<VLTestCountDetailsDto> vlTestCountDetailsDtoList = new ArrayList<VLTestCountDetailsDto>();
+			List<TestDetailsBodyDto> vlTestCountDetailsDtoList = new ArrayList<TestDetailsBodyDto>();
 			for(TestCountProjection vlTestCount:artBeneficiaryTestCountProjection) {
-				VLTestCountDetailsDto vlTestCountDetailsDto = new VLTestCountDetailsDto();
+				TestDetailsBodyDto vlTestCountDetailsDto = new TestDetailsBodyDto();
 				vlTestCountDetailsDto.setYear(vlTestCount.getYear());
 				vlTestCountDetailsDto.setCount(vlTestCount.getValue());
 				vlTestCountDetailsDtoList.add(vlTestCountDetailsDto);
@@ -42,9 +39,9 @@ public class TestDetailsGraphService {
 		List<TestCountProjection> artBeneficiaryCDFourTestCountProjection =
 				testDetailsGraphRepository.getCDFourTestCountDetails(beneficiaryId,facilityId);
 		if(artBeneficiaryCDFourTestCountProjection !=null && artBeneficiaryCDFourTestCountProjection.size()>0 ) {
-			List<CDFourTestCountDetailsDto> cdFourTestCountDetailsDtoList = new ArrayList<CDFourTestCountDetailsDto>();
+			List<TestDetailsBodyDto> cdFourTestCountDetailsDtoList = new ArrayList<TestDetailsBodyDto>();
 			for(TestCountProjection vlTestCount:artBeneficiaryCDFourTestCountProjection) {
-				CDFourTestCountDetailsDto cdFourTestCountDetailsDto = new CDFourTestCountDetailsDto();
+				TestDetailsBodyDto cdFourTestCountDetailsDto = new TestDetailsBodyDto();
 				cdFourTestCountDetailsDto.setYear(vlTestCount.getYear());
 				cdFourTestCountDetailsDto.setCount(vlTestCount.getValue());
 				cdFourTestCountDetailsDtoList.add(cdFourTestCountDetailsDto);
@@ -56,17 +53,38 @@ public class TestDetailsGraphService {
 		List<TestCountProjection> adherenceTestCountProjection = 
 				testDetailsGraphRepository.getAdherenceCountDetails(beneficiaryId,facilityId);
 		if(artBeneficiaryTestCountProjection !=null && artBeneficiaryTestCountProjection.size()>0 ) {
-			List<AdherenceDetailsDto> adherenceDetailsDtoList = new ArrayList<AdherenceDetailsDto>();
+			List<TestDetailsBodyDto> adherenceDetailsDtoList = new ArrayList<TestDetailsBodyDto>();
 			for(TestCountProjection adherenceCount:adherenceTestCountProjection) {
-				AdherenceDetailsDto adherenceDetailsDto = new AdherenceDetailsDto();
+				TestDetailsBodyDto adherenceDetailsDto = new TestDetailsBodyDto();
 				adherenceDetailsDto.setYear(adherenceCount.getYear());
 				adherenceDetailsDto.setCount(adherenceCount.getValue());
 				adherenceDetailsDtoList.add(adherenceDetailsDto);
 			}
 			beneficiaryTestDetailsDto.setAdherenceDetails(adherenceDetailsDtoList);
 		}
-		TestCountHeaderProjection testResultHeaderObject = testDetailsGraphRepository.getGraphHeaderCounts(beneficiaryId,facilityId);
-		return beneficiaryTestDetailsDto;
+		
+		TestDetailsHeaderDto testResultHeaderObject = getHeaderDetails(beneficiaryId,facilityId);
+		
+		beneficiaryTestDetailsDto.setTestDetailsHeaderDto(testResultHeaderObject);
+	}
+
+	private TestDetailsHeaderDto getHeaderDetails(Long beneficiaryId, Long facilityId) {
+        
+		TestDetailsHeaderDto testDetailsHeaderDto = new TestDetailsHeaderDto();
+		Date artStartDate = testDetailsGraphRepository.getStartDate(beneficiaryId,facilityId);
+		testDetailsHeaderDto.setArtStartDate(artStartDate);
+		List<Date> currentAndpreviousDates = testDetailsGraphRepository.getDates(beneficiaryId,facilityId);
+		if(!currentAndpreviousDates.equals(null) && !currentAndpreviousDates.isEmpty()) {
+			if(currentAndpreviousDates.size() == 2) {
+				
+				int currentVlCount = testDetailsGraphRepository.getCurrentVlCount(beneficiaryId,facilityId,currentAndpreviousDates.get(0));
+				int previousVlCount = testDetailsGraphRepository.getCurrentVlCount(beneficiaryId,facilityId,currentAndpreviousDates.get(1));
+				testDetailsHeaderDto.setCurrentVlCount(currentVlCount);
+				
+			}
+		}
+		
+		return testDetailsHeaderDto;
 	}
 
 }

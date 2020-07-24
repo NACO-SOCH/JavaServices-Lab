@@ -1,6 +1,6 @@
 package gov.naco.soch.lab.dto;
 
-public class AdherenceDetailsDto {
+public class TestDetailsBodyDto {
 	
 	private String year;
 	
