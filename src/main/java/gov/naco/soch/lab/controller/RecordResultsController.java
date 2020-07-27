@@ -55,4 +55,5 @@ public class RecordResultsController {
 		logger.info("inside record results list by advance search");
 		return recordResultsService.getRecordResultsListByAdvanceSearch(labId,searchValue);
 	}
+	
 }
