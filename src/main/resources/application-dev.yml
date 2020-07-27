@@ -21,3 +21,4 @@ logging:
        org.hibernate: INFO
 mhl:
   auth_key: c2285c7c4cdaf31f8486b35f171c643c
+accessKey: $5gw@965

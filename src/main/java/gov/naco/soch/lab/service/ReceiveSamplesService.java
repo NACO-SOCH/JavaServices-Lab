@@ -148,7 +148,7 @@ public class ReceiveSamplesService {
 				labTestSampleBatch.getLabTestSamples().forEach(s -> {
 
 					Optional<LabTestSampleDto> sampleOpt = labTestSampleBatchDto.getLabTestSampleDtoList().stream()
-							.filter(ts -> ts.getSampleId() == s.getId()).findFirst();
+							.filter(ts -> ts.getSampleId().equals(s.getId())).findFirst();
 					if (sampleOpt.isPresent()) {
 						LabTestSampleDto sample = sampleOpt.get();
 						s.setLabTecnician(labTechUserOpt.get());
