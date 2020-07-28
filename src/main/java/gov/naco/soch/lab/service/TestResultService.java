@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -25,7 +24,9 @@ import gov.naco.soch.dto.LoginResponseDto;
 import gov.naco.soch.entity.Address;
 import gov.naco.soch.entity.Beneficiary;
 import gov.naco.soch.entity.BeneficiaryFamilyDetail;
+import gov.naco.soch.entity.BeneficiaryIctcStatusTracking;
 import gov.naco.soch.entity.Facility;
+import gov.naco.soch.entity.IctcBeneficiary;
 import gov.naco.soch.entity.IctcSampleCollection;
 import gov.naco.soch.entity.IctcTestResult;
 import gov.naco.soch.entity.LabTestSample;
@@ -43,7 +44,9 @@ import gov.naco.soch.lab.mapper.AdvanceSearchMapperUtil;
 import gov.naco.soch.lab.mapper.TestResultMapper;
 import gov.naco.soch.projection.IctcTestResultProjection;
 import gov.naco.soch.repository.BeneficiaryFamilyDetailRepository;
+import gov.naco.soch.repository.BeneficiaryIctcStatusTrackingRepository;
 import gov.naco.soch.repository.BeneficiaryRepository;
+import gov.naco.soch.repository.IctcBeneficiaryRepository;
 import gov.naco.soch.repository.IctcSampleCollectionRepository;
 import gov.naco.soch.repository.IctcTestResultRepository;
 import gov.naco.soch.repository.LabTestSampleBatchRepository;
@@ -93,6 +96,12 @@ public class TestResultService {
 
 	@Autowired
 	private BeneficiaryRepository beneficiaryRepository;
+	
+	@Autowired
+	private BeneficiaryIctcStatusTrackingRepository beneficiaryIctcStatusTrackingRepository;
+	
+	@Autowired
+	private IctcBeneficiaryRepository ictcBeneficiaryRepository;
 
 	public List<TestResultDto> fetchTestResultsList(Long labId) {
 
@@ -220,6 +229,7 @@ public class TestResultService {
 			// Change the status of batch
 			changeBatchStatus(batchIds);
 			updateIctc(labTestSampleList);
+			//updateIctcBeneficiaryAndStatusTracking(labTestSampleList);
 		}
 
 		return testResultDto;
@@ -602,4 +612,32 @@ public class TestResultService {
 		return testResultDto.stream().sorted(Comparator.comparing(TestResultDto::getBatchId).reversed())
 				.collect(Collectors.toList());
 	}
+	
+	private void updateIctcBeneficiaryAndStatusTracking(List<LabTestSample> labTestSampleList) {
+		List<BeneficiaryIctcStatusTracking> trackingList = TestResultMapper.updateIctcBeneficiaryAndStatusTracking(labTestSampleList);
+		if(trackingList != null) {
+			for(LabTestSample sample :labTestSampleList) {
+				trackingList.stream().forEach(s -> s.setPreviousIctcBeneficiaryStatusId(getPreviousStatus(sample.getBeneficiary().getId())));
+			}
+			
+			if (!CollectionUtils.isEmpty(trackingList)) {
+				beneficiaryIctcStatusTrackingRepository.saveAll(trackingList);
+				for(BeneficiaryIctcStatusTracking track:trackingList) {
+					ictcBeneficiaryRepository.updateBeneficiaryStatus(track.getCurrentIctcBeneficiaryStatusId(),track.getBeneficiaryId());
+				}
+			}
+		}
+
+	}
+	
+	private Integer getPreviousStatus(Long beneficiaryId) {
+		
+		Integer previousStatus = 0;
+		BeneficiaryIctcStatusTracking status = beneficiaryIctcStatusTrackingRepository.getPreviousStatus(beneficiaryId);
+		if(status != null) {
+			previousStatus = status.getCurrentIctcBeneficiaryStatusId();
+		}
+		return previousStatus;
+	}
+	
 }
