@@ -38,6 +38,7 @@ import gov.naco.soch.entity.MasterInfantBreastFeed;
 import gov.naco.soch.entity.MasterResultStatus;
 import gov.naco.soch.entity.MasterSampleStatus;
 import gov.naco.soch.entity.UserMaster;
+import gov.naco.soch.enums.FacilityTypeEnum;
 import gov.naco.soch.exception.ServiceException;
 import gov.naco.soch.lab.dto.TestResultDto;
 import gov.naco.soch.lab.mapper.AdvanceSearchMapperUtil;
@@ -229,7 +230,10 @@ public class TestResultService {
 			// Change the status of batch
 			changeBatchStatus(batchIds);
 			updateIctc(labTestSampleList);
-			//updateIctcBeneficiaryAndStatusTracking(labTestSampleList);
+			Long facilityType = UserUtils.getLoggedInUserDetails().getFacilityTypeId();
+			if(facilityType == FacilityTypeEnum.LABORATORY_EID.getFacilityType()) {
+				updateIctcBeneficiaryAndStatusTracking(labTestSampleList);
+			}
 		}
 
 		return testResultDto;
@@ -273,6 +277,7 @@ public class TestResultService {
 					.collect(Collectors.toList());
 
 			updateIctc(labTestSampleList);
+			updateIctcBeneficiaryAndStatusTracking(labTestSampleList);
 		}
 		return testResultDto;
 	}
@@ -613,8 +618,8 @@ public class TestResultService {
 				.collect(Collectors.toList());
 	}
 	
-	private void updateIctcBeneficiaryAndStatusTracking(List<LabTestSample> labTestSampleList) {
-		List<BeneficiaryIctcStatusTracking> trackingList = TestResultMapper.updateIctcBeneficiaryAndStatusTracking(labTestSampleList);
+	public void updateIctcBeneficiaryAndStatusTracking(List<LabTestSample> labTestSampleList) {
+		List<BeneficiaryIctcStatusTracking> trackingList = TestResultMapper.mappingStatuses(labTestSampleList);
 		if(trackingList != null) {
 			for(LabTestSample sample :labTestSampleList) {
 				trackingList.stream().forEach(s -> s.setPreviousIctcBeneficiaryStatusId(getPreviousStatus(sample.getBeneficiary().getId())));
@@ -630,8 +635,7 @@ public class TestResultService {
 
 	}
 	
-	private Integer getPreviousStatus(Long beneficiaryId) {
-		
+	public Integer getPreviousStatus(Long beneficiaryId) {
 		Integer previousStatus = 0;
 		BeneficiaryIctcStatusTracking status = beneficiaryIctcStatusTrackingRepository.getPreviousStatus(beneficiaryId);
 		if(status != null) {

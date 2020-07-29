@@ -99,6 +99,9 @@ public class RecordResultsService {
 
 	@Autowired
 	private BeneficiaryFamilyDetailRepository beneficiaryFamilyDetailRepository;
+	
+	@Autowired
+	private TestResultService testResultService;
 
 //	@Autowired
 //	private LabTestSampleBatchRepository labTestSampleBatchRepository;
@@ -199,6 +202,12 @@ public class RecordResultsService {
 
 			labTestSample = labTestSampleRepository.save(labTestSample);
 			updateIctc(labTestSample);
+			Long facilityType = UserUtils.getLoggedInUserDetails().getFacilityTypeId();
+			if(labTestSample.getIsError() == true && facilityType == FacilityTypeEnum.LABORATORY_EID.getFacilityType()) {
+				List<LabTestSample> sampleList = new ArrayList<LabTestSample>();
+				sampleList.add(labTestSample);
+				testResultService.updateIctcBeneficiaryAndStatusTracking(sampleList);
+			}
 			return TestResultMapper.mapToTestResultDto(labTestSample);
 		} else {
 			throw new ServiceException("SampleID not present", null, HttpStatus.BAD_REQUEST);
