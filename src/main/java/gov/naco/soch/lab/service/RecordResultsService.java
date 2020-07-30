@@ -203,7 +203,7 @@ public class RecordResultsService {
 			labTestSample = labTestSampleRepository.save(labTestSample);
 			
 			Long facilityType = UserUtils.getLoggedInUserDetails().getFacilityTypeId();
-			if(labTestSample.getIsError() == true && facilityType == FacilityTypeEnum.LABORATORY_EID.getFacilityType()) {
+			if(facilityType == FacilityTypeEnum.LABORATORY_EID.getFacilityType()) {
 				updateIctc(labTestSample);
 				List<LabTestSample> sampleList = new ArrayList<LabTestSample>();
 				sampleList.add(labTestSample);
