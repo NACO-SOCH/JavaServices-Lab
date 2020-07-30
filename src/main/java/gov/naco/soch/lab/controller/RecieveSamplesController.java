@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import gov.naco.soch.lab.dto.LabTestSampleBatchDto;
+import gov.naco.soch.lab.dto.TestResultDto;
 import gov.naco.soch.lab.service.ReceiveSamplesService;
 
 @RestController
@@ -46,5 +47,11 @@ public class RecieveSamplesController {
 	public List<LabTestSampleBatchDto> getReceiveSamplesListByAdvanceSearch(@PathVariable("labId") Long labId,@RequestParam Map<String, String> searchValue) {
 		logger.info("inside receive sample list by advance search");
 		return receiveSamplesService.getReceiveSamplesListByAdvanceSearch(labId,searchValue);
+	}
+	
+	@PostMapping("undodispatch/{batchId}")
+	public void undoDispatchedSample(@PathVariable("batchId") Long batchId) {
+		logger.debug("undoDispatchedSample is invoked!");
+		receiveSamplesService.undoDispatchedSample(batchId);
 	}
 }

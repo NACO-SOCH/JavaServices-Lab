@@ -25,6 +25,7 @@ import gov.naco.soch.entity.Address;
 import gov.naco.soch.entity.Beneficiary;
 import gov.naco.soch.entity.BeneficiaryFamilyDetail;
 import gov.naco.soch.entity.Facility;
+import gov.naco.soch.entity.IctcSampleBatch;
 import gov.naco.soch.entity.IctcSampleCollection;
 import gov.naco.soch.entity.LabTestSample;
 import gov.naco.soch.entity.LabTestSampleBatch;
@@ -41,6 +42,7 @@ import gov.naco.soch.lab.dto.LabTestSampleDto;
 import gov.naco.soch.lab.mapper.AdvanceSearchMapperUtil;
 import gov.naco.soch.lab.mapper.ReceiveSamplesServiceMapperUtil;
 import gov.naco.soch.repository.BeneficiaryFamilyDetailRepository;
+import gov.naco.soch.repository.IctcSampleBatchRepository;
 import gov.naco.soch.repository.IctcSampleCollectionRepository;
 import gov.naco.soch.repository.LabTestSampleBatchRepository;
 import gov.naco.soch.repository.LabTestSampleRepository;
@@ -94,6 +96,9 @@ public class ReceiveSamplesService {
 
 	@Autowired
 	private IctcSampleCollectionRepository ictcSampleCollectionRepository;
+
+	@Autowired
+	private IctcSampleBatchRepository ictcSampleBatchRepository;
 
 	@Autowired
 	private BeneficiaryFamilyDetailRepository beneficiaryFamilyDetailRepository;
@@ -323,10 +328,10 @@ public class ReceiveSamplesService {
 						String motherAddressString = (motherAddress.getAddressLineOne() != null
 								? motherAddress.getAddressLineOne()
 								: "")
-								+ (StringUtils.isEmpty(motherAddress.getAddressLineTwo()) ? "": ", " + motherAddress.getAddressLineTwo());
+								+ (StringUtils.isEmpty(motherAddress.getAddressLineTwo()) ? ""
+										: ", " + motherAddress.getAddressLineTwo());
 						s.setMotherAddress(motherAddressString);
 					}
-
 
 					if (ictcBenificiaryDetails.getVisit() != null) {
 						s.setFeedingType(
@@ -389,5 +394,61 @@ public class ReceiveSamplesService {
 		return labTestSampleBatchDtoList.stream()
 				.sorted(Comparator.comparing(LabTestSampleBatchDto::getBatchId).reversed())
 				.collect(Collectors.toList());
+	}
+
+	public void undoDispatchedSample(Long batchId) {
+
+		Optional<LabTestSampleBatch> labTestSampleBatchOpt = labTestSampleBatchRepository.findById(batchId);
+		if (labTestSampleBatchOpt.isPresent()) {
+
+			LabTestSampleBatch batch = labTestSampleBatchOpt.get();
+			List<LabTestSample> samples = labTestSampleRepository.findSamplesByBatchId(batch.getId());
+			if (!CollectionUtils.isEmpty(samples)) {
+				samples = samples.stream().map(s -> {
+					s.setLabTestSampleBatch(null);
+					s.setDispatchedToLab(null);
+					s.setSampleDispatchDate(null);
+					s.setMasterSampleStatus(null);
+					s.setArtcSampleStatus("Sample Collected");
+					return s;
+				}).collect(Collectors.toList());
+
+				labTestSampleRepository.saveAll(samples);
+			}
+			labTestSampleBatchRepository.delete(batch);
+
+			LoginResponseDto currentLoginDetils = UserUtils.getLoggedInUserDetails();
+			if (currentLoginDetils.getFacilityTypeId().equals(20L)) {
+				undoDispatchIctcSamples(samples);
+			}
+
+		} else {
+			throw new ServiceException("Invalid Batch Id", null, HttpStatus.BAD_REQUEST);
+		}
+	}
+
+	void undoDispatchIctcSamples(List<LabTestSample> samples) {
+
+		List<String> barcodes = samples.stream().map(s -> s.getBarcodeNumber()).collect(Collectors.toList());
+
+		List<IctcSampleCollection> ictcSamples = ictcSampleCollectionRepository.findBySampleBatchBarcodes(barcodes);
+		if (!CollectionUtils.isEmpty(ictcSamples)) {
+
+			Optional<IctcSampleBatch> batch = ictcSamples.stream().map(s -> s.getBatch()).distinct().findFirst();
+
+			if (!CollectionUtils.isEmpty(ictcSamples)) {
+				ictcSamples = ictcSamples.stream().map(s -> {
+					s.setBatch(null);
+					s.setSampleCollectionStatus(1L);
+					return s;
+				}).collect(Collectors.toList());
+
+				ictcSampleCollectionRepository.saveAll(ictcSamples);
+			}
+
+			if (batch.isPresent()) {
+				ictcSampleBatchRepository.delete(batch.get());
+			}
+		}
 	}
 }
