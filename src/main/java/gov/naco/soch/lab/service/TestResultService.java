@@ -229,9 +229,10 @@ public class TestResultService {
 					.collect(Collectors.toList());
 			// Change the status of batch
 			changeBatchStatus(batchIds);
-			updateIctc(labTestSampleList);
+			
 			Long facilityType = UserUtils.getLoggedInUserDetails().getFacilityTypeId();
 			if(facilityType == FacilityTypeEnum.LABORATORY_EID.getFacilityType()) {
+				updateIctc(labTestSampleList);
 				updateIctcBeneficiaryAndStatusTracking(labTestSampleList);
 			}
 		}
