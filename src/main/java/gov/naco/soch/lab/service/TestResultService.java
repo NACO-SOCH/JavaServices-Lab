@@ -620,19 +620,19 @@ public class TestResultService {
 	}
 	
 	public void updateIctcBeneficiaryAndStatusTracking(List<LabTestSample> labTestSampleList) {
-		List<BeneficiaryIctcStatusTracking> trackingList = TestResultMapper.mappingStatuses(labTestSampleList);
-		if(trackingList != null) {
-			for(LabTestSample sample :labTestSampleList) {
-				BeneficiaryIctcStatusTracking status = beneficiaryIctcStatusTrackingRepository.getPreviousStatus(sample.getBeneficiary().getId());
-				if(status != null) {
-					trackingList.stream().forEach(s -> s.setPreviousIctcBeneficiaryStatusId(status.getCurrentIctcBeneficiaryStatusId()));
-				}
-				
+		List<BeneficiaryIctcStatusTracking> trackingList = new ArrayList<BeneficiaryIctcStatusTracking>();
+		if (labTestSampleList != null) {
+			for (LabTestSample sample : labTestSampleList) {
+				BeneficiaryIctcStatusTracking status = beneficiaryIctcStatusTrackingRepository
+						.getPreviousStatus(sample.getBeneficiary().getId());
+				trackingList.add(TestResultMapper.mappingStatuses(sample, status.getCurrentIctcBeneficiaryStatusId()));
+
 			}
 			if (!CollectionUtils.isEmpty(trackingList)) {
 				beneficiaryIctcStatusTrackingRepository.saveAll(trackingList);
-				for(BeneficiaryIctcStatusTracking track:trackingList) {
-					ictcBeneficiaryRepository.updateBeneficiaryStatus(track.getCurrentIctcBeneficiaryStatusId(),track.getBeneficiaryId());
+				for (BeneficiaryIctcStatusTracking track : trackingList) {
+					ictcBeneficiaryRepository.updateBeneficiaryStatus(track.getCurrentIctcBeneficiaryStatusId(),
+							track.getBeneficiaryId());
 				}
 			}
 		}
