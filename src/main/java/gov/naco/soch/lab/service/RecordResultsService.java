@@ -137,11 +137,22 @@ public class RecordResultsService {
 //			labTestSampleList = labTestSampleList.stream().filter(checkResultStatus).collect(Collectors.toList());
 			testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 					.collect(Collectors.toList());
+			fetchVLTestCount(testResultDto);
 			fetchIctcInfantDetails(testResultDto);
 			findPreviousDBSDetails(testResultDto);
 		}
 		return testResultDto.stream().sorted(Comparator.comparing(TestResultDto::getBatchId).reversed())
 				.collect(Collectors.toList());
+	}
+
+	void fetchVLTestCount(List<TestResultDto> testResultDto) {
+		LoginResponseDto currentUser = UserUtils.getLoggedInUserDetails();
+		if (FacilityTypeEnum.VL_PUBLIC.getFacilityType().equals(currentUser.getFacilityTypeId())) {
+			testResultDto.forEach(s -> {
+				Long count = labTestSampleRepository.getVLTestCountOfBeneficiary(s.getBeneficiaryId());
+				s.setVlTestCount(count);
+			});
+		}
 	}
 
 	public TestResultDto saveRecordResult(Long sampleId, TestResultDto labTestSampleDto) {
@@ -510,6 +521,7 @@ public class RecordResultsService {
 //						.collect(Collectors.toList());
 				testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 						.collect(Collectors.toList());
+				fetchVLTestCount(testResultDto);
 				fetchIctcInfantDetails(testResultDto);
 				findPreviousDBSDetails(testResultDto);
 			}

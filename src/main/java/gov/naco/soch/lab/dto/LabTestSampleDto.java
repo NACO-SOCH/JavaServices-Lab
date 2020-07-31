@@ -77,6 +77,8 @@ public class LabTestSampleDto {
 	private String labSpecimenId;
 	private String feedingType;
 
+	private Long vlTestCount;
+
 	public LabTestSampleDto() {
 		super();
 	}
@@ -615,6 +617,14 @@ public class LabTestSampleDto {
 
 	public void setFeedingType(String feedingType) {
 		this.feedingType = feedingType;
+	}
+
+	public Long getVlTestCount() {
+		return vlTestCount;
+	}
+
+	public void setVlTestCount(Long vlTestCount) {
+		this.vlTestCount = vlTestCount;
 	}
 
 }

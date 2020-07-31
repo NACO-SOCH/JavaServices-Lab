@@ -87,6 +87,8 @@ public class TestResultDto {
 	private String labSpecimenId;
 	private String feedingType;
 
+	private Long vlTestCount;
+
 	public Long getBatchId() {
 		return batchId;
 	}
@@ -693,6 +695,14 @@ public class TestResultDto {
 
 	public void setFeedingType(String feedingType) {
 		this.feedingType = feedingType;
+	}
+
+	public Long getVlTestCount() {
+		return vlTestCount;
+	}
+
+	public void setVlTestCount(Long vlTestCount) {
+		this.vlTestCount = vlTestCount;
 	}
 
 }
