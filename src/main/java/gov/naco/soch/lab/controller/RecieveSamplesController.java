@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import gov.naco.soch.lab.dto.LabTestSampleBatchDto;
-import gov.naco.soch.lab.dto.TestResultDto;
 import gov.naco.soch.lab.service.ReceiveSamplesService;
 
 @RestController

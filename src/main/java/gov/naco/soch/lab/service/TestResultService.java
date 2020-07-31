@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
@@ -37,6 +36,7 @@ import gov.naco.soch.entity.MasterInfantBreastFeed;
 import gov.naco.soch.entity.MasterResultStatus;
 import gov.naco.soch.entity.MasterSampleStatus;
 import gov.naco.soch.entity.UserMaster;
+import gov.naco.soch.enums.FacilityTypeEnum;
 import gov.naco.soch.exception.ServiceException;
 import gov.naco.soch.lab.dto.TestResultDto;
 import gov.naco.soch.lab.mapper.AdvanceSearchMapperUtil;
@@ -132,11 +132,22 @@ public class TestResultService {
 //			labTestSampleList = labTestSampleList.stream().filter(checkResultStatus).collect(Collectors.toList());
 			testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 					.collect(Collectors.toList());
+			fetchVLTestCount(testResultDto);
 			fetchIctcInfantDetails(testResultDto);
 			findPreviousDBSDetails(testResultDto);
 		}
 		return testResultDto.stream().sorted(Comparator.comparing(TestResultDto::getBatchId).reversed())
 				.collect(Collectors.toList());
+	}
+
+	void fetchVLTestCount(List<TestResultDto> testResultDto) {
+		LoginResponseDto currentUser = UserUtils.getLoggedInUserDetails();
+		if (FacilityTypeEnum.VL_PUBLIC.getFacilityType().equals(currentUser.getFacilityTypeId())) {
+			testResultDto.forEach(s -> {
+				Long count = labTestSampleRepository.getVLTestCountOfBeneficiary(s.getBeneficiaryId());
+				s.setVlTestCount(count);
+			});
+		}
 	}
 
 	public List<TestResultDto> fetchTestResultsUnderApproval(Long labId) {
@@ -172,6 +183,7 @@ public class TestResultService {
 //					.collect(Collectors.toList());
 			testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 					.collect(Collectors.toList());
+			fetchVLTestCount(testResultDto);
 			fetchIctcInfantDetails(testResultDto);
 			findPreviousDBSDetails(testResultDto);
 		}
@@ -550,6 +562,7 @@ public class TestResultService {
 //						.collect(Collectors.toList());
 				testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 						.collect(Collectors.toList());
+				fetchVLTestCount(testResultDto);
 				fetchIctcInfantDetails(testResultDto);
 				findPreviousDBSDetails(testResultDto);
 			}
@@ -594,6 +607,7 @@ public class TestResultService {
 //						.collect(Collectors.toList());
 				testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 						.collect(Collectors.toList());
+				fetchVLTestCount(testResultDto);
 				fetchIctcInfantDetails(testResultDto);
 				findPreviousDBSDetails(testResultDto);
 			}

@@ -32,7 +32,7 @@ public class LabServiceApplication extends SpringBootServletInitializer {
 	 * @param args the command line arguments.
 	 */
 	public static void main(String[] args) {
-		SpringApplication.run(LabServiceApplication.class, args);
+		SpringApplication.run(LabServiceApplication.class);
 	}
 
 	@PostConstruct
