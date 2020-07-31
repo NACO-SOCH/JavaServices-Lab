@@ -50,8 +50,10 @@ public class ReceiveSamplesServiceMapperUtil {
 			Address labAddress = labTestSampleBatch.getLab().getAddress();
 			String labAddressString = (labAddress.getAddressLineOne() != null ? labAddress.getAddressLineOne() : "")
 					+ (labAddress.getAddressLineTwo() != null ? ", " + labAddress.getAddressLineTwo() : "");
-
-			labTestSampleBatchDto.setLabAddress(labAddressString);
+			
+			if (!labAddressString.equals(", ")) {
+				labTestSampleBatchDto.setLabAddress(labAddressString);
+			}
 			labTestSampleBatchDto.setLabCode(labTestSampleBatch.getLab().getCode());
 		}
 		if (labTestSampleBatch.getArtcLabTechUser() != null) {
