@@ -36,6 +36,7 @@ import gov.naco.soch.entity.MasterResultStatus;
 import gov.naco.soch.entity.MasterSampleStatus;
 import gov.naco.soch.entity.Test;
 import gov.naco.soch.entity.UserMaster;
+import gov.naco.soch.enums.FacilityTypeEnum;
 import gov.naco.soch.exception.ServiceException;
 import gov.naco.soch.lab.dto.LabTestSampleBatchDto;
 import gov.naco.soch.lab.dto.LabTestSampleDto;
@@ -119,12 +120,25 @@ public class ReceiveSamplesService {
 						.mapToLabTestSampleBatchDto(l);
 				labTestSampleBatchDtoList.add(labTestSampleBatchDto);
 			});
+			fetchVLTestCount(labTestSampleBatchDtoList);
 			fetchIctcInfantDetails(labTestSampleBatchDtoList);
 			findPreviousDBSDetails(labTestSampleBatchDtoList);
 		}
 		return labTestSampleBatchDtoList.stream()
 				.sorted(Comparator.comparing(LabTestSampleBatchDto::getBatchId).reversed())
 				.collect(Collectors.toList());
+	}
+
+	void fetchVLTestCount(List<LabTestSampleBatchDto> labTestSampleBatchDtoList) {
+		LoginResponseDto currentUser = UserUtils.getLoggedInUserDetails();
+		if (FacilityTypeEnum.VL_PUBLIC.getFacilityType().equals(currentUser.getFacilityTypeId())) {
+			labTestSampleBatchDtoList.forEach(b -> {
+				b.getLabTestSampleDtoList().forEach(s -> {
+					Long count = labTestSampleRepository.getVLTestCountOfBeneficiary(s.getBeneficiaryId());
+					s.setVlTestCount(count);
+				});
+			});
+		}
 	}
 
 	public LabTestSampleBatchDto saveReceivedSamples(Long batchId, LabTestSampleBatchDto labTestSampleBatchDto) {
@@ -387,6 +401,7 @@ public class ReceiveSamplesService {
 							.mapToLabTestSampleBatchDto(l);
 					labTestSampleBatchDtoList.add(labTestSampleBatchDto);
 				});
+				fetchVLTestCount(labTestSampleBatchDtoList);
 				fetchIctcInfantDetails(labTestSampleBatchDtoList);
 				findPreviousDBSDetails(labTestSampleBatchDtoList);
 			}
