@@ -5,14 +5,14 @@ import java.util.List;
 public class BeneficiaryTestDetailsDto {
 	
 	private TestDetailsHeaderDto testDetailsHeaderDto;
-	private List<TestDetailsBodyDto> adherenceDetails;
 	private List<TestDetailsBodyDto> cdfourTestCountDetails;
 	private List<TestDetailsBodyDto> vlTestCountDetails;
+	private List<TestDetailsAdheranceDto> adherenceDetails;
 	
-	public List<TestDetailsBodyDto> getAdherenceDetails() {
+	public List<TestDetailsAdheranceDto> getAdherenceDetails() {
 		return adherenceDetails;
 	}
-	public void setAdherenceDetails(List<TestDetailsBodyDto> adherenceDetails) {
+	public void setAdherenceDetails(List<TestDetailsAdheranceDto> adherenceDetails) {
 		this.adherenceDetails = adherenceDetails;
 	}
 	public List<TestDetailsBodyDto> getCdfourTestCountDetails() {
@@ -33,6 +33,4 @@ public class BeneficiaryTestDetailsDto {
 	public void setTestDetailsHeaderDto(TestDetailsHeaderDto testDetailsHeaderDto) {
 		this.testDetailsHeaderDto = testDetailsHeaderDto;
 	}
-	
-
 }

@@ -5,8 +5,8 @@ import java.util.Date;
 public class TestDetailsHeaderDto {
 	
 	private Date artStartDate;
-	private int currentVlCount;
-	private int previousVlCount;
+	private TestDetailsBodyDto currentVlCount;
+	private String changePercent;
 	
 	public Date getArtStartDate() {
 		return artStartDate;
@@ -14,17 +14,17 @@ public class TestDetailsHeaderDto {
 	public void setArtStartDate(Date artStartDate) {
 		this.artStartDate = artStartDate;
 	}
-	public int getCurrentVlCount() {
+	public TestDetailsBodyDto getCurrentVlCount() {
 		return currentVlCount;
 	}
-	public void setCurrentVlCount(int currentVlCount) {
+	public void setCurrentVlCount(TestDetailsBodyDto currentVlCount) {
 		this.currentVlCount = currentVlCount;
 	}
-	public int getPreviousVlCount() {
-		return previousVlCount;
+	public String getChangePercent() {
+		return changePercent;
 	}
-	public void setPreviousVlCount(int previousVlCount) {
-		this.previousVlCount = previousVlCount;
+	public void setChangePercent(String changePercent) {
+		this.changePercent = changePercent;
 	}
 	
 	

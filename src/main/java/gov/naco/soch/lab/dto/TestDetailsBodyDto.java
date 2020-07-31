@@ -1,26 +1,37 @@
 package gov.naco.soch.lab.dto;
 
+import java.util.Date;
+
 public class TestDetailsBodyDto {
 	
-	private String year;
+	private int resultId;
+	private String resultType;
+	private String resultValue;
+	private Date resultDate;
+	public int getResultId() {
+		return resultId;
+	}
+	public void setResultId(int resultId) {
+		this.resultId = resultId;
+	}
+	public String getResultType() {
+		return resultType;
+	}
+	public void setResultType(String resultType) {
+		this.resultType = resultType;
+	}
+	public String getResultValue() {
+		return resultValue;
+	}
+	public void setResultValue(String resultValue) {
+		this.resultValue = resultValue;
+	}
+	public Date getResultDate() {
+		return resultDate;
+	}
+	public void setResultDate(Date resultDate) {
+		this.resultDate = resultDate;
+	}
+
 	
-	private int count;
-
-	public String getYear() {
-		return year;
-	}
-
-	public void setYear(String year) {
-		this.year = year;
-	}
-
-	public int getCount() {
-		return count;
-	}
-
-	public void setCount(int count) {
-		this.count = count;
-	}
-	
-
 }
