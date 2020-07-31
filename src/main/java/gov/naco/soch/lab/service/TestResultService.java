@@ -25,6 +25,7 @@ import gov.naco.soch.entity.Address;
 import gov.naco.soch.entity.Beneficiary;
 import gov.naco.soch.entity.BeneficiaryFamilyDetail;
 import gov.naco.soch.entity.Facility;
+import gov.naco.soch.entity.IctcSampleBatch;
 import gov.naco.soch.entity.IctcSampleCollection;
 import gov.naco.soch.entity.IctcTestResult;
 import gov.naco.soch.entity.LabTestSample;
@@ -44,6 +45,7 @@ import gov.naco.soch.lab.mapper.TestResultMapper;
 import gov.naco.soch.projection.IctcTestResultProjection;
 import gov.naco.soch.repository.BeneficiaryFamilyDetailRepository;
 import gov.naco.soch.repository.BeneficiaryRepository;
+import gov.naco.soch.repository.IctcSampleBatchRepository;
 import gov.naco.soch.repository.IctcSampleCollectionRepository;
 import gov.naco.soch.repository.IctcTestResultRepository;
 import gov.naco.soch.repository.LabTestSampleBatchRepository;
@@ -93,6 +95,9 @@ public class TestResultService {
 
 	@Autowired
 	private BeneficiaryRepository beneficiaryRepository;
+	
+	@Autowired
+	private IctcSampleBatchRepository ictcSampleBatchRepository;
 
 	public List<TestResultDto> fetchTestResultsList(Long labId) {
 
@@ -311,6 +316,39 @@ public class TestResultService {
 			labTestSampleBatchRepository.saveAll(labTestSampleBatchList);
 		}
 	}
+	
+	private void changeBatchStatusICTC(List<Long> batchIds) {
+
+		batchIds = batchIds.stream().distinct().collect(Collectors.toList());
+
+		MasterBatchStatus masterBatchStatus = masterBatchStatusRepository.findByStatusAndIsDelete("RESULT POSTED",
+				Boolean.FALSE);
+
+		List<IctcSampleBatch> labTestSampleBatchList = ictcSampleBatchRepository.findAllById(batchIds);
+		if (!CollectionUtils.isEmpty(labTestSampleBatchList)) {
+
+			labTestSampleBatchList.stream().forEach(b -> {
+
+				Boolean accepted = Boolean.FALSE;
+				int acceptCount = 0;
+				if (!CollectionUtils.isEmpty(b.getSampleCollection())) {
+					for (IctcSampleCollection s : b.getSampleCollection()) {
+						if (s.getIctcTestResult().get(0).getResultStatus().equals(3L)) {
+							acceptCount++;
+						}
+					}
+					if (acceptCount == b.getSampleCollection().size()) {
+						accepted = Boolean.TRUE;
+					}
+				}
+				if (accepted) {
+					b.setBatchStatus(5L);
+				}
+			});
+
+			ictcSampleBatchRepository.saveAll(labTestSampleBatchList);
+		}
+	}
 
 	private void updateIctc(List<LabTestSample> labTestSampleList) {
 
@@ -410,6 +448,10 @@ public class TestResultService {
 				if (!CollectionUtils.isEmpty(updateBeneficiaryList)) {
 					beneficiaryRepository.saveAll(updateBeneficiaryList);
 				}
+				
+				List<Long> batchIds = samples.stream().map(s -> s.getBatch().getId())
+						.collect(Collectors.toList());
+				changeBatchStatusICTC(batchIds);
 			}
 
 		}
