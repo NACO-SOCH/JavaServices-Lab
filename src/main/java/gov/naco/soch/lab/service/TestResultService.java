@@ -293,9 +293,12 @@ public class TestResultService {
 
 			testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 					.collect(Collectors.toList());
-
-			updateIctc(labTestSampleList);
-			updateIctcBeneficiaryAndStatusTracking(labTestSampleList);
+			
+			Long facilityType = UserUtils.getLoggedInUserDetails().getFacilityTypeId();
+			if(facilityType == FacilityTypeEnum.LABORATORY_EID.getFacilityType()) {
+				updateIctc(labTestSampleList);
+				updateIctcBeneficiaryAndStatusTracking(labTestSampleList);
+			}	
 		}
 		return testResultDto;
 	}
