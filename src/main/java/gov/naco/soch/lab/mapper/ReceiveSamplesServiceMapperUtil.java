@@ -95,9 +95,7 @@ public class ReceiveSamplesServiceMapperUtil {
 
 		if (s.getBeneficiary().getGenderId() != null) {
 			labTestSampleDto.setBeneficiaryGender(s.getBeneficiary().getGenderId().getName());
-		} else {
-			labTestSampleDto.setBeneficiaryGender(s.getBeneficiary().getGender());
-		}
+		} 
 
 		if (!CollectionUtils.isEmpty(s.getBeneficiary().getArtBeneficiary())) {
 			if (s.getBeneficiary().getArtBeneficiary().iterator().hasNext()) {

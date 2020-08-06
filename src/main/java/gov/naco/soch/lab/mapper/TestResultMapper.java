@@ -70,9 +70,7 @@ public class TestResultMapper {
 
 		if (labTestSample.getBeneficiary().getGenderId() != null) {
 			vlTestResultDto.setBeneficiaryGender(labTestSample.getBeneficiary().getGenderId().getName());
-		} else {
-			vlTestResultDto.setBeneficiaryGender(labTestSample.getBeneficiary().getGender());
-		}
+		} 
 
 		vlTestResultDto.setArtNumber(labTestSample.getBeneficiary().getArtNumber());
 		vlTestResultDto.setPreArtNumber(labTestSample.getBeneficiary().getPreArtNumber());
