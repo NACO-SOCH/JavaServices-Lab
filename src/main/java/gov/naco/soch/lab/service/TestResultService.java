@@ -27,7 +27,6 @@ import gov.naco.soch.entity.BeneficiaryFamilyDetail;
 import gov.naco.soch.entity.BeneficiaryIctcStatusTracking;
 import gov.naco.soch.entity.Facility;
 import gov.naco.soch.entity.IctcSampleBatch;
-import gov.naco.soch.entity.IctcBeneficiary;
 import gov.naco.soch.entity.IctcSampleCollection;
 import gov.naco.soch.entity.IctcTestResult;
 import gov.naco.soch.entity.LabTestSample;
@@ -48,8 +47,8 @@ import gov.naco.soch.projection.IctcTestResultProjection;
 import gov.naco.soch.repository.BeneficiaryFamilyDetailRepository;
 import gov.naco.soch.repository.BeneficiaryIctcStatusTrackingRepository;
 import gov.naco.soch.repository.BeneficiaryRepository;
-import gov.naco.soch.repository.IctcSampleBatchRepository;
 import gov.naco.soch.repository.IctcBeneficiaryRepository;
+import gov.naco.soch.repository.IctcSampleBatchRepository;
 import gov.naco.soch.repository.IctcSampleCollectionRepository;
 import gov.naco.soch.repository.IctcTestResultRepository;
 import gov.naco.soch.repository.LabTestSampleBatchRepository;
@@ -99,13 +98,13 @@ public class TestResultService {
 
 	@Autowired
 	private BeneficiaryRepository beneficiaryRepository;
-	
+
 	@Autowired
 	private IctcSampleBatchRepository ictcSampleBatchRepository;
-	
+
 	@Autowired
 	private BeneficiaryIctcStatusTrackingRepository beneficiaryIctcStatusTrackingRepository;
-	
+
 	@Autowired
 	private IctcBeneficiaryRepository ictcBeneficiaryRepository;
 
@@ -246,9 +245,9 @@ public class TestResultService {
 					.collect(Collectors.toList());
 			// Change the status of batch
 			changeBatchStatus(batchIds);
-			
+
 			Long facilityType = UserUtils.getLoggedInUserDetails().getFacilityTypeId();
-			if(facilityType == FacilityTypeEnum.LABORATORY_EID.getFacilityType()) {
+			if (facilityType == FacilityTypeEnum.LABORATORY_EID.getFacilityType()) {
 				updateIctc(labTestSampleList);
 				updateIctcBeneficiaryAndStatusTracking(labTestSampleList);
 			}
@@ -293,12 +292,12 @@ public class TestResultService {
 
 			testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 					.collect(Collectors.toList());
-			
+
 			Long facilityType = UserUtils.getLoggedInUserDetails().getFacilityTypeId();
-			if(facilityType == FacilityTypeEnum.LABORATORY_EID.getFacilityType()) {
+			if (facilityType == FacilityTypeEnum.LABORATORY_EID.getFacilityType()) {
 				updateIctc(labTestSampleList);
 				updateIctcBeneficiaryAndStatusTracking(labTestSampleList);
-			}	
+			}
 		}
 		return testResultDto;
 	}
@@ -335,7 +334,7 @@ public class TestResultService {
 			labTestSampleBatchRepository.saveAll(labTestSampleBatchList);
 		}
 	}
-	
+
 	private void changeBatchStatusICTC(List<Long> batchIds) {
 
 		batchIds = batchIds.stream().distinct().collect(Collectors.toList());
@@ -429,21 +428,24 @@ public class TestResultService {
 							&& (ictcTestResult.getSample().getTestType() == 5L
 									|| ictcTestResult.getSample().getTestType() == 6L
 									|| ictcTestResult.getSample().getTestType() == 7L)
-							&& ((ictcTestResult.getHivStatus() != null) && (ictcTestResult.getHivStatus() == 1L))) {
+							&& ((ictcTestResult.getHivStatus() != null) && (ictcTestResult.getHivStatus() == 1L))
+							&& (ictcTestResult.getResultStatus() != 5L)) {
 						Beneficiary beneficiary = updateBenficiaryHIVStatus(ictcTestResult);
 						updateBeneficiaryList.add(beneficiary);
 					} else if ((ictcTestResult.getSample() != null)
 							&& (ictcTestResult.getSample().getTestType() == 8L
 									|| ictcTestResult.getSample().getTestType() == 9L
 									|| ictcTestResult.getSample().getTestType() == 10L)
-							&& ((ictcTestResult.getHivStatus() != null) && (ictcTestResult.getHivStatus() == 2L))) {
+							&& ((ictcTestResult.getHivStatus() != null) && (ictcTestResult.getHivStatus() == 2L))
+							&& (ictcTestResult.getResultStatus() != 5L)) {
 						Beneficiary beneficiary = updateBenficiaryHIVStatus(ictcTestResult);
 						updateBeneficiaryList.add(beneficiary);
 					} else if ((ictcTestResult.getSample() != null)
 							&& (ictcTestResult.getSample().getTestType() == 8L
 									|| ictcTestResult.getSample().getTestType() == 9L
 									|| ictcTestResult.getSample().getTestType() == 10L)
-							&& ((ictcTestResult.getHivStatus() != null) && (ictcTestResult.getHivStatus() == 1L))) {
+							&& ((ictcTestResult.getHivStatus() != null) && (ictcTestResult.getHivStatus() == 1L))
+							&& (ictcTestResult.getResultStatus() != 5L)) {
 
 						List<IctcTestResultProjection> previousTests = ictcTestResultRepository
 								.findAllCDBSTestByIctcBenficiaryId(ictcTestResult.getIctcBeneficiary().getId());
@@ -467,9 +469,8 @@ public class TestResultService {
 				if (!CollectionUtils.isEmpty(updateBeneficiaryList)) {
 					beneficiaryRepository.saveAll(updateBeneficiaryList);
 				}
-				
-				List<Long> batchIds = samples.stream().map(s -> s.getBatch().getId())
-						.collect(Collectors.toList());
+
+				List<Long> batchIds = samples.stream().map(s -> s.getBatch().getId()).collect(Collectors.toList());
 				changeBatchStatusICTC(batchIds);
 			}
 
@@ -677,7 +678,7 @@ public class TestResultService {
 		return testResultDto.stream().sorted(Comparator.comparing(TestResultDto::getBatchId).reversed())
 				.collect(Collectors.toList());
 	}
-	
+
 	public void updateIctcBeneficiaryAndStatusTracking(List<LabTestSample> labTestSampleList) {
 		List<BeneficiaryIctcStatusTracking> trackingList = new ArrayList<BeneficiaryIctcStatusTracking>();
 		if (labTestSampleList != null) {
@@ -696,5 +697,5 @@ public class TestResultService {
 			}
 		}
 	}
-	
+
 }
