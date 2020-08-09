@@ -1,0 +1,21 @@
+spring:
+   jpa:
+      database-platform: org.hibernate.dialect.PostgreSQLDialect
+      database: POSTGRESQL
+      generate-ddl: false
+      open-in-view: false
+      show-sql: true
+      hibernate:
+         ddl-auto: none
+         use-new-id-generator-mappings: false
+   datasource:
+       dataSourceClassName: org.postgresql.Driver
+       url: jdbc:postgresql://10.247.185.11:5432/soch_stag_app_db?currentSchema=soch
+       username: soch_stag_app_user
+       password: S0chApP2020
+logging:
+   level:
+       root: INFO
+       org.springframework: INFO
+       com.naco.soch: INFO
+       org.hibernate: INFO
