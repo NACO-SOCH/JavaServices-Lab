@@ -1,1 +1,1 @@
-mvn clean install -P dev
+mvn clean install -P staging
