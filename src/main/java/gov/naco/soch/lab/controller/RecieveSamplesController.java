@@ -51,7 +51,7 @@ public class RecieveSamplesController {
 	}
 
 	@GetMapping("advance/search/{labId}")
-	public List<LabTestSampleBatchDto> getReceiveSamplesListByAdvanceSearch(@PathVariable("labId") Long labId,
+	public ReceiceSamplesResponseDto getReceiveSamplesListByAdvanceSearch(@PathVariable("labId") Long labId,
 			@RequestParam Map<String, String> searchValue) {
 		logger.info("inside receive sample list by advance search");
 		return receiveSamplesService.getReceiveSamplesListByAdvanceSearch(labId, searchValue);

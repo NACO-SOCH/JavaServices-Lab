@@ -449,8 +449,8 @@ public class ReceiveSamplesService {
 		}
 	}
 
-	public List<LabTestSampleBatchDto> getReceiveSamplesListByAdvanceSearch(Long labId,
-			Map<String, String> searchValue) {
+	public ReceiceSamplesResponseDto getReceiveSamplesListByAdvanceSearch(Long labId, Map<String, String> searchValue) {
+		ReceiceSamplesResponseDto dto = new ReceiceSamplesResponseDto();
 		List<LabTestSampleBatchDto> labTestSampleBatchDtoList = new ArrayList<>();
 		List<String> searchQuery = AdvanceSearchMapperUtil.queryCreaterForAdvanceSearchReceiveSampleList(labId,
 				searchValue);
@@ -459,19 +459,24 @@ public class ReceiveSamplesService {
 					.getReceiveSamplesListByAdvanceSearch(searchQuery.get(0));
 			if (!CollectionUtils.isEmpty(labTestSampleBatchList)) {
 
-				labTestSampleBatchList.forEach(l -> {
+				for (LabTestSampleBatch l : labTestSampleBatchList) {
 					LabTestSampleBatchDto labTestSampleBatchDto = ReceiveSamplesServiceMapperUtil
 							.mapToLabTestSampleBatchDto(l);
 					labTestSampleBatchDtoList.add(labTestSampleBatchDto);
-				});
-				fetchVLTestCount(labTestSampleBatchDtoList);
-				fetchIctcInfantDetails(labTestSampleBatchDtoList);
-				findPreviousDBSDetails(labTestSampleBatchDtoList);
+				}
+
+				labTestSampleBatchDtoList = labTestSampleBatchDtoList.stream()
+						.sorted(Comparator.comparing(LabTestSampleBatchDto::getBatchId).reversed())
+						.collect(Collectors.toList());
+
+				dto.setBatches(labTestSampleBatchDtoList);
+				dto.setTotalCount((long) labTestSampleBatchDtoList.size());
+//				fetchVLTestCount(labTestSampleBatchDtoList);
+//				fetchIctcInfantDetails(labTestSampleBatchDtoList);
+//				findPreviousDBSDetails(labTestSampleBatchDtoList);
 			}
 		}
-		return labTestSampleBatchDtoList.stream()
-				.sorted(Comparator.comparing(LabTestSampleBatchDto::getBatchId).reversed())
-				.collect(Collectors.toList());
+		return dto;
 	}
 
 	public void undoDispatchedSample(Long batchId) {
