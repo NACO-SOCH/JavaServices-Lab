@@ -15,6 +15,9 @@ import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -40,9 +43,13 @@ import gov.naco.soch.enums.FacilityTypeEnum;
 import gov.naco.soch.exception.ServiceException;
 import gov.naco.soch.lab.dto.LabTestSampleBatchDto;
 import gov.naco.soch.lab.dto.LabTestSampleDto;
+import gov.naco.soch.lab.dto.ReceiceSamplesResponseDto;
 import gov.naco.soch.lab.mapper.AdvanceSearchMapperUtil;
 import gov.naco.soch.lab.mapper.ReceiveSamplesServiceMapperUtil;
+import gov.naco.soch.projection.FacilityProjection;
+import gov.naco.soch.projection.LabTestReceiveBatchProjection;
 import gov.naco.soch.repository.BeneficiaryFamilyDetailRepository;
+import gov.naco.soch.repository.FacilityRepository;
 import gov.naco.soch.repository.IctcSampleBatchRepository;
 import gov.naco.soch.repository.IctcSampleCollectionRepository;
 import gov.naco.soch.repository.LabTestSampleBatchRepository;
@@ -104,29 +111,85 @@ public class ReceiveSamplesService {
 	@Autowired
 	private BeneficiaryFamilyDetailRepository beneficiaryFamilyDetailRepository;
 
+	@Autowired
+	private FacilityRepository facilityRepository;
+
 	private static final Logger logger = LoggerFactory.getLogger(ReceiveSamplesService.class);
 
-	public List<LabTestSampleBatchDto> fetchReceiveSamplesList(Long labId) {
+//	public List<LabTestSampleBatchDto> fetchReceiveSamplesList(Long labId) {
+//		logger.debug("In fetchReceiveSamplesList() of RecieveSamplesService");
+//
+//		List<LabTestSampleBatchDto> labTestSampleBatchDtoList = new ArrayList<>();
+//
+//		List<LabTestSampleBatch> labTestSampleBatchList = labTestSampleBatchRepository.findByLabIdAndIsDelete(labId,
+//				Boolean.FALSE);
+//		if (!CollectionUtils.isEmpty(labTestSampleBatchList)) {
+//
+//			labTestSampleBatchList.forEach(l -> {
+//				LabTestSampleBatchDto labTestSampleBatchDto = ReceiveSamplesServiceMapperUtil
+//						.mapToLabTestSampleBatchDto(l);
+//				labTestSampleBatchDtoList.add(labTestSampleBatchDto);
+//			});
+//			fetchVLTestCount(labTestSampleBatchDtoList);
+//			fetchIctcInfantDetails(labTestSampleBatchDtoList);	
+//			findPreviousDBSDetails(labTestSampleBatchDtoList);
+//		}
+//		return labTestSampleBatchDtoList.stream()
+//				.sorted(Comparator.comparing(LabTestSampleBatchDto::getBatchId).reversed())
+//				.collect(Collectors.toList());
+//	}
+
+	public ReceiceSamplesResponseDto fetchReceiveSamplesList(Long labId, Integer pageNo, Integer pageSize) {
 		logger.debug("In fetchReceiveSamplesList() of RecieveSamplesService");
 
-		List<LabTestSampleBatchDto> labTestSampleBatchDtoList = new ArrayList<>();
+		ReceiceSamplesResponseDto dto = new ReceiceSamplesResponseDto();
 
-		List<LabTestSampleBatch> labTestSampleBatchList = labTestSampleBatchRepository.findByLabIdAndIsDelete(labId,
-				Boolean.FALSE);
-		if (!CollectionUtils.isEmpty(labTestSampleBatchList)) {
+		Pageable paging = PageRequest.of(pageNo, pageSize);
 
-			labTestSampleBatchList.forEach(l -> {
+		Page<LabTestReceiveBatchProjection> labTestSampleBatchList = labTestSampleBatchRepository
+				.findTestBatchesByLabId(labId, paging);
+
+		if (labTestSampleBatchList.hasContent()) {
+
+			List<LabTestSampleBatchDto> labTestSampleBatchDtoList = new ArrayList<>();
+
+			List<Long> batchIds = labTestSampleBatchList.stream().map(l -> l.getBatchId()).collect(Collectors.toList());
+
+			List<LabTestReceiveBatchProjection> labTestSampleList = labTestSampleBatchRepository
+					.findTestSamplesInBatches(batchIds);
+			Map<Long, List<LabTestReceiveBatchProjection>> labTestSampleMap = labTestSampleList.stream()
+					.collect(Collectors.groupingBy(LabTestReceiveBatchProjection::getBatchId));
+
+			for (LabTestReceiveBatchProjection b : labTestSampleBatchList) {
 				LabTestSampleBatchDto labTestSampleBatchDto = ReceiveSamplesServiceMapperUtil
-						.mapToLabTestSampleBatchDto(l);
+						.mapBatchProjectionToLabTestSampleBatchDto(b, labTestSampleMap.get(b.getBatchId()));
 				labTestSampleBatchDtoList.add(labTestSampleBatchDto);
+			}
+
+			List<MasterBatchStatus> batchStatus = masterBatchStatusRepository.findByIsDelete(false);
+			Map<Long, String> batchStatusMap = batchStatus.stream()
+					.collect(Collectors.toMap(MasterBatchStatus::getId, MasterBatchStatus::getStatus));
+
+			List<Long> facilityIds = labTestSampleBatchDtoList.stream().map(l -> l.getArtcId())
+					.collect(Collectors.toList());
+			List<FacilityProjection> facilityDetails = facilityRepository.findFacilityNameByIds(facilityIds);
+			Map<Long, String> facilityDetailsMap = facilityDetails.stream()
+					.collect(Collectors.toMap(FacilityProjection::getId, FacilityProjection::getName));
+
+			labTestSampleBatchDtoList.forEach(b -> {
+				b.setBatchStatus(batchStatusMap.get(b.getBatchStatusId()));
+				b.setArtcName(facilityDetailsMap.get(b.getArtcId()));
 			});
-			fetchVLTestCount(labTestSampleBatchDtoList);
-			fetchIctcInfantDetails(labTestSampleBatchDtoList);
-			findPreviousDBSDetails(labTestSampleBatchDtoList);
+
+			labTestSampleBatchDtoList = labTestSampleBatchDtoList.stream()
+					.sorted(Comparator.comparing(LabTestSampleBatchDto::getBatchId).reversed())
+					.collect(Collectors.toList());
+			dto.setBatches(labTestSampleBatchDtoList);
+			dto.setTotalCount(labTestSampleBatchList.getTotalElements());
 		}
-		return labTestSampleBatchDtoList.stream()
-				.sorted(Comparator.comparing(LabTestSampleBatchDto::getBatchId).reversed())
-				.collect(Collectors.toList());
+		dto.setCurrentCount(pageSize);
+		dto.setPageNumber(pageNo);
+		return dto;
 	}
 
 	void fetchVLTestCount(List<LabTestSampleBatchDto> labTestSampleBatchDtoList) {
@@ -464,6 +527,31 @@ public class ReceiveSamplesService {
 			if (batch.isPresent()) {
 				ictcSampleBatchRepository.delete(batch.get());
 			}
+		}
+	}
+
+	public LabTestSampleBatchDto fetchReceiveSamplesByBatchId(Long batchId) {
+		logger.debug("In fetchReceiveSamplesList() of RecieveSamplesService");
+
+		LabTestSampleBatchDto labTestSampleBatchDto = new LabTestSampleBatchDto();
+
+		Optional<LabTestSampleBatch> labTestSampleBatchOpt = labTestSampleBatchRepository.findById(batchId);
+
+		if (labTestSampleBatchOpt.isPresent()) {
+
+			labTestSampleBatchDto = ReceiveSamplesServiceMapperUtil
+					.mapToLabTestSampleBatchDto(labTestSampleBatchOpt.get());
+
+			List<LabTestSampleBatchDto> labTestSampleBatchDtoList = new ArrayList<>();
+			labTestSampleBatchDtoList.add(labTestSampleBatchDto);
+
+			fetchVLTestCount(labTestSampleBatchDtoList);
+			fetchIctcInfantDetails(labTestSampleBatchDtoList);
+			findPreviousDBSDetails(labTestSampleBatchDtoList);
+
+			return labTestSampleBatchDto;
+		} else {
+			throw new ServiceException("Invalid Batch Id", null, HttpStatus.BAD_REQUEST);
 		}
 	}
 }

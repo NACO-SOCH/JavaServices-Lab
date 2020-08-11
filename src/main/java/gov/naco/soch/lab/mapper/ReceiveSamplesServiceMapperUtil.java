@@ -12,6 +12,7 @@ import gov.naco.soch.entity.LabTestSampleBatch;
 import gov.naco.soch.lab.dto.LabTestSampleBatchDto;
 import gov.naco.soch.lab.dto.LabTestSampleDto;
 import gov.naco.soch.lab.util.LabServiceUtil;
+import gov.naco.soch.projection.LabTestReceiveBatchProjection;
 
 public class ReceiveSamplesServiceMapperUtil {
 
@@ -187,6 +188,38 @@ public class ReceiveSamplesServiceMapperUtil {
 		}
 		labTestSampleDto.setTestRequestFormLink(s.getTestRequestFormLink());
 		return labTestSampleDto;
+	}
+	
+	public static LabTestSampleBatchDto mapBatchProjectionToLabTestSampleBatchDto(LabTestReceiveBatchProjection batch, List<LabTestReceiveBatchProjection> samples) {
+
+		LabTestSampleBatchDto labTestSampleBatchDto = new LabTestSampleBatchDto();
+		
+		labTestSampleBatchDto.setBatchId(batch.getBatchId());
+		labTestSampleBatchDto.setBdnSerialNumber(batch.getBdnNumber());
+		labTestSampleBatchDto.setDispatchDate(batch.getBatchDispatchDate());
+		labTestSampleBatchDto.setReceivedDate(batch.getBatchRecevievedDate());
+		labTestSampleBatchDto.setNum_ofSamples(batch.getTotalSamples());
+		labTestSampleBatchDto.setAcceptedSamples(batch.getAcceptedSamples());
+		labTestSampleBatchDto.setRejectedSamples(batch.getRejectedSamples());
+		labTestSampleBatchDto.setBatchStatusId(batch.getBatchStatusId());
+		labTestSampleBatchDto.setArtcId(batch.getFacilityId());
+		
+		
+		List<LabTestSampleDto> labTestSampleDtoList = new ArrayList<>();
+		
+		samples.forEach(s -> {	
+			LabTestSampleDto labTestSampleDto = new LabTestSampleDto();
+			labTestSampleDto.setSampleCollectedDate(s.getSampleCollectedDate());
+			labTestSampleDto.setSampleDispatchDate(s.getSampleDispatchDate());
+			labTestSampleDto.setSampleReceivedDate(s.getSampleReceivedDate());
+			labTestSampleDto.setResultReceivedDate(s.getResultReceivedDate());
+			labTestSampleDto.setResultApprovedDate(s.getResultApprovedDate());
+			labTestSampleDto.setResultDispatchDate(s.getResultDispatchDate());
+			labTestSampleDtoList.add(labTestSampleDto);
+		});
+		
+		labTestSampleBatchDto.setLabTestSampleDtoList(labTestSampleDtoList);
+		return labTestSampleBatchDto;
 	}
 
 }

@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import gov.naco.soch.lab.dto.LabTestSampleBatchDto;
+import gov.naco.soch.lab.dto.ReceiceSamplesResponseDto;
 import gov.naco.soch.lab.service.ReceiveSamplesService;
 
 @RestController
@@ -28,10 +29,17 @@ public class RecieveSamplesController {
 	@Autowired
 	private ReceiveSamplesService receiveSamplesService;
 
+//	@GetMapping("/list/{labId}")
+//	public List<LabTestSampleBatchDto> fetchReceiveSamplesList(@PathVariable("labId") Long labId) {
+//		logger.info("fetchReceiveSamplesList method is invoked");
+//		return receiveSamplesService.fetchReceiveSamplesList(labId);
+//	}
+
 	@GetMapping("/list/{labId}")
-	public List<LabTestSampleBatchDto> fetchReceiveSamplesList(@PathVariable("labId") Long labId) {
+	public ReceiceSamplesResponseDto fetchReceiveSamplesList(@PathVariable("labId") Long labId,
+			@RequestParam(defaultValue = "0") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
 		logger.info("fetchReceiveSamplesList method is invoked");
-		return receiveSamplesService.fetchReceiveSamplesList(labId);
+		return receiveSamplesService.fetchReceiveSamplesList(labId, pageNo, pageSize);
 	}
 
 	@PostMapping("/{batchId}")
@@ -41,16 +49,23 @@ public class RecieveSamplesController {
 		labTestSampleBatchDto = receiveSamplesService.saveReceivedSamples(batchId, labTestSampleBatchDto);
 		return labTestSampleBatchDto;
 	}
-	
+
 	@GetMapping("advance/search/{labId}")
-	public List<LabTestSampleBatchDto> getReceiveSamplesListByAdvanceSearch(@PathVariable("labId") Long labId,@RequestParam Map<String, String> searchValue) {
+	public List<LabTestSampleBatchDto> getReceiveSamplesListByAdvanceSearch(@PathVariable("labId") Long labId,
+			@RequestParam Map<String, String> searchValue) {
 		logger.info("inside receive sample list by advance search");
-		return receiveSamplesService.getReceiveSamplesListByAdvanceSearch(labId,searchValue);
+		return receiveSamplesService.getReceiveSamplesListByAdvanceSearch(labId, searchValue);
 	}
-	
+
 	@PostMapping("undodispatch/{batchId}")
 	public void undoDispatchedSample(@PathVariable("batchId") Long batchId) {
 		logger.debug("undoDispatchedSample is invoked!");
 		receiveSamplesService.undoDispatchedSample(batchId);
+	}
+
+	@GetMapping("/batch/{batchId}")
+	public LabTestSampleBatchDto fetchReceiveSamplesByBatchId(@PathVariable("batchId") Long batchId) {
+		logger.info("fetchReceiveSamplesByBatchId method is invoked");
+		return receiveSamplesService.fetchReceiveSamplesByBatchId(batchId);
 	}
 }
