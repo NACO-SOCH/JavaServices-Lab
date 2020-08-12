@@ -170,15 +170,17 @@ public class ReceiveSamplesService {
 			Map<Long, String> batchStatusMap = batchStatus.stream()
 					.collect(Collectors.toMap(MasterBatchStatus::getId, MasterBatchStatus::getStatus));
 
-			List<Long> facilityIds = labTestSampleBatchDtoList.stream().map(l -> l.getArtcId())
-					.collect(Collectors.toList());
+			List<Long> facilityIds = labTestSampleBatchDtoList.stream().map(l -> l.getArtcId()).filter(i -> i != null)
+					.distinct().collect(Collectors.toList());
 			List<FacilityProjection> facilityDetails = facilityRepository.findFacilityNameByIds(facilityIds);
 			Map<Long, String> facilityDetailsMap = facilityDetails.stream()
 					.collect(Collectors.toMap(FacilityProjection::getId, FacilityProjection::getName));
 
 			labTestSampleBatchDtoList.forEach(b -> {
 				b.setBatchStatus(batchStatusMap.get(b.getBatchStatusId()));
-				b.setArtcName(facilityDetailsMap.get(b.getArtcId()));
+				if (b.getArtcId() != null) {
+					b.setArtcName(facilityDetailsMap.get(b.getArtcId()));
+				}
 			});
 
 			labTestSampleBatchDtoList = labTestSampleBatchDtoList.stream()

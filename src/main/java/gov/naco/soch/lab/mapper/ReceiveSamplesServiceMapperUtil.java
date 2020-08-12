@@ -190,10 +190,11 @@ public class ReceiveSamplesServiceMapperUtil {
 		return labTestSampleDto;
 	}
 	
-	public static LabTestSampleBatchDto mapBatchProjectionToLabTestSampleBatchDto(LabTestReceiveBatchProjection batch, List<LabTestReceiveBatchProjection> samples) {
+	public static LabTestSampleBatchDto mapBatchProjectionToLabTestSampleBatchDto(LabTestReceiveBatchProjection batch,
+			List<LabTestReceiveBatchProjection> samples) {
 
 		LabTestSampleBatchDto labTestSampleBatchDto = new LabTestSampleBatchDto();
-		
+
 		labTestSampleBatchDto.setBatchId(batch.getBatchId());
 		labTestSampleBatchDto.setBdnSerialNumber(batch.getBdnNumber());
 		labTestSampleBatchDto.setDispatchDate(batch.getBatchDispatchDate());
@@ -203,21 +204,22 @@ public class ReceiveSamplesServiceMapperUtil {
 		labTestSampleBatchDto.setRejectedSamples(batch.getRejectedSamples());
 		labTestSampleBatchDto.setBatchStatusId(batch.getBatchStatusId());
 		labTestSampleBatchDto.setArtcId(batch.getFacilityId());
-		
-		
+
 		List<LabTestSampleDto> labTestSampleDtoList = new ArrayList<>();
-		
-		samples.forEach(s -> {	
-			LabTestSampleDto labTestSampleDto = new LabTestSampleDto();
-			labTestSampleDto.setSampleCollectedDate(s.getSampleCollectedDate());
-			labTestSampleDto.setSampleDispatchDate(s.getSampleDispatchDate());
-			labTestSampleDto.setSampleReceivedDate(s.getSampleReceivedDate());
-			labTestSampleDto.setResultReceivedDate(s.getResultReceivedDate());
-			labTestSampleDto.setResultApprovedDate(s.getResultApprovedDate());
-			labTestSampleDto.setResultDispatchDate(s.getResultDispatchDate());
-			labTestSampleDtoList.add(labTestSampleDto);
-		});
-		
+
+		if (!CollectionUtils.isEmpty(samples)) {
+			for (LabTestReceiveBatchProjection s : samples) {
+				LabTestSampleDto labTestSampleDto = new LabTestSampleDto();
+				labTestSampleDto.setSampleCollectedDate(s.getSampleCollectedDate());
+				labTestSampleDto.setSampleDispatchDate(s.getSampleDispatchDate());
+				labTestSampleDto.setSampleReceivedDate(s.getSampleReceivedDate());
+				labTestSampleDto.setResultReceivedDate(s.getResultReceivedDate());
+				labTestSampleDto.setResultApprovedDate(s.getResultApprovedDate());
+				labTestSampleDto.setResultDispatchDate(s.getResultDispatchDate());
+				labTestSampleDtoList.add(labTestSampleDto);
+			}
+		}
+
 		labTestSampleBatchDto.setLabTestSampleDtoList(labTestSampleDtoList);
 		return labTestSampleBatchDto;
 	}
