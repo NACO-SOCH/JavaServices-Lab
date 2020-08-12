@@ -17,6 +17,9 @@ import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -40,6 +43,7 @@ import gov.naco.soch.entity.UserMaster;
 import gov.naco.soch.enums.FacilityTypeEnum;
 import gov.naco.soch.exception.ServiceException;
 import gov.naco.soch.lab.dto.TestResultDto;
+import gov.naco.soch.lab.dto.TestSamplesResponseDto;
 import gov.naco.soch.lab.mapper.AdvanceSearchMapperUtil;
 import gov.naco.soch.lab.mapper.TestResultMapper;
 import gov.naco.soch.repository.BeneficiaryFamilyDetailRepository;
@@ -106,7 +110,7 @@ public class RecordResultsService {
 //	@Autowired
 //	private LabTestSampleBatchRepository labTestSampleBatchRepository;
 
-	public List<TestResultDto> getRecordResultsList(Long labId) {
+	public TestSamplesResponseDto getRecordResultsList(Long labId, Integer pageNo, Integer pageSize) {
 
 		logger.debug("In getRecordResultsList() of RecordResultsService");
 
@@ -131,9 +135,12 @@ public class RecordResultsService {
 //		Predicate<LabTestSample> checkResultStatus = s -> s.getMasterResultStatus().getId() == masterResultStatus
 //				.getId();
 
+		TestSamplesResponseDto dto = new TestSamplesResponseDto();
+		Pageable paging = PageRequest.of(pageNo, pageSize);
+
 		List<TestResultDto> testResultDto = new ArrayList<>();
-		List<LabTestSample> labTestSampleList = labTestSampleRepository.findSamplesToRecordResult(labId);
-		if (!CollectionUtils.isEmpty(labTestSampleList)) {
+		Page<LabTestSample> labTestSampleList = labTestSampleRepository.findSamplesToRecordResult(labId, paging);
+		if (labTestSampleList.hasContent()) {
 //			labTestSampleList = labTestSampleList.stream().filter(isSampleInLab).collect(Collectors.toList());
 //			labTestSampleList = labTestSampleList.stream().filter(statusAccepted).collect(Collectors.toList());
 //			labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
@@ -143,9 +150,14 @@ public class RecordResultsService {
 			fetchVLTestCount(testResultDto);
 			fetchIctcInfantDetails(testResultDto);
 			findPreviousDBSDetails(testResultDto);
+			testResultDto = testResultDto.stream().sorted(Comparator.comparing(TestResultDto::getBatchId).reversed())
+					.collect(Collectors.toList());
+			dto.setSamples(testResultDto);
+			dto.setTotalCount(labTestSampleList.getTotalElements());
 		}
-		return testResultDto.stream().sorted(Comparator.comparing(TestResultDto::getBatchId).reversed())
-				.collect(Collectors.toList());
+		dto.setPageNumber(pageNo);
+		dto.setCurrentCount(pageSize);
+		return dto;
 	}
 
 	void fetchVLTestCount(List<TestResultDto> testResultDto) {
@@ -495,7 +507,7 @@ public class RecordResultsService {
 		return PARTIALLY_RECEIVED;
 	}
 
-	public List<TestResultDto> getRecordResultsListByAdvanceSearch(Long labId, Map<String, String> searchValue) {
+	public TestSamplesResponseDto getRecordResultsListByAdvanceSearch(Long labId, Map<String, String> searchValue) {
 
 //		MasterSampleStatus masterSampleStatus = masterSampleStatusRepository.findByStatusAndIsDelete("ACCEPT",
 //				Boolean.FALSE);
@@ -517,6 +529,8 @@ public class RecordResultsService {
 //		Predicate<LabTestSample> checkResultStatus = s -> s.getMasterResultStatus().getId() == masterResultStatus
 //				.getId();
 
+		TestSamplesResponseDto dto = new TestSamplesResponseDto();
+
 		List<TestResultDto> testResultDto = new ArrayList<>();
 		List<String> searchQuery = AdvanceSearchMapperUtil.queryCreaterForAdvanceSearchRecordResultsList(labId,
 				searchValue);
@@ -534,10 +548,13 @@ public class RecordResultsService {
 				fetchVLTestCount(testResultDto);
 				fetchIctcInfantDetails(testResultDto);
 				findPreviousDBSDetails(testResultDto);
+				testResultDto = testResultDto.stream()
+						.sorted(Comparator.comparing(TestResultDto::getBatchId).reversed())
+						.collect(Collectors.toList());
+				dto.setTotalCount((long) labTestSampleList.size());
 			}
-
 		}
-		return testResultDto.stream().sorted(Comparator.comparing(TestResultDto::getBatchId).reversed())
-				.collect(Collectors.toList());
+
+		return dto;
 	}
 }

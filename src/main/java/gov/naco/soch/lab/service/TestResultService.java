@@ -15,6 +15,9 @@ import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -41,6 +44,7 @@ import gov.naco.soch.entity.UserMaster;
 import gov.naco.soch.enums.FacilityTypeEnum;
 import gov.naco.soch.exception.ServiceException;
 import gov.naco.soch.lab.dto.TestResultDto;
+import gov.naco.soch.lab.dto.TestSamplesResponseDto;
 import gov.naco.soch.lab.mapper.AdvanceSearchMapperUtil;
 import gov.naco.soch.lab.mapper.TestResultMapper;
 import gov.naco.soch.projection.IctcTestResultProjection;
@@ -108,7 +112,7 @@ public class TestResultService {
 	@Autowired
 	private IctcBeneficiaryRepository ictcBeneficiaryRepository;
 
-	public List<TestResultDto> fetchTestResultsList(Long labId) {
+	public TestSamplesResponseDto fetchTestResultsList(Long labId, Integer pageNo, Integer pageSize) {
 
 		logger.debug("In fetchTestResultsList() of TestResultService");
 
@@ -137,9 +141,12 @@ public class TestResultService {
 //		Predicate<LabTestSample> checkResultStatus = s -> s.getMasterResultStatus().getId() != masterResultStatus
 //				.getId();
 
+		TestSamplesResponseDto dto = new TestSamplesResponseDto();
+		Pageable paging = PageRequest.of(pageNo, pageSize);
+
 		List<TestResultDto> testResultDto = new ArrayList<>();
-		List<LabTestSample> labTestSampleList = labTestSampleRepository.findSamplesTestResults(labId);
-		if (!CollectionUtils.isEmpty(labTestSampleList)) {
+		Page<LabTestSample> labTestSampleList = labTestSampleRepository.findSamplesTestResults(labId, paging);
+		if (labTestSampleList.hasContent()) {
 //			labTestSampleList = labTestSampleList.stream().filter(isSampleInLab).collect(Collectors.toList());
 //			labTestSampleList = labTestSampleList.stream().filter(sampleStatus).collect(Collectors.toList());
 //			labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
@@ -149,9 +156,14 @@ public class TestResultService {
 			fetchVLTestCount(testResultDto);
 			fetchIctcInfantDetails(testResultDto);
 			findPreviousDBSDetails(testResultDto);
+			testResultDto = testResultDto.stream().sorted(Comparator.comparing(TestResultDto::getBatchId).reversed())
+					.collect(Collectors.toList());
+			dto.setSamples(testResultDto);
+			dto.setTotalCount(labTestSampleList.getTotalElements());
 		}
-		return testResultDto.stream().sorted(Comparator.comparing(TestResultDto::getBatchId).reversed())
-				.collect(Collectors.toList());
+		dto.setPageNumber(pageNo);
+		dto.setCurrentCount(pageSize);
+		return dto;
 	}
 
 	void fetchVLTestCount(List<TestResultDto> testResultDto) {
@@ -164,7 +176,7 @@ public class TestResultService {
 		}
 	}
 
-	public List<TestResultDto> fetchTestResultsUnderApproval(Long labId) {
+	public TestSamplesResponseDto fetchTestResultsUnderApproval(Long labId, Integer pageNo, Integer pageSize) {
 
 		logger.debug("In fetchTestResultsUnderApproval() of TestResultService");
 
@@ -188,9 +200,12 @@ public class TestResultService {
 //		Predicate<LabTestSample> checkResultStatus = s -> s.getMasterResultStatus().getId() == masterResultStatus
 //				.getId();
 
+		TestSamplesResponseDto dto = new TestSamplesResponseDto();
+		Pageable paging = PageRequest.of(pageNo, pageSize);
+
 		List<TestResultDto> testResultDto = new ArrayList<>();
-		List<LabTestSample> labTestSampleList = labTestSampleRepository.findSamplesForApproval(labId);
-		if (!CollectionUtils.isEmpty(labTestSampleList)) {
+		Page<LabTestSample> labTestSampleList = labTestSampleRepository.findSamplesForApproval(labId, paging);
+		if (labTestSampleList.hasContent()) {
 //			labTestSampleList = labTestSampleList.stream().filter(statusAccepted).collect(Collectors.toList());
 //			labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
 //			labTestSampleList = labTestSampleList.stream().filter(isSampleInLab.and(checkResultStatus))
@@ -200,9 +215,14 @@ public class TestResultService {
 			fetchVLTestCount(testResultDto);
 			fetchIctcInfantDetails(testResultDto);
 			findPreviousDBSDetails(testResultDto);
+			testResultDto = testResultDto.stream().sorted(Comparator.comparing(TestResultDto::getBatchId).reversed())
+					.collect(Collectors.toList());
+			dto.setSamples(testResultDto);
+			dto.setTotalCount(labTestSampleList.getTotalElements());
 		}
-		return testResultDto.stream().sorted(Comparator.comparing(TestResultDto::getBatchId).reversed())
-				.collect(Collectors.toList());
+		dto.setPageNumber(pageNo);
+		dto.setCurrentCount(pageSize);
+		return dto;
 	}
 
 	public List<TestResultDto> approveTestResults(Long labInchargeId, List<TestResultDto> testResultList) {
@@ -585,7 +605,7 @@ public class TestResultService {
 		}
 	}
 
-	public List<TestResultDto> getTestResultsListByAdvanceSearch(Long labId, Map<String, String> searchValue) {
+	public TestSamplesResponseDto getTestResultsListByAdvanceSearch(Long labId, Map<String, String> searchValue) {
 
 //		MasterSampleStatus masterSampleStatusAccepted = masterSampleStatusRepository.findByStatusAndIsDelete("ACCEPT",
 //				Boolean.FALSE);
@@ -611,6 +631,8 @@ public class TestResultService {
 //		Predicate<LabTestSample> checkResultStatus = s -> s.getMasterResultStatus().getId() != masterResultStatus
 //				.getId();
 
+		TestSamplesResponseDto dto = new TestSamplesResponseDto();
+
 		List<TestResultDto> testResultDto = new ArrayList<>();
 		List<String> searchQuery = AdvanceSearchMapperUtil.queryCreaterForAdvanceSearchResultsList(labId, searchValue,
 				Boolean.TRUE, Boolean.FALSE);
@@ -627,14 +649,18 @@ public class TestResultService {
 				fetchVLTestCount(testResultDto);
 				fetchIctcInfantDetails(testResultDto);
 				findPreviousDBSDetails(testResultDto);
-			}
 
+				testResultDto = testResultDto.stream()
+						.sorted(Comparator.comparing(TestResultDto::getBatchId).reversed())
+						.collect(Collectors.toList());
+				dto.setTotalCount((long) labTestSampleList.size());
+			}
 		}
-		return testResultDto.stream().sorted(Comparator.comparing(TestResultDto::getBatchId).reversed())
-				.collect(Collectors.toList());
+		return dto;
 	}
 
-	public List<TestResultDto> getRecordResultsUnderApprovalAdvanceSearch(Long labId, Map<String, String> searchValue) {
+	public TestSamplesResponseDto getRecordResultsUnderApprovalAdvanceSearch(Long labId,
+			Map<String, String> searchValue) {
 
 //		MasterSampleStatus masterSampleStatus = masterSampleStatusRepository.findByStatusAndIsDelete("ACCEPT",
 //				Boolean.FALSE);
@@ -656,6 +682,8 @@ public class TestResultService {
 //		Predicate<LabTestSample> checkResultStatus = s -> s.getMasterResultStatus().getId() == masterResultStatus
 //				.getId();
 
+		TestSamplesResponseDto dto = new TestSamplesResponseDto();
+
 		List<TestResultDto> testResultDto = new ArrayList<>();
 		List<String> searchQuery = AdvanceSearchMapperUtil.queryCreaterForAdvanceSearchResultsList(labId, searchValue,
 				Boolean.FALSE, Boolean.TRUE);
@@ -672,11 +700,15 @@ public class TestResultService {
 				fetchVLTestCount(testResultDto);
 				fetchIctcInfantDetails(testResultDto);
 				findPreviousDBSDetails(testResultDto);
+				testResultDto = testResultDto.stream()
+						.sorted(Comparator.comparing(TestResultDto::getBatchId).reversed())
+						.collect(Collectors.toList());
+				dto.setSamples(testResultDto);
+				dto.setTotalCount((long) testResultDto.size());
 			}
 
 		}
-		return testResultDto.stream().sorted(Comparator.comparing(TestResultDto::getBatchId).reversed())
-				.collect(Collectors.toList());
+		return dto;
 	}
 
 	public void updateIctcBeneficiaryAndStatusTracking(List<LabTestSample> labTestSampleList) {

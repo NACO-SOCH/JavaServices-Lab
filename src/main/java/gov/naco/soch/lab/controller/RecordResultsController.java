@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import gov.naco.soch.lab.dto.TestResultDto;
+import gov.naco.soch.lab.dto.TestSamplesResponseDto;
 import gov.naco.soch.lab.service.RecordResultsService;
 
 @RestController
@@ -39,21 +40,23 @@ public class RecordResultsController {
 	}
 
 	@GetMapping("/list/{labId}")
-	public List<TestResultDto> getRecordResultsList(@PathVariable("labId") Long labId) {
+	public TestSamplesResponseDto getRecordResultsList(@PathVariable("labId") Long labId,
+			@RequestParam(defaultValue = "0") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
 		logger.debug("getRecordResultsList is invoked!");
-		return recordResultsService.getRecordResultsList(labId);
+		return recordResultsService.getRecordResultsList(labId, pageNo, pageSize);
 	}
-	
+
 	@GetMapping("/artclist/{artcId}")
 	public List<TestResultDto> getRecordResultsArtcList(@PathVariable("artcId") Long artcId) {
 		logger.debug("getRecordResultsArtcList is invoked!");
 		return recordResultsService.getRecordResultsArtcList(artcId);
 	}
-	
+
 	@GetMapping("advance/search/{labId}")
-	public List<TestResultDto> getRecordResultsListByAdvanceSearch(@PathVariable("labId") Long labId,@RequestParam Map<String, String> searchValue) {
+	public TestSamplesResponseDto getRecordResultsListByAdvanceSearch(@PathVariable("labId") Long labId,
+			@RequestParam Map<String, String> searchValue) {
 		logger.info("inside record results list by advance search");
-		return recordResultsService.getRecordResultsListByAdvanceSearch(labId,searchValue);
+		return recordResultsService.getRecordResultsListByAdvanceSearch(labId, searchValue);
 	}
-	
+
 }

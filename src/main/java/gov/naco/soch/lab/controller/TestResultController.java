@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import gov.naco.soch.lab.dto.TestResultDto;
+import gov.naco.soch.lab.dto.TestSamplesResponseDto;
 import gov.naco.soch.lab.service.TestResultService;
 
 @RestController
@@ -29,15 +30,17 @@ public class TestResultController {
 	private TestResultService testResultService;
 
 	@GetMapping("/list/{labId}")
-	public List<TestResultDto> fetchTestResultsList(@PathVariable("labId") Long labId) {
+	public TestSamplesResponseDto fetchTestResultsList(@PathVariable("labId") Long labId,
+			@RequestParam(defaultValue = "0") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
 		logger.info("fetchTestResultsList method is invoked");
-		return testResultService.fetchTestResultsList(labId);
+		return testResultService.fetchTestResultsList(labId, pageNo, pageSize);
 	}
 
 	@GetMapping("/underapproval/{labId}")
-	public List<TestResultDto> fetchTestResultsUnderApproval(@PathVariable("labId") Long labId) {
+	public TestSamplesResponseDto fetchTestResultsUnderApproval(@PathVariable("labId") Long labId,
+			@RequestParam(defaultValue = "0") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
 		logger.info("fetchTestResultsUnderApproval is invoked!");
-		return testResultService.fetchTestResultsUnderApproval(labId);
+		return testResultService.fetchTestResultsUnderApproval(labId, pageNo, pageSize);
 	}
 
 	@PostMapping("/approve/{labInchargeId}")
@@ -53,15 +56,17 @@ public class TestResultController {
 		logger.info("rejectTestResults is invoked!");
 		return testResultService.rejectTestResults(labInchargeId, testResultList);
 	}
-	
+
 	@GetMapping("advance/search/{labId}")
-	public List<TestResultDto> getRecordResultsListByAdvanceSearch(@PathVariable("labId") Long labId,@RequestParam Map<String, String> searchValue) {
+	public TestSamplesResponseDto getRecordResultsListByAdvanceSearch(@PathVariable("labId") Long labId,
+			@RequestParam Map<String, String> searchValue) {
 		logger.info("inside record results list by advance search");
-		return testResultService.getTestResultsListByAdvanceSearch(labId,searchValue);
+		return testResultService.getTestResultsListByAdvanceSearch(labId, searchValue);
 	}
-	
+
 	@GetMapping("/underapproval/advance/search/{labId}")
-	public List<TestResultDto> getRecordResultsUnderApprovalAdvanceSearch(@PathVariable("labId") Long labId,@RequestParam Map<String, String> searchValue) {
-		return testResultService.getRecordResultsUnderApprovalAdvanceSearch(labId,searchValue);
+	public TestSamplesResponseDto getRecordResultsUnderApprovalAdvanceSearch(@PathVariable("labId") Long labId,
+			@RequestParam Map<String, String> searchValue) {
+		return testResultService.getRecordResultsUnderApprovalAdvanceSearch(labId, searchValue);
 	}
 }
