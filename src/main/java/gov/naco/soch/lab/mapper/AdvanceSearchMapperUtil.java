@@ -55,7 +55,7 @@ public class AdvanceSearchMapperUtil {
 		String searchQuery = "SELECT s.* FROM soch.lab_test_sample as s join soch.lab_test_sample_batch as b " + 
 				"on s.test_batch_id = b.id where b.lab_id = " + labId +" and s.sample_status_id = 1 " + 
 				"and b.batch_status_id > 1 and s.result_status_id = 1 " + 
-				"and s.is_delete = false where ";
+				"and ";
 
 		if (testType != null && testType != "") {
 			Long test = Long.valueOf(testType);

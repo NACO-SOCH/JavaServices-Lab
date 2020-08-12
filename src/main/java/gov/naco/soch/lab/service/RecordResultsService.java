@@ -551,6 +551,7 @@ public class RecordResultsService {
 				testResultDto = testResultDto.stream()
 						.sorted(Comparator.comparing(TestResultDto::getBatchId).reversed())
 						.collect(Collectors.toList());
+				dto.setSamples(testResultDto);
 				dto.setTotalCount((long) labTestSampleList.size());
 			}
 		}
