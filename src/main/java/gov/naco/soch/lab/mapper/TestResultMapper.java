@@ -190,7 +190,7 @@ public class TestResultMapper {
 					&& sample.getMasterResultStatus().getId() == 2 && sample.getIsError() == false) {
 				currentStatus = 10; // S-DBS-1- awaiting approval
 			} else if (sample.getTestType().getId() == 5 && sample.getMasterSampleStatus().getId() == 4
-					&& sample.getMasterResultStatus().getId() == 3) {
+					&& sample.getMasterResultStatus().getId() == 3 && sample.getIsError() == false) {
 				currentStatus = 11; // S-DBS-1- approved
 			} else if (sample.getTestType().getId() == 5 && sample.getMasterSampleStatus().getId() == 4
 					&& sample.getMasterResultStatus().getId() == 5) {
@@ -202,7 +202,7 @@ public class TestResultMapper {
 					&& sample.getMasterResultStatus().getId() == 2 && sample.getIsError() == false) {
 				currentStatus = 16; // S-DBS-11- awaiting approval
 			} else if (sample.getTestType().getId() == 6 && sample.getMasterSampleStatus().getId() == 4
-					&& sample.getMasterResultStatus().getId() == 3) {
+					&& sample.getMasterResultStatus().getId() == 3 && sample.getIsError() == false) {
 				currentStatus = 17; // S-DBS-11- approved
 			} else if (sample.getTestType().getId() == 6 && sample.getMasterSampleStatus().getId() == 4
 					&& sample.getMasterResultStatus().getId() == 5) {
@@ -214,7 +214,7 @@ public class TestResultMapper {
 					&& sample.getMasterResultStatus().getId() == 2 && sample.getIsError() == false) {
 				currentStatus = 22; // S-DBS-111- awaiting approval
 			} else if (sample.getTestType().getId() == 7 && sample.getMasterSampleStatus().getId() == 4
-					&& sample.getMasterResultStatus().getId() == 3) {
+					&& sample.getMasterResultStatus().getId() == 3 && sample.getIsError() == false) {
 				currentStatus = 23; // S-DBS-111- approved
 			} else if (sample.getTestType().getId() == 7 && sample.getMasterSampleStatus().getId() == 4
 					&& sample.getMasterResultStatus().getId() == 5) {
@@ -226,7 +226,7 @@ public class TestResultMapper {
 					&& sample.getMasterResultStatus().getId() == 2 && sample.getIsError() == false) {
 				currentStatus = 28; // C-DBS-1- awaiting approval
 			} else if (sample.getTestType().getId() == 8 && sample.getMasterSampleStatus().getId() == 4
-					&& sample.getMasterResultStatus().getId() == 3) {
+					&& sample.getMasterResultStatus().getId() == 3 && sample.getIsError() == false) {
 				currentStatus = 29; // C-DBS-1- approved
 			} else if (sample.getTestType().getId() == 8 && sample.getMasterSampleStatus().getId() == 4
 					&& sample.getMasterResultStatus().getId() == 5) {
@@ -238,7 +238,7 @@ public class TestResultMapper {
 					&& sample.getMasterResultStatus().getId() == 2 && sample.getIsError() == false) {
 				currentStatus = 34; // C-DBS-11- awaiting approval
 			} else if (sample.getTestType().getId() == 9 && sample.getMasterSampleStatus().getId() == 4
-					&& sample.getMasterResultStatus().getId() == 3) {
+					&& sample.getMasterResultStatus().getId() == 3 && sample.getIsError() == false) {
 				currentStatus = 35; // C-DBS-11- approved
 			} else if (sample.getTestType().getId() == 9 && sample.getMasterSampleStatus().getId() == 4
 					&& sample.getMasterResultStatus().getId() == 5) {
@@ -250,7 +250,7 @@ public class TestResultMapper {
 					&& sample.getMasterResultStatus().getId() == 2 && sample.getIsError() == false) {
 				currentStatus = 40; // C-DBS-111- awaiting approval
 			} else if (sample.getTestType().getId() == 10 && sample.getMasterSampleStatus().getId() == 4
-					&& sample.getMasterResultStatus().getId() == 3) {
+					&& sample.getMasterResultStatus().getId() == 3 && sample.getIsError() == false) {
 				currentStatus = 41; // C-DBS-111- approved
 			} else if (sample.getTestType().getId() == 10 && sample.getMasterSampleStatus().getId() == 4
 					&& sample.getMasterResultStatus().getId() == 5) {
