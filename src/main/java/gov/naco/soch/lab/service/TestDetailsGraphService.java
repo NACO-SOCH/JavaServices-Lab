@@ -75,10 +75,14 @@ public class TestDetailsGraphService {
 			  List<TestDetailsAdheranceDto> adherenceDetailsDtoList = new ArrayList<TestDetailsAdheranceDto>();
 		  for(TestDetailsAdheranceProjection adherenceCount:adherenceTestCountProjection) {
 			  TestDetailsAdheranceDto adherenceDetailsDto = new TestDetailsAdheranceDto();
+			  	  adherenceDetailsDto.setResultId(adherenceCount.getResultId());
 				  adherenceDetailsDto.setAdherancePercentage(adherenceCount.getAdherancePercentage());
 				  adherenceDetailsDto.setDispensationDate(adherenceCount.getDispensationDate());
 				  adherenceDetailsDtoList.add(adherenceDetailsDto);
 		  }
+		  if(!adherenceDetailsDtoList.isEmpty()) {
+			  adherenceDetailsDtoList.sort((p1, p2) -> p1.getResultId().compareTo(p2.getResultId())); // sort value in ascending order}
+			}
 		  beneficiaryTestDetailsDto.setAdherenceDetails(adherenceDetailsDtoList); 
 		  }
 		  

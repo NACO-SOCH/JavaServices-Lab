@@ -4,8 +4,18 @@ import java.util.Date;
 
 public class TestDetailsAdheranceDto {
 
+	private Integer resultId;
 	private String adherancePercentage;
 	private Date dispensationDate;
+
+	
+	public Integer getResultId() {
+		return resultId;
+	}
+
+	public void setResultId(Integer resultId) {
+		this.resultId = resultId;
+	}
 
 	public String getAdherancePercentage() {
 		return adherancePercentage;
