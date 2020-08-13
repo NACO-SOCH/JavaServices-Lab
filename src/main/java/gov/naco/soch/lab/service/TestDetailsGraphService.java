@@ -75,10 +75,12 @@ public class TestDetailsGraphService {
 			  List<TestDetailsAdheranceDto> adherenceDetailsDtoList = new ArrayList<TestDetailsAdheranceDto>();
 		  for(TestDetailsAdheranceProjection adherenceCount:adherenceTestCountProjection) {
 			  TestDetailsAdheranceDto adherenceDetailsDto = new TestDetailsAdheranceDto();
+			  	  adherenceDetailsDto.setResultId(adherenceCount.getResultId());
 				  adherenceDetailsDto.setAdherancePercentage(adherenceCount.getAdherancePercentage());
 				  adherenceDetailsDto.setDispensationDate(adherenceCount.getDispensationDate());
 				  adherenceDetailsDtoList.add(adherenceDetailsDto);
 		  }
+		  
 		  beneficiaryTestDetailsDto.setAdherenceDetails(adherenceDetailsDtoList); 
 		  }
 		  
