@@ -103,7 +103,7 @@ public class RecordResultsService {
 
 	@Autowired
 	private BeneficiaryFamilyDetailRepository beneficiaryFamilyDetailRepository;
-	
+
 	@Autowired
 	private TestResultService testResultService;
 
@@ -224,9 +224,9 @@ public class RecordResultsService {
 			}
 
 			labTestSample = labTestSampleRepository.save(labTestSample);
-			
+
 			Long facilityType = UserUtils.getLoggedInUserDetails().getFacilityTypeId();
-			if(facilityType == FacilityTypeEnum.LABORATORY_EID.getFacilityType()) {
+			if (facilityType == FacilityTypeEnum.LABORATORY_EID.getFacilityType()) {
 				updateIctc(labTestSample);
 				List<LabTestSample> sampleList = new ArrayList<LabTestSample>();
 				sampleList.add(labTestSample);
@@ -488,13 +488,13 @@ public class RecordResultsService {
 		int notRecievedCount = 0;
 		int samplesCount = labTestSamples.size();
 		for (LabTestSample s : labTestSamples) {
-			if (s.getMasterSampleStatus().getId() == 1L) {
+			if (s.getMasterSampleStatus() != null && s.getMasterSampleStatus().getId() == 1L) {
 				acceptCount++;
 			}
-			if (s.getMasterSampleStatus().getId() == 2L) {
+			if (s.getMasterSampleStatus() != null && s.getMasterSampleStatus().getId() == 2L) {
 				rejectCount++;
 			}
-			if (s.getMasterSampleStatus().getId() == 3L) {
+			if (s.getMasterSampleStatus() != null && s.getMasterSampleStatus().getId() == 3L) {
 				notRecievedCount++;
 			}
 		}
