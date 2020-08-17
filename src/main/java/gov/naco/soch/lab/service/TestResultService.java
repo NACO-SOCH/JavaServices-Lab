@@ -156,8 +156,7 @@ public class TestResultService {
 			fetchVLTestCount(testResultDto);
 			fetchIctcInfantDetails(testResultDto);
 			findPreviousDBSDetails(testResultDto);
-			testResultDto = testResultDto.stream().sorted(Comparator.comparing(TestResultDto::getBatchId).reversed())
-					.collect(Collectors.toList());
+			testResultDto = testResultDto.stream().collect(Collectors.toList());
 			dto.setSamples(testResultDto);
 			dto.setTotalCount(labTestSampleList.getTotalElements());
 		}
