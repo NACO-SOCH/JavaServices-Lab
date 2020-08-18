@@ -73,7 +73,7 @@ public class AdvanceSearchMapperUtil {
 		}
 		
 		if (fromDate != null && fromDate != "" && toDate != null && toDate != "") {
-			searchQuery = searchQuery.concat(" cast(s.sample_collected_date as date) >= '" + fromDate + "' and cast(lts.sample_collected_date as date) <= '" + toDate + "' and ");
+			searchQuery = searchQuery.concat(" cast(s.sample_collected_date as date) >= '" + fromDate + "' and cast(s.sample_collected_date as date) <= '" + toDate + "' and ");
 		}
 			
 		searchQuery = searchQuery.concat(" s.is_delete = false ");
@@ -121,7 +121,7 @@ public class AdvanceSearchMapperUtil {
 		}
 		
 		if (fromDate != null && fromDate != "" && toDate != null && toDate != "") {
-			searchQuery = searchQuery.concat(" cast(s.result_received_date as date) >= '" + fromDate + "' and cast(lts.result_received_date as date) <= '" + toDate + "' and ");
+			searchQuery = searchQuery.concat(" cast(s.result_received_date as date) >= '" + fromDate + "' and cast(s.result_received_date as date) <= '" + toDate + "' and ");
 		}
 		
 		if(isTestResult) {
