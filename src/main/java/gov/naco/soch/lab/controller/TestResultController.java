@@ -69,4 +69,11 @@ public class TestResultController {
 			@RequestParam Map<String, String> searchValue) {
 		return testResultService.getRecordResultsUnderApprovalAdvanceSearch(labId, searchValue);
 	}
+	
+	@GetMapping("/normal/searchby/{labId}/{searchValue}")
+	public TestSamplesResponseDto fetchTestResultsListByNormalSearch(@PathVariable("labId") Long labId,
+			@PathVariable("searchValue") String searchValue,@RequestParam(defaultValue = "0") Integer pageNo, @RequestParam(defaultValue = "0") Integer pageSize) {
+		logger.info("fetchTestResultsList method is invoked");
+		return testResultService.fetchTestResultsListByNormalSearch(labId,searchValue, pageNo, pageSize);
+	}
 }

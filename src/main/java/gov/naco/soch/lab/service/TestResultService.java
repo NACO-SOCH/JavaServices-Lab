@@ -48,6 +48,7 @@ import gov.naco.soch.lab.dto.TestSamplesResponseDto;
 import gov.naco.soch.lab.mapper.AdvanceSearchMapperUtil;
 import gov.naco.soch.lab.mapper.TestResultMapper;
 import gov.naco.soch.projection.IctcTestResultProjection;
+import gov.naco.soch.projection.UserListProjection;
 import gov.naco.soch.repository.BeneficiaryFamilyDetailRepository;
 import gov.naco.soch.repository.BeneficiaryIctcStatusTrackingRepository;
 import gov.naco.soch.repository.BeneficiaryRepository;
@@ -728,6 +729,28 @@ public class TestResultService {
 				}
 			}
 		}
+	}
+
+	public TestSamplesResponseDto fetchTestResultsListByNormalSearch(Long labId, String searchValue, Integer pageNo,
+			Integer pageSize) {
+		TestSamplesResponseDto dto = new TestSamplesResponseDto();
+		Pageable paging = PageRequest.of(pageNo, pageSize);
+		searchValue = '%' + searchValue.trim() + '%';
+		List<TestResultDto> testResultDto = new ArrayList<>();
+		Page<LabTestSample> labTestSampleList = labTestSampleRepository.fetchTestResultsListByNormalSearch(labId,searchValue, paging);
+		if (labTestSampleList.hasContent()) {
+			testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
+					.collect(Collectors.toList());
+			fetchVLTestCount(testResultDto);
+			fetchIctcInfantDetails(testResultDto);
+			findPreviousDBSDetails(testResultDto);
+			testResultDto = testResultDto.stream().collect(Collectors.toList());
+			dto.setSamples(testResultDto);
+			dto.setTotalCount(labTestSampleList.getTotalElements());
+		}
+		dto.setPageNumber(pageNo);
+		dto.setCurrentCount(pageSize);
+		return dto;
 	}
 
 }
