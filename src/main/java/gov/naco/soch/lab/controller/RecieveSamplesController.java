@@ -1,11 +1,11 @@
 package gov.naco.soch.lab.controller;
 
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import gov.naco.soch.lab.constants.LabAccessCodes;
 import gov.naco.soch.lab.dto.LabTestSampleBatchDto;
 import gov.naco.soch.lab.dto.ReceiceSamplesResponseDto;
 import gov.naco.soch.lab.service.ReceiveSamplesService;
@@ -36,6 +37,8 @@ public class RecieveSamplesController {
 //	}
 
 	@GetMapping("/list/{labId}")
+	@PreAuthorize("hasAuthority('" + LabAccessCodes.VL_RECIEVE_SAMPLES + "') or hasAuthority('"
+			+ LabAccessCodes.EIDLAB_RECEIVE_SAMPLES + "')")
 	public ReceiceSamplesResponseDto fetchReceiveSamplesList(@PathVariable("labId") Long labId,
 			@RequestParam(defaultValue = "0") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
 		logger.info("fetchReceiveSamplesList method is invoked");
@@ -43,6 +46,8 @@ public class RecieveSamplesController {
 	}
 
 	@PostMapping("/{batchId}")
+	@PreAuthorize("hasAuthority('" + LabAccessCodes.VL_RECIEVE_SAMPLES + "') or hasAuthority('"
+			+ LabAccessCodes.EIDLAB_RECEIVE_SAMPLES + "')")
 	public LabTestSampleBatchDto saveReceivedSamples(@PathVariable("batchId") Long batchId,
 			@RequestBody LabTestSampleBatchDto labTestSampleBatchDto) {
 		logger.info("saveReceivedSamples method is invoked");
@@ -51,6 +56,8 @@ public class RecieveSamplesController {
 	}
 
 	@GetMapping("advance/search/{labId}")
+	@PreAuthorize("hasAuthority('" + LabAccessCodes.VL_RECIEVE_SAMPLES + "') or hasAuthority('"
+			+ LabAccessCodes.EIDLAB_RECEIVE_SAMPLES + "')")
 	public ReceiceSamplesResponseDto getReceiveSamplesListByAdvanceSearch(@PathVariable("labId") Long labId,
 			@RequestParam Map<String, String> searchValue) {
 		logger.info("inside receive sample list by advance search");
@@ -58,12 +65,16 @@ public class RecieveSamplesController {
 	}
 
 	@PostMapping("undodispatch/{batchId}")
+	@PreAuthorize("hasAuthority('" + LabAccessCodes.VL_RECIEVE_SAMPLES + "') or hasAuthority('"
+			+ LabAccessCodes.EIDLAB_RECEIVE_SAMPLES + "')")
 	public void undoDispatchedSample(@PathVariable("batchId") Long batchId) {
 		logger.debug("undoDispatchedSample is invoked!");
 		receiveSamplesService.undoDispatchedSample(batchId);
 	}
 
 	@GetMapping("/batch/{batchId}")
+	@PreAuthorize("hasAuthority('" + LabAccessCodes.VL_RECIEVE_SAMPLES + "') or hasAuthority('"
+			+ LabAccessCodes.EIDLAB_RECEIVE_SAMPLES + "')")
 	public LabTestSampleBatchDto fetchReceiveSamplesByBatchId(@PathVariable("batchId") Long batchId) {
 		logger.info("fetchReceiveSamplesByBatchId method is invoked");
 		return receiveSamplesService.fetchReceiveSamplesByBatchId(batchId);

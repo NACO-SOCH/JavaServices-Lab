@@ -6,6 +6,7 @@ import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import gov.naco.soch.lab.constants.LabAccessCodes;
 import gov.naco.soch.lab.dto.TestResultDto;
 import gov.naco.soch.lab.dto.TestSamplesResponseDto;
 import gov.naco.soch.lab.service.TestResultService;
@@ -30,6 +32,8 @@ public class TestResultController {
 	private TestResultService testResultService;
 
 	@GetMapping("/list/{labId}")
+	@PreAuthorize("hasAuthority('" + LabAccessCodes.EIDLAB_INFANT_TEST_RESULTS + "') or hasAuthority('"
+			+ LabAccessCodes.VL_TEST_RESULTS + "')")
 	public TestSamplesResponseDto fetchTestResultsList(@PathVariable("labId") Long labId,
 			@RequestParam(defaultValue = "0") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
 		logger.info("fetchTestResultsList method is invoked");
@@ -37,6 +41,8 @@ public class TestResultController {
 	}
 
 	@GetMapping("/underapproval/{labId}")
+	@PreAuthorize("hasAuthority('" + LabAccessCodes.EIDLAB_RESULTS_UNDER_APPROVAL + "') or hasAuthority('"
+			+ LabAccessCodes.VL_RESULT_UNDER_APPROVAL + "')")
 	public TestSamplesResponseDto fetchTestResultsUnderApproval(@PathVariable("labId") Long labId,
 			@RequestParam(defaultValue = "0") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
 		logger.info("fetchTestResultsUnderApproval is invoked!");
@@ -44,6 +50,8 @@ public class TestResultController {
 	}
 
 	@PostMapping("/approve/{labInchargeId}")
+	@PreAuthorize("hasAuthority('" + LabAccessCodes.EIDLAB_RESULTS_UNDER_APPROVAL + "') or hasAuthority('"
+			+ LabAccessCodes.VL_RESULT_UNDER_APPROVAL + "')")
 	public List<TestResultDto> approveTestResults(@PathVariable("labInchargeId") Long labInchargeId,
 			@RequestBody List<TestResultDto> testResultList) {
 		logger.info("approveTestResults is invoked!");
@@ -51,6 +59,8 @@ public class TestResultController {
 	}
 
 	@PostMapping("/reject/{labInchargeId}")
+	@PreAuthorize("hasAuthority('" + LabAccessCodes.EIDLAB_RESULTS_UNDER_APPROVAL + "') or hasAuthority('"
+			+ LabAccessCodes.VL_RESULT_UNDER_APPROVAL + "')")
 	public List<TestResultDto> rejectTestResults(@PathVariable("labInchargeId") Long labInchargeId,
 			@RequestBody List<TestResultDto> testResultList) {
 		logger.info("rejectTestResults is invoked!");
@@ -65,15 +75,20 @@ public class TestResultController {
 	}
 
 	@GetMapping("/underapproval/advance/search/{labId}")
+	@PreAuthorize("hasAuthority('" + LabAccessCodes.EIDLAB_RESULTS_UNDER_APPROVAL + "') or hasAuthority('"
+			+ LabAccessCodes.VL_RESULT_UNDER_APPROVAL + "')")
 	public TestSamplesResponseDto getRecordResultsUnderApprovalAdvanceSearch(@PathVariable("labId") Long labId,
 			@RequestParam Map<String, String> searchValue) {
 		return testResultService.getRecordResultsUnderApprovalAdvanceSearch(labId, searchValue);
 	}
-	
+
 	@GetMapping("/normal/searchby/{labId}/{searchValue}")
+	@PreAuthorize("hasAuthority('" + LabAccessCodes.EIDLAB_INFANT_TEST_RESULTS + "') or hasAuthority('"
+			+ LabAccessCodes.VL_TEST_RESULTS + "')")
 	public TestSamplesResponseDto fetchTestResultsListByNormalSearch(@PathVariable("labId") Long labId,
-			@PathVariable("searchValue") String searchValue,@RequestParam(defaultValue = "0") Integer pageNo, @RequestParam(defaultValue = "0") Integer pageSize) {
+			@PathVariable("searchValue") String searchValue, @RequestParam(defaultValue = "0") Integer pageNo,
+			@RequestParam(defaultValue = "0") Integer pageSize) {
 		logger.info("fetchTestResultsList method is invoked");
-		return testResultService.fetchTestResultsListByNormalSearch(labId,searchValue, pageNo, pageSize);
+		return testResultService.fetchTestResultsListByNormalSearch(labId, searchValue, pageNo, pageSize);
 	}
 }
