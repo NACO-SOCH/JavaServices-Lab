@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,15 +12,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
 import gov.naco.soch.entity.Beneficiary;
+import gov.naco.soch.entity.BeneficiaryFamilyDetail;
 import gov.naco.soch.entity.IctcSampleCollection;
 import gov.naco.soch.entity.LabTestSample;
-import gov.naco.soch.entity.MasterBatchStatus;
 import gov.naco.soch.entity.MasterInfantBreastFeed;
-import gov.naco.soch.entity.MasterSampleStatus;
 import gov.naco.soch.exception.ServiceException;
 import gov.naco.soch.lab.dto.InfantTestHistoryDto;
 import gov.naco.soch.lab.dto.TestHistoryDto;
 import gov.naco.soch.lab.util.LabServiceUtil;
+import gov.naco.soch.repository.BeneficiaryFamilyDetailRepository;
 import gov.naco.soch.repository.BeneficiaryRepository;
 import gov.naco.soch.repository.IctcSampleCollectionRepository;
 import gov.naco.soch.repository.LabTestSampleRepository;
@@ -48,6 +47,9 @@ public class InfantTestHistoryService {
 	private IctcSampleCollectionRepository ictcSampleCollectionRepository;
 
 	@Autowired
+	private BeneficiaryFamilyDetailRepository beneficiaryFamilyDetailRepository;
+
+	@Autowired
 	private MasterInfantBreastFeedRepository masterInfantBreastFeedRepository;
 
 	public InfantTestHistoryDto fetchInfantTestHistory(Long infantId, Long labId) {
@@ -58,31 +60,33 @@ public class InfantTestHistoryService {
 
 			Beneficiary infant = beneficiaryOpt.get();
 
-			MasterBatchStatus masterBatchStatus = masterBatchStatusRepository.findByStatusAndIsDelete("DISPATCHED",
-					Boolean.FALSE);
+//			MasterBatchStatus masterBatchStatus = masterBatchStatusRepository.findByStatusAndIsDelete("DISPATCHED",
+//					Boolean.FALSE);
+//
+//			MasterSampleStatus masterSampleStatusAccept = masterSampleStatusRepository.findByStatusAndIsDelete("ACCEPT",
+//					Boolean.FALSE);
+//			MasterSampleStatus masterSampleStatusResultPosted = masterSampleStatusRepository
+//					.findByStatusAndIsDelete("RESULT POSTED", Boolean.FALSE);
+//
+//			Predicate<LabTestSample> checkBatchStatus = s -> s.getLabTestSampleBatch().getMasterBatchStatus()
+//					.getId() != masterBatchStatus.getId();
+//
+//			Predicate<LabTestSample> isSampleInLab = s -> s.getLabTestSampleBatch().getLab().getId() == labId;
+//
+//			Predicate<LabTestSample> statusAccepted = s -> s.getMasterSampleStatus().getId() == masterSampleStatusAccept
+//					.getId() || s.getMasterSampleStatus().getId() == masterSampleStatusResultPosted.getId();
+//
+			List<LabTestSample> labTestSampleList = labTestSampleRepository.findSamplesByBeneficiaryIdAndLabId(infantId,
+					labId);
 
-			MasterSampleStatus masterSampleStatusAccept = masterSampleStatusRepository.findByStatusAndIsDelete("ACCEPT",
-					Boolean.FALSE);
-			MasterSampleStatus masterSampleStatusResultPosted = masterSampleStatusRepository
-					.findByStatusAndIsDelete("RESULT POSTED", Boolean.FALSE);
-
-			Predicate<LabTestSample> checkBatchStatus = s -> s.getLabTestSampleBatch().getMasterBatchStatus()
-					.getId() != masterBatchStatus.getId();
-
-			Predicate<LabTestSample> isSampleInLab = s -> s.getLabTestSampleBatch().getLab().getId() == labId;
-
-			Predicate<LabTestSample> statusAccepted = s -> s.getMasterSampleStatus().getId() == masterSampleStatusAccept
-					.getId() || s.getMasterSampleStatus().getId() == masterSampleStatusResultPosted.getId();
-
-			List<LabTestSample> labTestSampleList = labTestSampleRepository.findByBeneficiaryId(infantId);
-
-			if (!CollectionUtils.isEmpty(labTestSampleList)) {
-				labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
-				labTestSampleList = labTestSampleList.stream().filter(isSampleInLab.and(statusAccepted))
-						.collect(Collectors.toList());
-			} else {
-
-			}
+//
+//			if (!CollectionUtils.isEmpty(labTestSampleList)) {
+//				labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
+//				labTestSampleList = labTestSampleList.stream().filter(statusAccepted)
+//						.collect(Collectors.toList());
+//			} else {
+//
+//			}
 
 			List<TestHistoryDto> testHistoryDtoList = labTestSampleList.stream().map(s -> {
 
@@ -112,9 +116,15 @@ public class InfantTestHistoryService {
 			infantTestHistoryDto.setBeneficiaryId(infantId);
 			infantTestHistoryDto.setBeneficiaryUid(infant.getUid());
 			infantTestHistoryDto.setBeneficiaryName(LabServiceUtil.getBeneficiaryName(infant));
-//			infantTestHistoryDto.setMotherId(motherId);
-//			infantTestHistoryDto.setMotherName(motherName);
-//			infantTestHistoryDto.setMotherUid(motherUid);
+
+			Optional<BeneficiaryFamilyDetail> motherDetilsOpt = beneficiaryFamilyDetailRepository
+					.findByBeneficiaryIdAndRelationshipId(infantId, 4L);
+			if (motherDetilsOpt.isPresent()) {
+				Beneficiary motherDetils = motherDetilsOpt.get().getPartnerBeneficiary();
+				infantTestHistoryDto.setMotherId(motherDetils.getId());
+				infantTestHistoryDto.setMotherName(LabServiceUtil.getBeneficiaryName(motherDetils));
+				infantTestHistoryDto.setMotherUid(motherDetils.getUid());
+			}
 
 			infantTestHistoryDto.setTestHistoryDetails(testHistoryDtoList);
 
