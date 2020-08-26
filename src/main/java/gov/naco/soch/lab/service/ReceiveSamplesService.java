@@ -495,6 +495,7 @@ public class ReceiveSamplesService {
 					s.setSampleDispatchDate(null);
 					s.setMasterSampleStatus(null);
 					s.setArtcSampleStatus("Sample Collected");
+					s.setIsUndone(Boolean.TRUE);
 					return s;
 				}).collect(Collectors.toList());
 
