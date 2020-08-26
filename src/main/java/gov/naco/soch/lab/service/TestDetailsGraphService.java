@@ -70,7 +70,7 @@ public class TestDetailsGraphService {
     	 	
      }
 		
-		  List<TestDetailsAdheranceProjection> adherenceTestCountProjection = testDetailsGraphRepository.getAdherenceCountDetails(beneficiaryId,facilityId);
+		  List<TestDetailsAdheranceProjection> adherenceTestCountProjection = testDetailsGraphRepository.getAdherenceCountDetails(beneficiaryId);
 		  if(adherenceTestCountProjection !=null && adherenceTestCountProjection.size()>0 ) { 
 			  List<TestDetailsAdheranceDto> adherenceDetailsDtoList = new ArrayList<TestDetailsAdheranceDto>();
 		  for(TestDetailsAdheranceProjection adherenceCount:adherenceTestCountProjection) {
@@ -118,13 +118,13 @@ public class TestDetailsGraphService {
 					testDetailsBodyDtoForPreviousVlCountObj.setResultValue(getScalevalue(previousVlCountObj.get(0).getResultType(), previousVlCountObj.get(0).getResultValue()));
 					testDetailsBodyDtoForPreviousVlCountObj.setResultDate(previousVlCountObj.get(0).getResultDate());
 				
-					if(!testDetailsBodyDtoForCurrentVlCountObj.getResultValue().isEmpty() && !testDetailsBodyDtoForPreviousVlCountObj.getResultValue().isEmpty() && !testDetailsBodyDtoForCurrentVlCountObj.getResultValue().equals("0")) {
+					if(!testDetailsBodyDtoForCurrentVlCountObj.getResultValue().isEmpty() && !testDetailsBodyDtoForPreviousVlCountObj.getResultValue().isEmpty() && !testDetailsBodyDtoForPreviousVlCountObj.getResultValue().equals("0")) {
 						Double currentVal = Double.parseDouble(testDetailsBodyDtoForCurrentVlCountObj.getResultValue());
 						Double previousVal = Double.parseDouble(testDetailsBodyDtoForPreviousVlCountObj.getResultValue());
-						Double percentVal = ((currentVal - previousVal)/currentVal) * 100;
+						Double percentVal = ((currentVal - previousVal)/previousVal) * 100;
 						testDetailsHeaderDto.setChangePercent(percentVal.toString());
 					}else {
-						testDetailsHeaderDto.setChangePercent(null);
+						testDetailsHeaderDto.setChangePercent("0");
 					
 					}
 					}
