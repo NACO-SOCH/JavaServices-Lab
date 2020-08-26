@@ -145,7 +145,7 @@ public class AdvanceSearchMapperUtil {
 		
 		}
 		
-		searchQuery = searchQuery.concat(" s.is_delete = false ");
+		searchQuery = searchQuery.concat(" s.is_delete = false order by s.id desc");
 
 		searchQueryList.add(searchQuery);
 
