@@ -76,7 +76,7 @@ public class AdvanceSearchMapperUtil {
 			searchQuery = searchQuery.concat(" cast(s.sample_collected_date as date) >= '" + fromDate + "' and cast(s.sample_collected_date as date) <= '" + toDate + "' and ");
 		}
 			
-		searchQuery = searchQuery.concat(" s.is_delete = false ");
+		searchQuery = searchQuery.concat(" s.is_delete = false order by s.id desc");
 
 		searchQueryList.add(searchQuery);
 
