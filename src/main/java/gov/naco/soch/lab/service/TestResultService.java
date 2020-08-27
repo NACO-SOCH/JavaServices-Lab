@@ -444,46 +444,47 @@ public class TestResultService {
 
 				for (IctcTestResult ictcTestResult : currentTestResults) {
 
-					if ((ictcTestResult.getSample() != null)
-							&& (ictcTestResult.getSample().getTestType() == 5L
-									|| ictcTestResult.getSample().getTestType() == 6L
-									|| ictcTestResult.getSample().getTestType() == 7L)
-							&& ((ictcTestResult.getHivStatus() != null) && (ictcTestResult.getHivStatus() == 1L))
-							&& (ictcTestResult.getResultStatus() != 5L)) {
-						Beneficiary beneficiary = updateBenficiaryHIVStatus(ictcTestResult);
-						updateBeneficiaryList.add(beneficiary);
-					} else if ((ictcTestResult.getSample() != null)
-							&& (ictcTestResult.getSample().getTestType() == 8L
-									|| ictcTestResult.getSample().getTestType() == 9L
-									|| ictcTestResult.getSample().getTestType() == 10L)
-							&& ((ictcTestResult.getHivStatus() != null) && (ictcTestResult.getHivStatus() == 2L))
-							&& (ictcTestResult.getResultStatus() != 5L)) {
-						Beneficiary beneficiary = updateBenficiaryHIVStatus(ictcTestResult);
-						updateBeneficiaryList.add(beneficiary);
-					} else if ((ictcTestResult.getSample() != null)
-							&& (ictcTestResult.getSample().getTestType() == 8L
-									|| ictcTestResult.getSample().getTestType() == 9L
-									|| ictcTestResult.getSample().getTestType() == 10L)
-							&& ((ictcTestResult.getHivStatus() != null) && (ictcTestResult.getHivStatus() == 1L))
-							&& (ictcTestResult.getResultStatus() != 5L)) {
+					if ((ictcTestResult.getSample() != null) && (ictcTestResult.getResultStatus() == 3L)) {
 
 						List<IctcTestResultProjection> previousTests = ictcTestResultRepository
 								.findAllCDBSTestByIctcBenficiaryId(ictcTestResult.getIctcBeneficiary().getId());
 
-						if ((!CollectionUtils.isEmpty(previousTests)) && previousTests.size() > 1) {
-
-							boolean isNegetive = true;
-							for (IctcTestResultProjection test : previousTests) {
-								if (test.getHivStatus() != null && test.getHivStatus() == 2L) {
-									isNegetive = false;
-								}
-							}
-							if (isNegetive) {
+						if ((!CollectionUtils.isEmpty(previousTests)) && previousTests.size() == 1) {
+							if (previousTests.get(0).getHivStatus() == 1L) {
 								Beneficiary beneficiary = updateBenficiaryHIVStatus(ictcTestResult);
 								updateBeneficiaryList.add(beneficiary);
 							}
+						} else if ((!CollectionUtils.isEmpty(previousTests)) && previousTests.size() > 1) {
+
+							if ((ictcTestResult.getHivStatus() != null) && (ictcTestResult.getHivStatus() == 1L)) {
+								int isNegetive = 0;
+								for (IctcTestResultProjection test : previousTests) {
+									if (test.getHivStatus() != null && test.getHivStatus() == 1L) {
+										isNegetive = isNegetive + 1;
+									}
+								}
+								if (isNegetive > 1) {
+									Beneficiary beneficiary = updateBenficiaryHIVStatus(ictcTestResult);
+									updateBeneficiaryList.add(beneficiary);
+								}
+							} else if ((ictcTestResult.getHivStatus() != null)
+									&& (ictcTestResult.getHivStatus() == 2L)) {
+								int isPositive = 0;
+								for (IctcTestResultProjection test : previousTests) {
+									if (test.getHivStatus() != null && test.getHivStatus() == 2L) {
+										isPositive = isPositive + 1;
+									}
+								}
+								if (isPositive > 1) {
+									Beneficiary beneficiary = updateBenficiaryHIVStatus(ictcTestResult);
+									updateBeneficiaryList.add(beneficiary);
+								}
+							}
+
 						}
+
 					}
+
 				}
 
 				if (!CollectionUtils.isEmpty(updateBeneficiaryList)) {
