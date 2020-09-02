@@ -449,7 +449,7 @@ public class TestResultService {
 								.findAllCDBSTestByIctcBenficiaryId(ictcTestResult.getIctcBeneficiary().getId());
 
 						if ((!CollectionUtils.isEmpty(previousTests)) && previousTests.size() == 1) {
-							if (previousTests.get(0).getHivStatus() == 1L) {
+							if (previousTests.get(0).getHivStatus() != null && previousTests.get(0).getHivStatus() == 1L) {
 								Beneficiary beneficiary = updateBenficiaryHIVStatus(ictcTestResult);
 								updateBeneficiaryList.add(beneficiary);
 							}
