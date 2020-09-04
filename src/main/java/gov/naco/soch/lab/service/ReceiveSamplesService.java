@@ -195,14 +195,18 @@ public class ReceiveSamplesService {
 	}
 
 	void fetchVLTestCount(List<LabTestSampleBatchDto> labTestSampleBatchDtoList) {
-		LoginResponseDto currentUser = UserUtils.getLoggedInUserDetails();
-		if (FacilityTypeEnum.VL_PUBLIC.getFacilityType().equals(currentUser.getFacilityTypeId())) {
-			labTestSampleBatchDtoList.forEach(b -> {
-				b.getLabTestSampleDtoList().forEach(s -> {
-					Long count = labTestSampleRepository.getVLTestCountOfBeneficiary(s.getBeneficiaryId());
-					s.setVlTestCount(count);
+		if (!CollectionUtils.isEmpty(labTestSampleBatchDtoList)) {
+			LoginResponseDto currentUser = UserUtils.getLoggedInUserDetails();
+			if (FacilityTypeEnum.VL_PUBLIC.getFacilityType().equals(currentUser.getFacilityTypeId())) {
+				labTestSampleBatchDtoList.forEach(b -> {
+					if (!CollectionUtils.isEmpty(b.getLabTestSampleDtoList())) {
+						b.getLabTestSampleDtoList().forEach(s -> {
+							Long count = labTestSampleRepository.getVLTestCountOfBeneficiary(s.getBeneficiaryId());
+							s.setVlTestCount(count);
+						});
+					}
 				});
-			});
+			}
 		}
 	}
 
