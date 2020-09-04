@@ -147,9 +147,16 @@ public class RecordResultsService {
 //			labTestSampleList = labTestSampleList.stream().filter(checkResultStatus).collect(Collectors.toList());
 			testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 					.collect(Collectors.toList());
-			fetchVLTestCount(testResultDto);
-			fetchIctcInfantDetails(testResultDto);
-			findPreviousDBSDetails(testResultDto);
+			LoginResponseDto currentUser = UserUtils.getLoggedInUserDetails();
+			if (FacilityTypeEnum.VL_PUBLIC.getFacilityType().equals(currentUser.getFacilityTypeId())) {
+				fetchVLTestCount(testResultDto);
+			}
+
+			if (FacilityTypeEnum.LABORATORY_EID.getFacilityType().equals(currentUser.getFacilityTypeId())) {
+				fetchIctcInfantDetails(testResultDto);
+				findPreviousDBSDetails(testResultDto);
+			}
+
 			testResultDto = testResultDto.stream().sorted(Comparator.comparing(TestResultDto::getBatchId).reversed())
 					.collect(Collectors.toList());
 			dto.setSamples(testResultDto);
@@ -161,8 +168,7 @@ public class RecordResultsService {
 	}
 
 	void fetchVLTestCount(List<TestResultDto> testResultDto) {
-		LoginResponseDto currentUser = UserUtils.getLoggedInUserDetails();
-		if (FacilityTypeEnum.VL_PUBLIC.getFacilityType().equals(currentUser.getFacilityTypeId())) {
+		if (!CollectionUtils.isEmpty(testResultDto)) {
 			testResultDto.forEach(s -> {
 				Long count = labTestSampleRepository.getVLTestCountOfBeneficiary(s.getBeneficiaryId());
 				s.setVlTestCount(count);
@@ -545,9 +551,15 @@ public class RecordResultsService {
 //						.collect(Collectors.toList());
 				testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 						.collect(Collectors.toList());
-				fetchVLTestCount(testResultDto);
-				fetchIctcInfantDetails(testResultDto);
-				findPreviousDBSDetails(testResultDto);
+				LoginResponseDto currentUser = UserUtils.getLoggedInUserDetails();
+				if (FacilityTypeEnum.VL_PUBLIC.getFacilityType().equals(currentUser.getFacilityTypeId())) {
+					fetchVLTestCount(testResultDto);
+				}
+
+				if (FacilityTypeEnum.LABORATORY_EID.getFacilityType().equals(currentUser.getFacilityTypeId())) {
+					fetchIctcInfantDetails(testResultDto);
+					findPreviousDBSDetails(testResultDto);
+				}
 				testResultDto = testResultDto.stream()
 						.sorted(Comparator.comparing(TestResultDto::getBatchId).reversed())
 						.collect(Collectors.toList());

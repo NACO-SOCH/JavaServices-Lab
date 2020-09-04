@@ -196,17 +196,15 @@ public class ReceiveSamplesService {
 
 	void fetchVLTestCount(List<LabTestSampleBatchDto> labTestSampleBatchDtoList) {
 		if (!CollectionUtils.isEmpty(labTestSampleBatchDtoList)) {
-			LoginResponseDto currentUser = UserUtils.getLoggedInUserDetails();
-			if (FacilityTypeEnum.VL_PUBLIC.getFacilityType().equals(currentUser.getFacilityTypeId())) {
-				labTestSampleBatchDtoList.forEach(b -> {
-					if (!CollectionUtils.isEmpty(b.getLabTestSampleDtoList())) {
-						b.getLabTestSampleDtoList().forEach(s -> {
-							Long count = labTestSampleRepository.getVLTestCountOfBeneficiary(s.getBeneficiaryId());
-							s.setVlTestCount(count);
-						});
-					}
-				});
-			}
+			labTestSampleBatchDtoList.forEach(b -> {
+				if (!CollectionUtils.isEmpty(b.getLabTestSampleDtoList())) {
+					b.getLabTestSampleDtoList().forEach(s -> {
+						Long count = labTestSampleRepository.getVLTestCountOfBeneficiary(s.getBeneficiaryId());
+						s.setVlTestCount(count);
+					});
+				}
+			});
+
 		}
 	}
 
@@ -544,7 +542,7 @@ public class ReceiveSamplesService {
 
 	public LabTestSampleBatchDto fetchReceiveSamplesByBatchId(Long batchId) {
 		logger.debug("In fetchReceiveSamplesList() of RecieveSamplesService");
-
+		LoginResponseDto currentUser = UserUtils.getLoggedInUserDetails();
 		LabTestSampleBatchDto labTestSampleBatchDto = new LabTestSampleBatchDto();
 
 		Optional<LabTestSampleBatch> labTestSampleBatchOpt = labTestSampleBatchRepository.findById(batchId);
@@ -557,9 +555,14 @@ public class ReceiveSamplesService {
 			List<LabTestSampleBatchDto> labTestSampleBatchDtoList = new ArrayList<>();
 			labTestSampleBatchDtoList.add(labTestSampleBatchDto);
 
-			fetchVLTestCount(labTestSampleBatchDtoList);
-			fetchIctcInfantDetails(labTestSampleBatchDtoList);
-			findPreviousDBSDetails(labTestSampleBatchDtoList);
+			if (FacilityTypeEnum.VL_PUBLIC.getFacilityType().equals(currentUser.getFacilityTypeId())) {
+				fetchVLTestCount(labTestSampleBatchDtoList);
+			}
+
+			if (FacilityTypeEnum.LABORATORY_EID.getFacilityType().equals(currentUser.getFacilityTypeId())) {
+				fetchIctcInfantDetails(labTestSampleBatchDtoList);
+				findPreviousDBSDetails(labTestSampleBatchDtoList);
+			}
 
 			return labTestSampleBatchDto;
 		} else {
