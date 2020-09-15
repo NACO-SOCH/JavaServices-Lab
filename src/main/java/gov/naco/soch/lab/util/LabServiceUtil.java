@@ -1,6 +1,7 @@
 package gov.naco.soch.lab.util;
 
 import gov.naco.soch.entity.Beneficiary;
+import gov.naco.soch.entity.LabBeneficiary;
 import gov.naco.soch.entity.UserMaster;
 
 public class LabServiceUtil {
@@ -13,6 +14,14 @@ public class LabServiceUtil {
 		return name.replaceAll("\\s+", " ");
 	}
 
+	public static String getBeneficiaryName(LabBeneficiary beneficiary) {
+		String firstName = beneficiary.getFirstName() != null ? beneficiary.getFirstName().concat(" ") : "";
+//		String middleName = beneficiary.getMiddleName() != null ? beneficiary.getMiddleName().concat(" ") : "";
+		String lastName = beneficiary.getLastName() != null ? beneficiary.getLastName() : "";
+		String name = firstName + lastName;
+		return name.replaceAll("\\s+", " ");
+	}
+	
 	public static String getBeneficiaryName(Beneficiary beneficiary) {
 		String firstName = beneficiary.getFirstName() != null ? beneficiary.getFirstName().concat(" ") : "";
 //		String middleName = beneficiary.getMiddleName() != null ? beneficiary.getMiddleName().concat(" ") : "";
