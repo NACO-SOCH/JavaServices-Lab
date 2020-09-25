@@ -1,0 +1,26 @@
+spring:
+   jpa:
+      database-platform: org.hibernate.dialect.PostgreSQLDialect
+      database: POSTGRESQL
+      generate-ddl: false
+      open-in-view: false
+      show-sql: true
+      hibernate:
+         ddl-auto: none
+         use-new-id-generator-mappings: false
+   datasource:
+       dataSourceClassName: org.postgresql.Driver
+       url: jdbc:postgresql://localhost:5432/soch-db-dev?currentSchema=soch
+       username: postgres
+       password: postgres
+logging:
+   level:
+       root: INFO
+       org.springframework: INFO
+       com.naco.soch: INFO
+       org.hibernate: INFO
+mhl:
+  auth_key: c2285c7c4cdaf31f8486b35f171c643c
+accessKey: $5gw@965
+crossDomainAllowedOrigins:
+jwtSecret: U09DSCtUMHBTM2NyRXQrQXV0aG9yaXphdGlvbit0b2tlbitrZXk=
