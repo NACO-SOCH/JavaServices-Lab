@@ -88,9 +88,6 @@
 		</profile>
 		<profile>
 			<id>Perf2</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
 			<properties>
 				<env>Perf2</env>
 			</properties>

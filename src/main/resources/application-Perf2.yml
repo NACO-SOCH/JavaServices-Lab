@@ -10,7 +10,7 @@ spring:
          use-new-id-generator-mappings: false
    datasource:
        dataSourceClassName: org.postgresql.Driver
-       url: jdbc:postgresql://localhost:5432/soch-db-dev?currentSchema=soch
+       url: jdbc:postgresql://15.206.146.175:9999/soch-db-dev?currentSchema=soch
        username: postgres
        password: postgres
 logging:
