@@ -22,5 +22,5 @@ logging:
 mhl:
   auth_key: c2285c7c4cdaf31f8486b35f171c643c
 accessKey: $5gw@965
-crossDomainAllowedOrigins: http://10.247.185.13
+crossDomainAllowedOrigins: http://10.247.185.13,http://sochbeta.naco.gov.in
 jwtSecret: U09DSCtUMHBTM2NyRXQrQXV0aG9yaXphdGlvbit0b2tlbitrZXk=
