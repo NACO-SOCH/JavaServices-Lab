@@ -19,7 +19,7 @@ import gov.naco.soch.util.CommonConstants;
 @EnableJpaRepositories("gov.naco.soch.repository")
 @EntityScan("gov.naco.soch.entity")
 @ComponentScan(basePackages = { "gov.naco.soch" })
-@PropertySource("classpath:application-${spring.profiles.active}.yml")
+//@PropertySource("classpath:application-${spring.profiles.active}.yml")
 public class LabServiceApplication extends SpringBootServletInitializer {
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
