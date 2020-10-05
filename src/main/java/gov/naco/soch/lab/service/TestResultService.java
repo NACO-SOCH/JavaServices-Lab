@@ -438,6 +438,7 @@ public class TestResultService {
 							samplesOpt.setSampleCollectionStatus(5L);
 							samplesOpt.getVisit().setBeneficiaryStatus(11L);
 							testResultOpt.setResultStatus(labTestSample.getMasterResultStatus().getId());
+							testResultOpt.setTestedDate(labTestSample.getResultReceivedDate().toLocalDate());
 							testResultOpt.setReportDeliveryDate(LocalDate.now());
 							samplesToSave.add(samplesOpt);
 							testResultToSave.add(testResultOpt);

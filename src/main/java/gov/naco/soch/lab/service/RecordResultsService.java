@@ -409,6 +409,14 @@ public class RecordResultsService {
 
 	private void handleMHLFacilityTest(LabTestSample labTestSample, TestResultDto labTestSampleDto) {
 
+		LoginResponseDto currentUser = UserUtils.getLoggedInUserDetails();
+		
+		UserMaster user = new UserMaster();
+		user.setId(currentUser.getUserId());
+		labTestSample.setLabInCharge(user);
+		
+		labTestSample.getLabTestSampleBatch().setVlLabTechUser(user);
+		
 		MasterSampleStatus sampleStatus = new MasterSampleStatus();
 		MasterResultStatus resultStatus = new MasterResultStatus();
 
@@ -474,7 +482,7 @@ public class RecordResultsService {
 			int acceptCount = 0;
 			if (!CollectionUtils.isEmpty(labTestSampleBatchList.getLabTestSamples())) {
 				for (LabTestSample s : labTestSampleBatchList.getLabTestSamples()) {
-					if (s.getMasterResultStatus().getId() == 4L) {
+					if (s.getMasterResultStatus().getId() == 3L) {
 						acceptCount++;
 					}
 				}
@@ -482,8 +490,12 @@ public class RecordResultsService {
 					accepted = Boolean.TRUE;
 				}
 			}
+			labTestSample.getLabTestSampleBatch().setAcceptedSamples(Long.valueOf(acceptCount));
 			if (accepted) {
-				labTestSampleBatchList.setMasterBatchStatus(masterBatchStatus);
+				masterBatchStatus = masterBatchStatusRepository.findByStatusAndIsDelete(RESULT_POSTED, Boolean.FALSE);
+				labTestSample.getLabTestSampleBatch().setMasterBatchStatus(masterBatchStatus);
+			} else {
+				labTestSample.getLabTestSampleBatch().setMasterBatchStatus(masterBatchStatus);
 			}
 		}
 	}
@@ -494,7 +506,8 @@ public class RecordResultsService {
 		int notRecievedCount = 0;
 		int samplesCount = labTestSamples.size();
 		for (LabTestSample s : labTestSamples) {
-			if (s.getMasterSampleStatus() != null && s.getMasterSampleStatus().getId() == 1L) {
+			if (s.getMasterSampleStatus() != null
+					&& (s.getMasterSampleStatus().getId() == 1L || s.getMasterSampleStatus().getId() == 4L)) {
 				acceptCount++;
 			}
 			if (s.getMasterSampleStatus() != null && s.getMasterSampleStatus().getId() == 2L) {
