@@ -1,6 +1,5 @@
 package gov.naco.soch.lab.service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -111,33 +110,9 @@ public class RecordResultsService {
 	@Autowired
 	private TestResultService testResultService;
 
-//	@Autowired
-//	private LabTestSampleBatchRepository labTestSampleBatchRepository;
-
 	public TestSamplesResponseDto getRecordResultsList(Long labId, Integer pageNo, Integer pageSize) {
 
 		logger.debug("In getRecordResultsList() of RecordResultsService");
-
-//		MasterSampleStatus masterSampleStatus = masterSampleStatusRepository.findByStatusAndIsDelete("ACCEPT",
-//				Boolean.FALSE);
-//
-//		MasterResultStatus masterResultStatus = masterResultStatusRepository.findByStatusAndIsDelete("PENDING",
-//				Boolean.FALSE);
-//
-//		MasterBatchStatus masterBatchStatus = masterBatchStatusRepository.findByStatusAndIsDelete("DISPATCHED",
-//				Boolean.FALSE);
-//
-//		Predicate<LabTestSample> checkBatchStatus = s -> s.getLabTestSampleBatch().getMasterBatchStatus()
-//				.getId() != masterBatchStatus.getId();
-//
-//		Predicate<LabTestSample> isSampleInLab = s -> (s.getLabTestSampleBatch() != null)
-//				&& (s.getLabTestSampleBatch().getLab().getId() == labId);
-//
-//		Predicate<LabTestSample> statusAccepted = s -> s.getMasterSampleStatus() != null
-//				&& s.getMasterSampleStatus().getId() == masterSampleStatus.getId();
-//
-//		Predicate<LabTestSample> checkResultStatus = s -> s.getMasterResultStatus().getId() == masterResultStatus
-//				.getId();
 
 		TestSamplesResponseDto dto = new TestSamplesResponseDto();
 		Pageable paging = PageRequest.of(pageNo, pageSize);
@@ -145,10 +120,6 @@ public class RecordResultsService {
 		List<TestResultDto> testResultDto = new ArrayList<>();
 		Page<LabTestSample> labTestSampleList = labTestSampleRepository.findSamplesToRecordResult(labId, paging);
 		if (labTestSampleList.hasContent()) {
-//			labTestSampleList = labTestSampleList.stream().filter(isSampleInLab).collect(Collectors.toList());
-//			labTestSampleList = labTestSampleList.stream().filter(statusAccepted).collect(Collectors.toList());
-//			labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
-//			labTestSampleList = labTestSampleList.stream().filter(checkResultStatus).collect(Collectors.toList());
 			testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 					.collect(Collectors.toList());
 			LoginResponseDto currentUser = UserUtils.getLoggedInUserDetails();
@@ -189,9 +160,6 @@ public class RecordResultsService {
 		MasterResultStatus masterResultStatus = masterResultStatusRepository
 				.findByStatusAndIsDelete("AWAITING APPROVAL", Boolean.FALSE);
 
-//		MasterResultStatus masterResultStatusError = masterResultStatusRepository.findByStatusAndIsDelete("ERROR",
-//				Boolean.FALSE);
-
 		if (labTestSampleOpt.isPresent()) {
 
 			LabTestSample labTestSample = labTestSampleOpt.get();
@@ -214,10 +182,6 @@ public class RecordResultsService {
 			labTestSample.setIsError(labTestSampleDto.getIsError());
 			labTestSample.setErrorCode(labTestSampleDto.getErrorCode());
 			labTestSample.setMasterResultStatus(masterResultStatus);
-
-//			if (labTestSampleDto.getIsError() != null && labTestSampleDto.getIsError()) {
-//				labTestSample.setMasterResultStatus(masterResultStatusError);
-//			}
 
 			if (labTestSampleDto.getResultTypeId() != null) {
 				Optional<MasterResultType> resultTypeOpt = masterResultTypeRepository
@@ -414,13 +378,13 @@ public class RecordResultsService {
 	private void handleMHLFacilityTest(LabTestSample labTestSample, TestResultDto labTestSampleDto) {
 
 		LoginResponseDto currentUser = UserUtils.getLoggedInUserDetails();
-		
+
 		UserMaster user = new UserMaster();
 		user.setId(currentUser.getUserId());
 		labTestSample.setLabInCharge(user);
-		
+
 		labTestSample.getLabTestSampleBatch().setVlLabTechUser(user);
-		
+
 		MasterSampleStatus sampleStatus = new MasterSampleStatus();
 		MasterResultStatus resultStatus = new MasterResultStatus();
 
@@ -532,26 +496,6 @@ public class RecordResultsService {
 
 	public TestSamplesResponseDto getRecordResultsListByAdvanceSearch(Long labId, Map<String, String> searchValue) {
 
-//		MasterSampleStatus masterSampleStatus = masterSampleStatusRepository.findByStatusAndIsDelete("ACCEPT",
-//				Boolean.FALSE);
-//
-//		MasterResultStatus masterResultStatus = masterResultStatusRepository.findByStatusAndIsDelete("PENDING",
-//				Boolean.FALSE);
-//
-//		MasterBatchStatus masterBatchStatus = masterBatchStatusRepository.findByStatusAndIsDelete("DISPATCHED",
-//				Boolean.FALSE);
-//
-//		Predicate<LabTestSample> checkBatchStatus = s -> s.getLabTestSampleBatch().getMasterBatchStatus()
-//				.getId() != masterBatchStatus.getId();
-//
-//		Predicate<LabTestSample> isSampleInLab = s -> s.getLabTestSampleBatch().getLab().getId() == labId;
-//
-//		Predicate<LabTestSample> statusAccepted = s -> s.getMasterSampleStatus() != null
-//				&& s.getMasterSampleStatus().getId() == masterSampleStatus.getId();
-//
-//		Predicate<LabTestSample> checkResultStatus = s -> s.getMasterResultStatus().getId() == masterResultStatus
-//				.getId();
-
 		TestSamplesResponseDto dto = new TestSamplesResponseDto();
 
 		List<TestResultDto> testResultDto = new ArrayList<>();
@@ -562,10 +506,6 @@ public class RecordResultsService {
 			List<LabTestSample> labTestSampleList = labTestSampleRepository
 					.getRecordResultsListByAdvanceSearch(searchQuery.get(0));
 			if (!CollectionUtils.isEmpty(labTestSampleList)) {
-//				labTestSampleList = labTestSampleList.stream().filter(statusAccepted).collect(Collectors.toList());
-//				labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
-//				labTestSampleList = labTestSampleList.stream().filter(isSampleInLab.and(checkResultStatus))
-//						.collect(Collectors.toList());
 				testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 						.collect(Collectors.toList());
 				LoginResponseDto currentUser = UserUtils.getLoggedInUserDetails();

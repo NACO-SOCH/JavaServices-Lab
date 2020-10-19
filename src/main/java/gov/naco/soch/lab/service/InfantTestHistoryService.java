@@ -26,9 +26,7 @@ import gov.naco.soch.repository.BeneficiaryFamilyDetailRepository;
 import gov.naco.soch.repository.BeneficiaryRepository;
 import gov.naco.soch.repository.IctcSampleCollectionRepository;
 import gov.naco.soch.repository.LabTestSampleRepository;
-import gov.naco.soch.repository.MasterBatchStatusRepository;
 import gov.naco.soch.repository.MasterInfantBreastFeedRepository;
-import gov.naco.soch.repository.MasterSampleStatusRepository;
 
 @Service
 @Transactional
@@ -36,12 +34,6 @@ public class InfantTestHistoryService {
 
 	@Autowired
 	private LabTestSampleRepository labTestSampleRepository;
-
-	@Autowired
-	private MasterSampleStatusRepository masterSampleStatusRepository;
-
-	@Autowired
-	private MasterBatchStatusRepository masterBatchStatusRepository;
 
 	@Autowired
 	private BeneficiaryRepository beneficiaryRepository;
@@ -63,33 +55,8 @@ public class InfantTestHistoryService {
 
 			Beneficiary infant = beneficiaryOpt.get();
 
-//			MasterBatchStatus masterBatchStatus = masterBatchStatusRepository.findByStatusAndIsDelete("DISPATCHED",
-//					Boolean.FALSE);
-//
-//			MasterSampleStatus masterSampleStatusAccept = masterSampleStatusRepository.findByStatusAndIsDelete("ACCEPT",
-//					Boolean.FALSE);
-//			MasterSampleStatus masterSampleStatusResultPosted = masterSampleStatusRepository
-//					.findByStatusAndIsDelete("RESULT POSTED", Boolean.FALSE);
-//
-//			Predicate<LabTestSample> checkBatchStatus = s -> s.getLabTestSampleBatch().getMasterBatchStatus()
-//					.getId() != masterBatchStatus.getId();
-//
-//			Predicate<LabTestSample> isSampleInLab = s -> s.getLabTestSampleBatch().getLab().getId() == labId;
-//
-//			Predicate<LabTestSample> statusAccepted = s -> s.getMasterSampleStatus().getId() == masterSampleStatusAccept
-//					.getId() || s.getMasterSampleStatus().getId() == masterSampleStatusResultPosted.getId();
-//
 			List<LabTestSample> labTestSampleList = labTestSampleRepository.findSamplesByBeneficiaryIdAndLabId(infantId,
 					labId);
-
-//
-//			if (!CollectionUtils.isEmpty(labTestSampleList)) {
-//				labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
-//				labTestSampleList = labTestSampleList.stream().filter(statusAccepted)
-//						.collect(Collectors.toList());
-//			} else {
-//
-//			}
 
 			List<TestHistoryDto> testHistoryDtoList = labTestSampleList.stream().map(s -> {
 
@@ -163,14 +130,6 @@ public class InfantTestHistoryService {
 
 					IctcSampleCollection ictcBenificiaryDetails = ictcBenificiaryDetailsMap.get(s.getBarcodeNumber());
 					if (ictcBenificiaryDetails != null) {
-//						s.setInfantDnaCode(ictcBenificiaryDetails.getIctcBeneficiary().getInfantCode());
-//						s.setInfantPID(ictcBenificiaryDetails.getIctcBeneficiary().getPid());
-//					if (ictcBenificiaryDetails.getIctcBeneficiary().getArtBeneficiaryDetails() != null) {
-//						s.setMotherArtNumber(
-//								ictcBenificiaryDetails.getIctcBeneficiary().getArtBeneficiaryDetails().getArtNumber());
-//						s.setMotherPreArtNumber(ictcBenificiaryDetails.getIctcBeneficiary().getArtBeneficiaryDetails()
-//								.getPreArtNumber());
-//					}
 						if (ictcBenificiaryDetails.getVisit() != null) {
 							s.setFeedingType(
 									infantBreastStatusMap.get(ictcBenificiaryDetails.getVisit().getInfantBreastFed()));

@@ -116,41 +116,12 @@ public class TestResultService {
 
 		logger.debug("In fetchTestResultsList() of TestResultService");
 
-//		MasterSampleStatus masterSampleStatusAccepted = masterSampleStatusRepository.findByStatusAndIsDelete("ACCEPT",
-//				Boolean.FALSE);
-//
-//		MasterSampleStatus masterSampleStatusResultPosted = masterSampleStatusRepository
-//				.findByStatusAndIsDelete("RESULT POSTED", Boolean.FALSE);
-//
-//		MasterResultStatus masterResultStatus = masterResultStatusRepository.findByStatusAndIsDelete("PENDING",
-//				Boolean.FALSE);
-//
-//		MasterBatchStatus masterBatchStatus = masterBatchStatusRepository.findByStatusAndIsDelete("DISPATCHED",
-//				Boolean.FALSE);
-//
-//		Predicate<LabTestSample> checkBatchStatus = s -> s.getLabTestSampleBatch().getMasterBatchStatus()
-//				.getId() != masterBatchStatus.getId();
-//
-//		Predicate<LabTestSample> isSampleInLab = s -> (s.getLabTestSampleBatch() != null)
-//				&& (s.getLabTestSampleBatch().getLab().getId() == labId);
-//
-//		Predicate<LabTestSample> sampleStatus = s -> s.getMasterSampleStatus() != null
-//				&& (s.getMasterSampleStatus().getId() == masterSampleStatusAccepted.getId()
-//						|| s.getMasterSampleStatus().getId() == masterSampleStatusResultPosted.getId());
-//
-//		Predicate<LabTestSample> checkResultStatus = s -> s.getMasterResultStatus().getId() != masterResultStatus
-//				.getId();
-
 		TestSamplesResponseDto dto = new TestSamplesResponseDto();
 		Pageable paging = PageRequest.of(pageNo, pageSize);
 
 		List<TestResultDto> testResultDto = new ArrayList<>();
 		Page<LabTestSample> labTestSampleList = labTestSampleRepository.findSamplesTestResults(labId, paging);
 		if (labTestSampleList.hasContent()) {
-//			labTestSampleList = labTestSampleList.stream().filter(isSampleInLab).collect(Collectors.toList());
-//			labTestSampleList = labTestSampleList.stream().filter(sampleStatus).collect(Collectors.toList());
-//			labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
-//			labTestSampleList = labTestSampleList.stream().filter(checkResultStatus).collect(Collectors.toList());
 			testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 					.collect(Collectors.toList());
 			LoginResponseDto currentUser = UserUtils.getLoggedInUserDetails();
@@ -184,36 +155,12 @@ public class TestResultService {
 
 		logger.debug("In fetchTestResultsUnderApproval() of TestResultService");
 
-//		MasterSampleStatus masterSampleStatus = masterSampleStatusRepository.findByStatusAndIsDelete("ACCEPT",
-//				Boolean.FALSE);
-//
-//		MasterResultStatus masterResultStatus = masterResultStatusRepository
-//				.findByStatusAndIsDelete("AWAITING APPROVAL", Boolean.FALSE);
-//
-//		MasterBatchStatus masterBatchStatus = masterBatchStatusRepository.findByStatusAndIsDelete("DISPATCHED",
-//				Boolean.FALSE);
-//
-//		Predicate<LabTestSample> checkBatchStatus = s -> s.getLabTestSampleBatch().getMasterBatchStatus()
-//				.getId() != masterBatchStatus.getId();
-//
-//		Predicate<LabTestSample> isSampleInLab = s -> s.getLabTestSampleBatch().getLab().getId() == labId;
-//
-//		Predicate<LabTestSample> statusAccepted = s -> s.getMasterSampleStatus() != null
-//				&& s.getMasterSampleStatus().getId() == masterSampleStatus.getId();
-//
-//		Predicate<LabTestSample> checkResultStatus = s -> s.getMasterResultStatus().getId() == masterResultStatus
-//				.getId();
-
 		TestSamplesResponseDto dto = new TestSamplesResponseDto();
 		Pageable paging = PageRequest.of(pageNo, pageSize);
 
 		List<TestResultDto> testResultDto = new ArrayList<>();
 		Page<LabTestSample> labTestSampleList = labTestSampleRepository.findSamplesForApproval(labId, paging);
 		if (labTestSampleList.hasContent()) {
-//			labTestSampleList = labTestSampleList.stream().filter(statusAccepted).collect(Collectors.toList());
-//			labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
-//			labTestSampleList = labTestSampleList.stream().filter(isSampleInLab.and(checkResultStatus))
-//					.collect(Collectors.toList());
 			testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 					.collect(Collectors.toList());
 			LoginResponseDto currentUser = UserUtils.getLoggedInUserDetails();
@@ -284,7 +231,6 @@ public class TestResultService {
 		}
 
 		return testResultDto;
-		// Handle the change of batch status
 	}
 
 	public List<TestResultDto> rejectTestResults(Long labInchargeId, List<TestResultDto> testResultList) {
@@ -368,9 +314,6 @@ public class TestResultService {
 	private void changeBatchStatusICTC(List<Long> batchIds) {
 
 		batchIds = batchIds.stream().distinct().collect(Collectors.toList());
-
-		MasterBatchStatus masterBatchStatus = masterBatchStatusRepository.findByStatusAndIsDelete("RESULT POSTED",
-				Boolean.FALSE);
 
 		List<IctcSampleBatch> labTestSampleBatchList = ictcSampleBatchRepository.findAllById(batchIds);
 		if (!CollectionUtils.isEmpty(labTestSampleBatchList)) {
@@ -620,30 +563,6 @@ public class TestResultService {
 
 	public TestSamplesResponseDto getTestResultsListByAdvanceSearch(Long labId, Map<String, String> searchValue) {
 
-//		MasterSampleStatus masterSampleStatusAccepted = masterSampleStatusRepository.findByStatusAndIsDelete("ACCEPT",
-//				Boolean.FALSE);
-//
-//		MasterSampleStatus masterSampleStatusResultPosted = masterSampleStatusRepository
-//				.findByStatusAndIsDelete("RESULT POSTED", Boolean.FALSE);
-//
-//		MasterResultStatus masterResultStatus = masterResultStatusRepository.findByStatusAndIsDelete("PENDING",
-//				Boolean.FALSE);
-//
-//		MasterBatchStatus masterBatchStatus = masterBatchStatusRepository.findByStatusAndIsDelete("DISPATCHED",
-//				Boolean.FALSE);
-//
-//		Predicate<LabTestSample> checkBatchStatus = s -> s.getLabTestSampleBatch().getMasterBatchStatus()
-//				.getId() != masterBatchStatus.getId();
-//
-//		Predicate<LabTestSample> isSampleInLab = s -> s.getLabTestSampleBatch().getLab().getId() == labId;
-//
-//		Predicate<LabTestSample> sampleStatus = s -> s.getMasterSampleStatus() != null
-//				&& (s.getMasterSampleStatus().getId() == masterSampleStatusAccepted.getId()
-//						|| s.getMasterSampleStatus().getId() == masterSampleStatusResultPosted.getId());
-//
-//		Predicate<LabTestSample> checkResultStatus = s -> s.getMasterResultStatus().getId() != masterResultStatus
-//				.getId();
-
 		TestSamplesResponseDto dto = new TestSamplesResponseDto();
 
 		List<TestResultDto> testResultDto = new ArrayList<>();
@@ -653,10 +572,6 @@ public class TestResultService {
 			List<LabTestSample> labTestSampleList = labTestSampleRepository
 					.getRecordResultsListByAdvanceSearch(searchQuery.get(0));
 			if (!CollectionUtils.isEmpty(labTestSampleList)) {
-//				labTestSampleList = labTestSampleList.stream().filter(sampleStatus).collect(Collectors.toList());
-//				labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
-//				labTestSampleList = labTestSampleList.stream().filter(isSampleInLab.and(checkResultStatus))
-//						.collect(Collectors.toList());
 				testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 						.collect(Collectors.toList());
 				LoginResponseDto currentUser = UserUtils.getLoggedInUserDetails();
@@ -682,26 +597,6 @@ public class TestResultService {
 	public TestSamplesResponseDto getRecordResultsUnderApprovalAdvanceSearch(Long labId,
 			Map<String, String> searchValue) {
 
-//		MasterSampleStatus masterSampleStatus = masterSampleStatusRepository.findByStatusAndIsDelete("ACCEPT",
-//				Boolean.FALSE);
-//
-//		MasterResultStatus masterResultStatus = masterResultStatusRepository
-//				.findByStatusAndIsDelete("AWAITING APPROVAL", Boolean.FALSE);
-//
-//		MasterBatchStatus masterBatchStatus = masterBatchStatusRepository.findByStatusAndIsDelete("DISPATCHED",
-//				Boolean.FALSE);
-//
-//		Predicate<LabTestSample> checkBatchStatus = s -> s.getLabTestSampleBatch().getMasterBatchStatus()
-//				.getId() != masterBatchStatus.getId();
-//
-//		Predicate<LabTestSample> isSampleInLab = s -> s.getLabTestSampleBatch().getLab().getId() == labId;
-//
-//		Predicate<LabTestSample> statusAccepted = s -> s.getMasterSampleStatus() != null
-//				&& s.getMasterSampleStatus().getId() == masterSampleStatus.getId();
-//
-//		Predicate<LabTestSample> checkResultStatus = s -> s.getMasterResultStatus().getId() == masterResultStatus
-//				.getId();
-
 		TestSamplesResponseDto dto = new TestSamplesResponseDto();
 
 		List<TestResultDto> testResultDto = new ArrayList<>();
@@ -711,10 +606,6 @@ public class TestResultService {
 			List<LabTestSample> labTestSampleList = labTestSampleRepository
 					.getRecordResultsListByAdvanceSearch(searchQuery.get(0));
 			if (!CollectionUtils.isEmpty(labTestSampleList)) {
-//				labTestSampleList = labTestSampleList.stream().filter(statusAccepted).collect(Collectors.toList());
-//				labTestSampleList = labTestSampleList.stream().filter(checkBatchStatus).collect(Collectors.toList());
-//				labTestSampleList = labTestSampleList.stream().filter(isSampleInLab.and(checkResultStatus))
-//						.collect(Collectors.toList());
 				testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 						.collect(Collectors.toList());
 				LoginResponseDto currentUser = UserUtils.getLoggedInUserDetails();
