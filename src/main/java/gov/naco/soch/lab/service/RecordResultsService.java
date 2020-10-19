@@ -1,5 +1,6 @@
 package gov.naco.soch.lab.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import javax.transaction.Transactional;
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import gov.naco.soch.dto.ErrorResponse;
 import gov.naco.soch.dto.LoginResponseDto;
 import gov.naco.soch.entity.Address;
 import gov.naco.soch.entity.Beneficiary;
@@ -42,6 +45,7 @@ import gov.naco.soch.entity.MasterSampleStatus;
 import gov.naco.soch.entity.UserMaster;
 import gov.naco.soch.enums.FacilityTypeEnum;
 import gov.naco.soch.exception.ServiceException;
+import gov.naco.soch.lab.dto.RecordBatchResultDto;
 import gov.naco.soch.lab.dto.TestResultDto;
 import gov.naco.soch.lab.dto.TestSamplesResponseDto;
 import gov.naco.soch.lab.mapper.AdvanceSearchMapperUtil;
@@ -582,5 +586,82 @@ public class RecordResultsService {
 		}
 
 		return dto;
+	}
+
+	public List<RecordBatchResultDto> recordResultFromFile(@Valid List<RecordBatchResultDto> results) {
+
+		if (!CollectionUtils.isEmpty(results)) {
+
+			LoginResponseDto currentUser = UserUtils.getLoggedInUserDetails();
+
+			List<LabTestSample> currentRecordResultList = labTestSampleRepository
+					.findAllSamplesToRecordResult(currentUser.getFacilityId());
+
+			if (CollectionUtils.isEmpty(currentRecordResultList)) {
+				throw new ServiceException(null, new ErrorResponse("No sample to upload results", null),
+						HttpStatus.NOT_FOUND);
+			} else {
+
+				MasterResultStatus masterResultStatus = masterResultStatusRepository
+						.findByStatusAndIsDelete("AWAITING APPROVAL", Boolean.FALSE);
+
+				Optional<UserMaster> labTechUserOpt = userMasterRepository.findById(currentUser.getUserId());
+				if (!labTechUserOpt.isPresent()) {
+					throw new ServiceException("Invalid User", null, HttpStatus.BAD_REQUEST);
+				}
+
+				List<LabTestSample> samplesToUpdate = new ArrayList<>();
+
+				for (RecordBatchResultDto result : results) {
+
+					Optional<LabTestSample> sampleOpt = currentRecordResultList.stream()
+							.filter(r -> r.getBarcodeNumber().equals(result.getBarcode())).findFirst();
+
+					if (sampleOpt.isPresent()) {
+
+						LabTestSample sample = sampleOpt.get();
+						Long resultTypeId = 0L;
+
+						if (!StringUtils.isEmpty(result.getResultValue())) {
+
+							MasterResultType resultType = new MasterResultType();
+
+							if (result.getResultValue().equalsIgnoreCase("Not detected")) {
+								resultTypeId = 2L;
+							} else if (result.getResultValue().equalsIgnoreCase("< 150")) {
+								resultTypeId = 1L;
+							} else if (result.getResultValue().equalsIgnoreCase("> 10000000")) {
+								resultTypeId = 3L;
+							} else {
+								resultTypeId = 4L;
+								sample.setResultValue(result.getResultValue());
+								Double resultVal = Double.parseDouble(result.getResultValue());
+								Double logValue = Math.log(resultVal);
+								if (!logValue.isNaN()) {
+									sample.setLogValue(logValue.toString());
+								}
+							}
+
+							resultType.setId(resultTypeId);
+							sample.setResultType(resultType);
+							sample.setMasterResultStatus(masterResultStatus);
+							sample.setResultReceivedDate(LocalDateTime.now());
+							samplesToUpdate.add(sample);
+
+							result.setIsResultRecorded(Boolean.TRUE);
+						}
+					}
+				}
+
+				if (!CollectionUtils.isEmpty(samplesToUpdate)) {
+					labTestSampleRepository.saveAll(samplesToUpdate);
+				}
+			}
+
+		} else {
+			throw new ServiceException(null, new ErrorResponse("No data to upload", null), HttpStatus.BAD_REQUEST);
+		}
+
+		return results;
 	}
 }

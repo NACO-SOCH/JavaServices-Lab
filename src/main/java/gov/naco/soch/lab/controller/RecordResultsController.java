@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import gov.naco.soch.lab.constants.LabAccessCodes;
+import gov.naco.soch.lab.dto.RecordBatchResultDto;
 import gov.naco.soch.lab.dto.TestResultDto;
 import gov.naco.soch.lab.dto.TestSamplesResponseDto;
 import gov.naco.soch.lab.service.RecordResultsService;
@@ -66,6 +67,15 @@ public class RecordResultsController {
 			@RequestParam Map<String, String> searchValue) {
 		logger.info("inside record results list by advance search");
 		return recordResultsService.getRecordResultsListByAdvanceSearch(labId, searchValue);
+	}
+	
+	@PostMapping("/uploadresults")
+	@PreAuthorize("hasAuthority('" + LabAccessCodes.EIDLAB_RECORD_RESULTS + "') or hasAuthority('"
+			+ LabAccessCodes.VL_RECORD_RESULTS + "') or hasAuthority('" + LabAccessCodes.ART_LABTECHNICIAN
+			+ "') or hasAuthority('" + LabAccessCodes.ART_RECORD_RESULTS + "')")
+	public @ResponseBody List<RecordBatchResultDto> recordResultFromFile(@Valid @RequestBody List<RecordBatchResultDto> results) {
+		logger.debug("saveRecordResult is invoked!");
+		return recordResultsService.recordResultFromFile(results);
 	}
 
 }
