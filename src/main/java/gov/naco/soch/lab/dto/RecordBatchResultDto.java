@@ -6,6 +6,7 @@ public class RecordBatchResultDto {
 	private String resultValue;
 	private String logValue;
 	private Boolean isResultRecorded = Boolean.FALSE;
+	private String resultDate;
 
 	public String getBarcode() {
 		return barcode;
@@ -39,10 +40,18 @@ public class RecordBatchResultDto {
 		this.isResultRecorded = isResultRecorded;
 	}
 
+	public String getResultDate() {
+		return resultDate;
+	}
+
+	public void setResultDate(String resultDate) {
+		this.resultDate = resultDate;
+	}
+
 	@Override
 	public String toString() {
 		return "RecordBatchResultDto [barcode=" + barcode + ", resultValue=" + resultValue + ", logValue=" + logValue
-				+ ", isResultRecorded=" + isResultRecorded + "]";
+				+ ", isResultRecorded=" + isResultRecorded + ", resultDate=" + resultDate + "]";
 	}
 
 }

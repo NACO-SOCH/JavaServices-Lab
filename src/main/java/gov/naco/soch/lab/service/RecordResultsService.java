@@ -551,6 +551,7 @@ public class RecordResultsService {
 				}
 
 				List<LabTestSample> samplesToUpdate = new ArrayList<>();
+				LocalDateTime currentTime = LocalDateTime.now();
 
 				for (RecordBatchResultDto result : results) {
 
@@ -585,7 +586,8 @@ public class RecordResultsService {
 							resultType.setId(resultTypeId);
 							sample.setResultType(resultType);
 							sample.setMasterResultStatus(masterResultStatus);
-							sample.setResultReceivedDate(LocalDateTime.now());
+							sample.setResultReceivedDate(LocalDateTime.parse(result.getResultDate(), formatter)
+									.withHour(currentTime.getHour()).withMinute(currentTime.getMinute()));
 							samplesToUpdate.add(sample);
 
 							result.setIsResultRecorded(Boolean.TRUE);
