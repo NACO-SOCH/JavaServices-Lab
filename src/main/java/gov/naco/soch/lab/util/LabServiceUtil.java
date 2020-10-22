@@ -16,17 +16,17 @@ public class LabServiceUtil {
 
 	public static String getBeneficiaryName(LabBeneficiary beneficiary) {
 		String firstName = beneficiary.getFirstName() != null ? beneficiary.getFirstName().concat(" ") : "";
-//		String middleName = beneficiary.getMiddleName() != null ? beneficiary.getMiddleName().concat(" ") : "";
+		String middleName = beneficiary.getMiddleName() != null ? beneficiary.getMiddleName().concat(" ") : "";
 		String lastName = beneficiary.getLastName() != null ? beneficiary.getLastName() : "";
-		String name = firstName + lastName;
+		String name = firstName + middleName + lastName;
 		return name.replaceAll("\\s+", " ");
 	}
 	
 	public static String getBeneficiaryName(Beneficiary beneficiary) {
 		String firstName = beneficiary.getFirstName() != null ? beneficiary.getFirstName().concat(" ") : "";
-//		String middleName = beneficiary.getMiddleName() != null ? beneficiary.getMiddleName().concat(" ") : "";
+		String middleName = beneficiary.getMiddleName() != null ? beneficiary.getMiddleName().concat(" ") : "";
 		String lastName = beneficiary.getLastName() != null ? beneficiary.getLastName() : "";
-		String name = firstName + lastName;
+		String name = firstName + middleName + lastName;
 		return name.replaceAll("\\s+", " ");
 	}
 }
