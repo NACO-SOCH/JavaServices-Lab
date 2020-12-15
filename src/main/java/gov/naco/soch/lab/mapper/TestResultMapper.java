@@ -175,6 +175,10 @@ public class TestResultMapper {
 			vlTestResultDto.setTestMachineId(labTestSample.getMachine().getId());
 			vlTestResultDto.setTestMachineName(labTestSample.getMachine().getMachineName());
 		}
+		
+		if(labTestSample.getResultApprovedDate() != null) {
+			vlTestResultDto.setResultApprovedDate(labTestSample.getResultApprovedDate().format(formatter));
+		}
 
 		return vlTestResultDto;
 	}

@@ -88,6 +88,7 @@ public class TestResultDto {
 	private String feedingType;
 
 	private Long vlTestCount;
+	private String resultApprovedDate;
 
 	public Long getBatchId() {
 		return batchId;
@@ -704,5 +705,16 @@ public class TestResultDto {
 	public void setVlTestCount(Long vlTestCount) {
 		this.vlTestCount = vlTestCount;
 	}
+
+	public String getResultApprovedDate() {
+		return resultApprovedDate;
+	}
+
+	public void setResultApprovedDate(String resultApprovedDate) {
+		this.resultApprovedDate = resultApprovedDate;
+	}
+
+	
+	
 
 }
