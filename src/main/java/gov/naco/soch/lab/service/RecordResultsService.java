@@ -387,38 +387,40 @@ public class RecordResultsService {
 
 		MasterSampleStatus sampleStatus = new MasterSampleStatus();
 		MasterResultStatus resultStatus = new MasterResultStatus();
-
-		if (labTestSampleDto.getResultTypeId() == 11L) {
-			sampleStatus.setId(4L);
-			resultStatus.setId(3L);
-			labTestSample.setArtcSampleStatus(RESULT_POSTED);
-		}
-		if (labTestSampleDto.getResultTypeId() == 12L) {
-			sampleStatus.setId(4L);
-			resultStatus.setId(3L);
-			labTestSample.setArtcSampleStatus(RESULT_POSTED);
-		}
-		if (labTestSampleDto.getResultTypeId() == 13L) {
-			sampleStatus.setId(4L);
-			resultStatus.setId(3L);
-			labTestSample.setArtcSampleStatus(RESULT_POSTED);
-		}
-		if (labTestSampleDto.getResultTypeId() == 14L) {
-			sampleStatus.setId(4L);
-			resultStatus.setId(3L);
-			labTestSample.setResultValue(labTestSampleDto.getResultValue());
-			labTestSample.setLogValue(labTestSampleDto.getLogValue());
-			labTestSample.setArtcSampleStatus(RESULT_POSTED);
-		}
-		if (labTestSampleDto.getResultTypeId() == 15L) {
-			sampleStatus.setId(2L);
-			resultStatus.setId(5L);
-			labTestSample.setArtcSampleStatus(REJECTED);
-		}
-		if (labTestSampleDto.getResultTypeId() == 16L) {
-			sampleStatus.setId(2L);
-			resultStatus.setId(5L);
-			labTestSample.setArtcSampleStatus(REJECTED);
+		
+		if(labTestSampleDto.getResultTypeId() != null) {
+			if (labTestSampleDto.getResultTypeId() == 11L) {
+				sampleStatus.setId(4L);
+				resultStatus.setId(3L);
+				labTestSample.setArtcSampleStatus(RESULT_POSTED);
+			}
+			if (labTestSampleDto.getResultTypeId() == 12L) {
+				sampleStatus.setId(4L);
+				resultStatus.setId(3L);
+				labTestSample.setArtcSampleStatus(RESULT_POSTED);
+			}
+			if (labTestSampleDto.getResultTypeId() == 13L) {
+				sampleStatus.setId(4L);
+				resultStatus.setId(3L);
+				labTestSample.setArtcSampleStatus(RESULT_POSTED);
+			}
+			if (labTestSampleDto.getResultTypeId() == 14L) {
+				sampleStatus.setId(4L);
+				resultStatus.setId(3L);
+				labTestSample.setResultValue(labTestSampleDto.getResultValue());
+				labTestSample.setLogValue(labTestSampleDto.getLogValue());
+				labTestSample.setArtcSampleStatus(RESULT_POSTED);
+			}
+			if (labTestSampleDto.getResultTypeId() == 15L) {
+				sampleStatus.setId(2L);
+				resultStatus.setId(5L);
+				labTestSample.setArtcSampleStatus(REJECTED);
+			}
+			if (labTestSampleDto.getResultTypeId() == 16L) {
+				sampleStatus.setId(2L);
+				resultStatus.setId(5L);
+				labTestSample.setArtcSampleStatus(REJECTED);
+			}	
 		}
 
 		labTestSample.setMasterSampleStatus(sampleStatus);
