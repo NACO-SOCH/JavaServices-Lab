@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
 import gov.naco.soch.dto.LoginResponseDto;
@@ -30,8 +31,31 @@ public class TestResultMapper {
 		vlTestResultDto.setArtcName(labTestSample.getLabTestSampleBatch().getFacility().getName());
 
 		Address facAddress = labTestSample.getLabTestSampleBatch().getFacility().getAddress();
-		String facAddressString = (facAddress.getAddressLineOne() != null ? facAddress.getAddressLineOne() : "")
-				+ (facAddress.getAddressLineTwo() != null ? ", " + facAddress.getAddressLineTwo() : "");
+		String facAddressString = (facAddress.getAddressLineOne() != null ? facAddress.getAddressLineOne() : "");
+		if(facAddress.getAddressLineTwo() != null && !StringUtils.isBlank(facAddress.getAddressLineTwo())) {
+			facAddressString = facAddressString	+ (facAddress.getAddressLineTwo() != null ? ", " + facAddress.getAddressLineTwo() : "");
+		}
+		if (facAddress.getTown() != null) {
+			facAddressString = facAddressString
+					+ (facAddress.getTown().getTownName() != null ? ", " + facAddress.getTown().getTownName() : "");
+		}
+		if (facAddress.getSubdistrict() != null) {
+			facAddressString = facAddressString + (facAddress.getSubdistrict().getSubdistrictName() != null
+					? ", " + facAddress.getSubdistrict().getSubdistrictName()
+					: "");
+		}
+		if (facAddress.getDistrict() != null) {
+			facAddressString = facAddressString
+					+ (facAddress.getDistrict().getName() != null ? ", " + facAddress.getDistrict().getName() : "");
+		}
+		if (facAddress.getState() != null) {
+			facAddressString = facAddressString
+					+ (facAddress.getState().getName() != null ? ", " + facAddress.getState().getName() : "");
+		}
+		if (facAddress.getPincodeEntity() != null) {
+			facAddressString = facAddressString
+					+ (facAddress.getPincodeEntity().getPincode() != null ? ", " + facAddress.getPincodeEntity().getPincode() : "");
+		}
 
 		vlTestResultDto.setArtcAddress(facAddressString);
 		vlTestResultDto.setArtcCode(labTestSample.getLabTestSampleBatch().getFacility().getCode());
@@ -40,8 +64,33 @@ public class TestResultMapper {
 		vlTestResultDto.setLabName(labTestSample.getLabTestSampleBatch().getLab().getName());
 
 		Address labAddress = labTestSample.getLabTestSampleBatch().getLab().getAddress();
-		String labAddressString = (labAddress.getAddressLineOne() != null ? labAddress.getAddressLineOne() : "")
-				+ (labAddress.getAddressLineTwo() != null ? ", " + labAddress.getAddressLineTwo() : "");
+		String labAddressString = (labAddress.getAddressLineOne() != null ? labAddress.getAddressLineOne() : "");
+		if(labAddress.getAddressLineTwo() != null && !StringUtils.isBlank(labAddress.getAddressLineTwo())) {
+			labAddressString = labAddressString	+ (labAddress.getAddressLineTwo() != null ? ", " + labAddress.getAddressLineTwo() : "");
+		}
+		if (labAddress.getTown() != null) {
+			labAddressString = labAddressString
+					+ (labAddress.getTown().getTownName() != null ? ", " + labAddress.getTown().getTownName() : "");
+		}
+		if (labAddress.getSubdistrict() != null) {
+			labAddressString = labAddressString + (labAddress.getSubdistrict().getSubdistrictName() != null
+					? ", " + labAddress.getSubdistrict().getSubdistrictName()
+					: "");
+		}
+		if (labAddress.getDistrict() != null) {
+			labAddressString = labAddressString
+					+ (labAddress.getDistrict().getName() != null ? ", " + labAddress.getDistrict().getName() : "");
+		}
+		/*
+		 * if (labAddress.getState() != null) { labAddressString = facAddressString +
+		 * (labAddress.getState().getName() != null ? ", " +
+		 * labAddress.getState().getName() : ""); }
+		 */
+		if (labAddress.getPincodeEntity() != null) {
+			labAddressString = labAddressString
+					+ (labAddress.getPincodeEntity().getPincode() != null ? ", " + labAddress.getPincodeEntity().getPincode() : "");
+		}
+				
 		if (!labAddressString.equals(", ")) {
 			vlTestResultDto.setLabAddress(labAddressString);
 		}
