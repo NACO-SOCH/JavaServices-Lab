@@ -78,13 +78,14 @@ public class TestResultMapper {
 					: "");
 		}
 		if (labAddress.getDistrict() != null) {
-			labAddressString = facAddressString
+			labAddressString = labAddressString
 					+ (labAddress.getDistrict().getName() != null ? ", " + labAddress.getDistrict().getName() : "");
 		}
-		if (labAddress.getState() != null) {
-			labAddressString = facAddressString
-					+ (labAddress.getState().getName() != null ? ", " + labAddress.getState().getName() : "");
-		}
+		/*
+		 * if (labAddress.getState() != null) { labAddressString = facAddressString +
+		 * (labAddress.getState().getName() != null ? ", " +
+		 * labAddress.getState().getName() : ""); }
+		 */
 		if (labAddress.getPincodeEntity() != null) {
 			labAddressString = labAddressString
 					+ (labAddress.getPincodeEntity().getPincode() != null ? ", " + labAddress.getPincodeEntity().getPincode() : "");
