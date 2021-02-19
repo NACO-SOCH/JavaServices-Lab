@@ -4,7 +4,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.CollectionUtils;
 
 import gov.naco.soch.dto.LoginResponseDto;
@@ -30,8 +33,32 @@ public class TestResultMapper {
 		vlTestResultDto.setArtcName(labTestSample.getLabTestSampleBatch().getFacility().getName());
 
 		Address facAddress = labTestSample.getLabTestSampleBatch().getFacility().getAddress();
-		String facAddressString = (facAddress.getAddressLineOne() != null ? facAddress.getAddressLineOne() : "")
-				+ (facAddress.getAddressLineTwo() != null ? ", " + facAddress.getAddressLineTwo() : "");
+		String facAddressString = (facAddress.getAddressLineOne() != null ? facAddress.getAddressLineOne() : "");
+		if(facAddress.getAddressLineTwo() != null && !StringUtils.isBlank(facAddress.getAddressLineTwo())) {
+			facAddressString = facAddressString	+ (facAddress.getAddressLineTwo() != null ? ", " + facAddress.getAddressLineTwo() : "");
+		}
+				//+ (facAddress.getAddressLineTwo() != null ? ", " + facAddress.getAddressLineTwo() : "");
+		if (facAddress.getTown() != null) {
+			facAddressString = facAddressString
+					+ (facAddress.getTown().getTownName() != null ? ", " + facAddress.getTown().getTownName() : "");
+		}
+		if (facAddress.getSubdistrict() != null) {
+			facAddressString = facAddressString + (facAddress.getSubdistrict().getSubdistrictName() != null
+					? ", " + facAddress.getSubdistrict().getSubdistrictName()
+					: "");
+		}
+		if (facAddress.getDistrict() != null) {
+			facAddressString = facAddressString
+					+ (facAddress.getDistrict().getName() != null ? ", " + facAddress.getDistrict().getName() : "");
+		}
+		if (facAddress.getState() != null) {
+			facAddressString = facAddressString
+					+ (facAddress.getState().getName() != null ? ", " + facAddress.getState().getName() : "");
+		}
+		if (facAddress.getPincodeEntity() != null) {
+			facAddressString = facAddressString
+					+ (facAddress.getPincodeEntity().getPincode() != null ? ", " + facAddress.getPincodeEntity().getPincode() : "");
+		}
 
 		vlTestResultDto.setArtcAddress(facAddressString);
 		vlTestResultDto.setArtcCode(labTestSample.getLabTestSampleBatch().getFacility().getCode());
