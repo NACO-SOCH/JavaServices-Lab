@@ -15,9 +15,11 @@ import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -111,11 +113,42 @@ public class TestResultService {
 
 	@Autowired
 	private IctcBeneficiaryRepository ictcBeneficiaryRepository;
+	
+	@Value("${exportRecordsLimit}")
+	private Integer exportRecordsLimit;
 
-	public TestSamplesResponseDto fetchTestResultsList(Long labId, Integer pageNo, Integer pageSize) {
+	public TestSamplesResponseDto fetchTestResultsList(Long labId, Integer pageNo, Integer pageSize , String sortBy, String sortType) {
 
 		logger.debug("In fetchTestResultsList() of TestResultService");
 
+		Pageable pageable = null;
+		if (pageSize != null && pageNo != null) {
+			String sortColumn = "d.modified_time";
+			if (sortBy.equalsIgnoreCase("bdn")) {
+				sortColumn = "b.bdn_serial_number";
+			} else if (sortBy.equalsIgnoreCase("artcentre")) {
+				sortColumn = "b.artc_id";
+			} else if (sortBy.equalsIgnoreCase("name")) {
+				sortColumn = "ben.first_name";
+			} else if (sortBy.equalsIgnoreCase("barcode")) {
+				sortColumn = "d.barcode_number";
+			} else if (sortBy.equalsIgnoreCase("testtype")) {
+				sortColumn = "tt.test_type";
+			} else if (sortBy.equalsIgnoreCase("resultdate")) {
+				sortColumn = "d.result_approved_date";
+			} else if (sortBy.equalsIgnoreCase("testresult")) {
+				sortColumn = "resType.result_type";
+			} else if (sortBy.equalsIgnoreCase("status")) {
+				sortColumn = "res.status";
+			}
+			pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortColumn).descending());
+			if (sortType.equalsIgnoreCase("asc")) {
+				pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortColumn).ascending());
+			}
+		} else {
+			pageable = PageRequest.of(0, exportRecordsLimit);
+		}
+		
 		TestSamplesResponseDto dto = new TestSamplesResponseDto();
 		Pageable paging = PageRequest.of(pageNo, pageSize);
 

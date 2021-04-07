@@ -35,9 +35,10 @@ public class TestResultController {
 	@PreAuthorize("hasAuthority('" + LabAccessCodes.EIDLAB_INFANT_TEST_RESULTS + "') or hasAuthority('"
 			+ LabAccessCodes.VL_TEST_RESULTS + "')")
 	public TestSamplesResponseDto fetchTestResultsList(@PathVariable("labId") Long labId,
-			@RequestParam(defaultValue = "0") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
+			@RequestParam(required = false) Integer pageNo, @RequestParam(required = false) Integer pageSize, @RequestParam(defaultValue = "modified_time") String sortBy,
+			@RequestParam(defaultValue = "desc") String sortType) {
 		logger.info("fetchTestResultsList method is invoked");
-		return testResultService.fetchTestResultsList(labId, pageNo, pageSize);
+		return testResultService.fetchTestResultsList(labId, pageNo, pageSize,sortBy,sortType);
 	}
 
 	@GetMapping("/underapproval/{labId}")
