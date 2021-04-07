@@ -30,3 +30,4 @@ mhl:
 accessKey: devkey@3
 crossDomainAllowedOrigins:
 jwtSecret: U09DSCtUMHBTM2NyRXQrQXV0aG9yaXphdGlvbit0b2tlbitrZXk=
+exportRecordsLimit: 50000
