@@ -122,7 +122,11 @@ public class TestResultService {
 		logger.debug("In fetchTestResultsList() of TestResultService");
 
 		Pageable pageable = null;
-		if (pageSize != null && pageNo != null) {
+		if (pageSize== 0 && pageNo ==0) {
+			pageable = PageRequest.of(0, exportRecordsLimit);
+		}else {
+		//}
+		//if (pageSize != null && pageNo != null) {
 			String sortColumn = "d.modified_time";
 			if (sortBy.equalsIgnoreCase("bdn")) {
 				sortColumn = "b.bdn_serial_number";
@@ -145,8 +149,9 @@ public class TestResultService {
 			if (sortType.equalsIgnoreCase("asc")) {
 				pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortColumn).ascending());
 			}
-		} else {
-			pageable = PageRequest.of(0, exportRecordsLimit);
+		//} else {
+			//pageable = PageRequest.of(0, exportRecordsLimit);
+		//}
 		}
 		
 		TestSamplesResponseDto dto = new TestSamplesResponseDto();
