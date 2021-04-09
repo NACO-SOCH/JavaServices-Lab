@@ -127,23 +127,23 @@ public class TestResultService {
 		}else {
 		//}
 		//if (pageSize != null && pageNo != null) {
-			String sortColumn = "d.modified_time";
+			String sortColumn = "modifiedTime";
 			if (sortBy.equalsIgnoreCase("bdn")) {
-				sortColumn = "b.bdn_serial_number";
+				sortColumn = "bdnSerialNumber";
 			} else if (sortBy.equalsIgnoreCase("artcentre")) {
-				sortColumn = "b.artc_id";
+				sortColumn = "facility";
 			} else if (sortBy.equalsIgnoreCase("name")) {
-				sortColumn = "ben.first_name";
+				sortColumn = "firstName";
 			} else if (sortBy.equalsIgnoreCase("barcode")) {
-				sortColumn = "d.barcode_number";
+				sortColumn = "barcodeNumber";
 			} else if (sortBy.equalsIgnoreCase("testtype")) {
-				sortColumn = "tt.test_type";
+				sortColumn = "testType";
 			} else if (sortBy.equalsIgnoreCase("resultdate")) {
-				sortColumn = "d.result_approved_date";
+				sortColumn = "resultApprovedDate";
 			} else if (sortBy.equalsIgnoreCase("testresult")) {
-				sortColumn = "resType.result_type";
+				sortColumn = "resultType";
 			} else if (sortBy.equalsIgnoreCase("status")) {
-				sortColumn = "res.status";
+				sortColumn = "masterResultStatus";
 			}
 			pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortColumn).descending());
 			if (sortType.equalsIgnoreCase("asc")) {
