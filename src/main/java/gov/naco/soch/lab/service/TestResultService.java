@@ -123,6 +123,7 @@ public class TestResultService {
 
 		Pageable pageable = null;
 		if (pageSize== 0 && pageNo ==0) {
+			pageSize = exportRecordsLimit;
 			pageable = PageRequest.of(0, exportRecordsLimit);
 		}else {
 		//}
@@ -158,7 +159,7 @@ public class TestResultService {
 		Pageable paging = PageRequest.of(pageNo, pageSize);
 
 		List<TestResultDto> testResultDto = new ArrayList<>();
-		Page<LabTestSample> labTestSampleList = labTestSampleRepository.findSamplesTestResults(labId, paging);
+		Page<LabTestSample> labTestSampleList = labTestSampleRepository.findSamplesTestResults(labId, pageable);
 		if (labTestSampleList.hasContent()) {
 			testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 					.collect(Collectors.toList());
