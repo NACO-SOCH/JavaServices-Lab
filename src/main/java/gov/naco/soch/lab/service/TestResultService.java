@@ -130,11 +130,11 @@ public class TestResultService {
 		//if (pageSize != null && pageNo != null) {
 			String sortColumn = "modifiedTime";
 			if (sortBy.equalsIgnoreCase("bdn")) {
-				sortColumn = "bdnSerialNumber";
+				sortColumn = "b.bdnSerialNumber";
 			} else if (sortBy.equalsIgnoreCase("artcentre")) {
-				sortColumn = "facility";
+				sortColumn = "d.sampleCollectedFacility.name";
 			} else if (sortBy.equalsIgnoreCase("name")) {
-				sortColumn = "firstName";
+				sortColumn = "d.beneficiary.firstName";
 			} else if (sortBy.equalsIgnoreCase("barcode")) {
 				sortColumn = "barcodeNumber";
 			} else if (sortBy.equalsIgnoreCase("testtype")) {
@@ -146,9 +146,11 @@ public class TestResultService {
 			} else if (sortBy.equalsIgnoreCase("status")) {
 				sortColumn = "masterResultStatus";
 			}
-			pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortColumn).descending());
+			
 			if (sortType.equalsIgnoreCase("asc")) {
 				pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortColumn).ascending());
+			}else {
+				pageable = PageRequest.of(pageNo, pageSize, Sort.by(sortColumn).descending());
 			}
 		//} else {
 			//pageable = PageRequest.of(0, exportRecordsLimit);
