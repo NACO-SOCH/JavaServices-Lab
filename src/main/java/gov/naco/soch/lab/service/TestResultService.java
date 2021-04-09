@@ -132,9 +132,9 @@ public class TestResultService {
 			if (sortBy.equalsIgnoreCase("bdn")) {
 				sortColumn = "b.bdnSerialNumber";
 			} else if (sortBy.equalsIgnoreCase("artcentre")) {
-				sortColumn = "d.sampleCollectedFacility.name";
+				sortColumn = "f.name";
 			} else if (sortBy.equalsIgnoreCase("name")) {
-				sortColumn = "d.beneficiary.firstName";
+				sortColumn = "ben.firstName";
 			} else if (sortBy.equalsIgnoreCase("barcode")) {
 				sortColumn = "barcodeNumber";
 			} else if (sortBy.equalsIgnoreCase("testtype")) {
