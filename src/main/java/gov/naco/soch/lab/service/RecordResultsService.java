@@ -387,8 +387,8 @@ public class RecordResultsService {
 
 		MasterSampleStatus sampleStatus = new MasterSampleStatus();
 		MasterResultStatus resultStatus = new MasterResultStatus();
-		
-		if(labTestSampleDto.getResultTypeId() != null) {
+
+		if (labTestSampleDto.getResultTypeId() != null) {
 			if (labTestSampleDto.getResultTypeId() == 11L) {
 				sampleStatus.setId(4L);
 				resultStatus.setId(3L);
@@ -420,7 +420,7 @@ public class RecordResultsService {
 				sampleStatus.setId(2L);
 				resultStatus.setId(5L);
 				labTestSample.setArtcSampleStatus(REJECTED);
-			}	
+			}
 		}
 
 		labTestSample.setMasterSampleStatus(sampleStatus);
@@ -476,15 +476,20 @@ public class RecordResultsService {
 		int notRecievedCount = 0;
 		int samplesCount = labTestSamples.size();
 		for (LabTestSample s : labTestSamples) {
-			if (s.getMasterSampleStatus() != null
-					&& (s.getMasterSampleStatus().getId() == 1L || s.getMasterSampleStatus().getId() == 4L)) {
-				acceptCount++;
+			if (s.getMasterSampleStatus() != null) {
+				if ((s.getMasterSampleStatus().getId() == 1L || s.getMasterSampleStatus().getId() == 4L)) {
+					acceptCount++;
+				}
 			}
-			if (s.getMasterSampleStatus() != null && s.getMasterSampleStatus().getId() == 2L) {
-				rejectCount++;
+			if (s.getMasterSampleStatus() != null) {
+				if (s.getMasterSampleStatus().getId() == 2L) {
+					rejectCount++;
+				}
 			}
-			if (s.getMasterSampleStatus() != null && s.getMasterSampleStatus().getId() == 3L) {
-				notRecievedCount++;
+			if (s.getMasterSampleStatus() != null) {
+				if (s.getMasterSampleStatus().getId() == 3L) {
+					notRecievedCount++;
+				}
 			}
 		}
 		if (acceptCount == samplesCount) {
