@@ -77,5 +77,11 @@ public class RecordResultsController {
 		logger.debug("saveRecordResult is invoked!");
 		return recordResultsService.recordResultFromFile(results);
 	}
+	
+	@GetMapping("/status")
+	public Boolean getBackdatedRecordResultStatus() {
+		logger.debug("getBackdatedRecordResultStatus is invoked!");
+		return recordResultsService.getBackdatedRecordResultStatus();
+	}
 
 }

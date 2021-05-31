@@ -18,6 +18,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -76,6 +77,9 @@ public class RecordResultsService {
 	private static final Logger logger = LoggerFactory.getLogger(TestResultService.class);
 
 	private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+	
+	@Value("${lab.recordresult.backdate.enabled}")
+	private Boolean recordresultBackdateEnabled;
 
 	@Autowired
 	private LabTestSampleRepository labTestSampleRepository;
@@ -612,5 +616,9 @@ public class RecordResultsService {
 		}
 
 		return results;
+	}
+
+	public Boolean getBackdatedRecordResultStatus() {
+		return recordresultBackdateEnabled;
 	}
 }
