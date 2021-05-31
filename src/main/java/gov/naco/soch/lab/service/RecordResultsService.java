@@ -78,8 +78,6 @@ public class RecordResultsService {
 
 	private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 	
-	@Value("${lab.recordresult.backdate.enabled}")
-	private Boolean recordresultBackdateEnabled;
 
 	@Autowired
 	private LabTestSampleRepository labTestSampleRepository;
@@ -618,7 +616,4 @@ public class RecordResultsService {
 		return results;
 	}
 
-	public Boolean getBackdatedRecordResultStatus() {
-		return recordresultBackdateEnabled;
-	}
 }
