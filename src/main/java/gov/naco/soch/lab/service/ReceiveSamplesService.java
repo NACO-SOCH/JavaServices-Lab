@@ -1,6 +1,5 @@
 package gov.naco.soch.lab.service;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -9,7 +8,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
+import java.time.LocalDateTime;
 import javax.transaction.Transactional;
 
 import org.slf4j.Logger;
@@ -211,11 +210,19 @@ public class ReceiveSamplesService {
 	public LabTestSampleBatchDto saveReceivedSamples(Long batchId, LabTestSampleBatchDto labTestSampleBatchDto) {
 
 		Optional<LabTestSampleBatch> labTestSampleBatchOpt = labTestSampleBatchRepository.findById(batchId);
+		Long facilityType = UserUtils.getLoggedInUserDetails().getFacilityTypeId();
+		
 		if (labTestSampleBatchOpt.isPresent()) {
 			LabTestSampleBatch labTestSampleBatch = labTestSampleBatchOpt.get();
 			labTestSampleBatch.setAcceptedSamples(labTestSampleBatchDto.getAcceptedSamples());
 			labTestSampleBatch.setRejectedSamples(labTestSampleBatchDto.getRejectedSamples());
-			labTestSampleBatch.setReceivedDate(LocalDateTime.now());
+			if (facilityType == FacilityTypeEnum.LABORATORY_EID.getFacilityType()) {
+				labTestSampleBatch.setReceivedDate(LocalDateTime.now());
+			}else {
+				labTestSampleBatch.setReceivedDate(labTestSampleBatchDto.getReceivedDate());
+			}
+			
+		
 			Facility lab = labTestSampleBatch.getLab();
 			Optional<UserMaster> labTechUserOpt = userMasterRepository
 					.findById(labTestSampleBatchDto.getLabTechnicianId());
@@ -230,7 +237,9 @@ public class ReceiveSamplesService {
 
 				MasterResultStatus masterResultStatus = masterResultStatusRepository.findByStatusAndIsDelete("PENDING",
 						Boolean.FALSE);
-
+				
+				
+				
 				labTestSampleBatch.getLabTestSamples().forEach(s -> {
 
 					Optional<LabTestSampleDto> sampleOpt = labTestSampleBatchDto.getLabTestSampleDtoList().stream()
@@ -242,7 +251,13 @@ public class ReceiveSamplesService {
 							Optional<MasterSampleStatus> sampleStatusOpt = masterSampleStatusRepository
 									.findById(sample.getSampleStatusId());
 							if (sampleStatusOpt.isPresent()) {
-								s.setSampleReceivedDate(LocalDateTime.now());
+								
+								if (facilityType == FacilityTypeEnum.LABORATORY_EID.getFacilityType()) {
+								 s.setSampleReceivedDate(LocalDateTime.now());
+								}else {
+								 s.setSampleReceivedDate(labTestSampleBatchDto.getReceivedDate());
+								}
+								 
 								s.setMasterSampleStatus(sampleStatusOpt.get());
 								if (sampleStatusOpt.get().getStatus().equalsIgnoreCase(ACCEPT)) {
 									s.setArtcSampleStatus(RECIEVED);

@@ -49,9 +49,15 @@ public class RecieveSamplesController {
 	@PreAuthorize("hasAuthority('" + LabAccessCodes.VL_RECIEVE_SAMPLES + "') or hasAuthority('"
 			+ LabAccessCodes.EIDLAB_RECEIVE_SAMPLES + "')")
 	public LabTestSampleBatchDto saveReceivedSamples(@PathVariable("batchId") Long batchId,
-			@RequestBody LabTestSampleBatchDto labTestSampleBatchDto) {
+			 @RequestBody LabTestSampleBatchDto labTestSampleBatchDto) {
 		logger.info("saveReceivedSamples method is invoked");
-		labTestSampleBatchDto = receiveSamplesService.saveReceivedSamples(batchId, labTestSampleBatchDto);
+		
+		System.out.println("print-getReceivedDate => "); // Added by Asjad
+		System.out.println(labTestSampleBatchDto.getReceivedDate());
+		
+		logger.warn("receivedData---1",labTestSampleBatchDto.getReceivedDate());
+		logger.info("saveReceivedSamples with parameters->{}", labTestSampleBatchDto);
+		labTestSampleBatchDto = receiveSamplesService.saveReceivedSamples(batchId, labTestSampleBatchDto);  // Commented by Asjad
 		return labTestSampleBatchDto;
 	}
 

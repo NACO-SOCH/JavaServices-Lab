@@ -226,7 +226,7 @@ public class TestResultMapper {
 		}
 		
 		if(labTestSample.getResultApprovedDate() != null) {
-			vlTestResultDto.setResultApprovedDate(labTestSample.getResultApprovedDate().format(formatter));
+			vlTestResultDto.setResultApprovedDate(labTestSample.getResultApprovedDate().format(formatter));			
 		}
 
 		return vlTestResultDto;

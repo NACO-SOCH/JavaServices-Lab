@@ -1,7 +1,11 @@
 package gov.naco.soch.lab.controller;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
+
+import javax.validation.Valid;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import gov.naco.soch.lab.constants.LabAccessCodes;
+import gov.naco.soch.lab.dto.LabTestSampleDto;
 import gov.naco.soch.lab.dto.TestResultDto;
 import gov.naco.soch.lab.dto.TestSamplesResponseDto;
 import gov.naco.soch.lab.service.TestResultService;
@@ -27,7 +32,7 @@ import gov.naco.soch.lab.service.TestResultService;
 public class TestResultController {
 
 	private static final Logger logger = LoggerFactory.getLogger(TestResultController.class);
-
+	
 	@Autowired
 	private TestResultService testResultService;
 
@@ -54,11 +59,16 @@ public class TestResultController {
 	@PreAuthorize("hasAuthority('" + LabAccessCodes.EIDLAB_RESULTS_UNDER_APPROVAL + "') or hasAuthority('"
 			+ LabAccessCodes.VL_RESULT_UNDER_APPROVAL + "')")
 	public List<TestResultDto> approveTestResults(@PathVariable("labInchargeId") Long labInchargeId,
-			@RequestBody List<TestResultDto> testResultList) {
-		logger.info("approveTestResults is invoked!");
+			@Valid @RequestBody List<TestResultDto> testResultList) {
+		
+		TestResultDto vlTestResultDto = new TestResultDto();
+		
+		logger.info("approveTestResults is invoked!");		
+	    logger.info("Body: {}", vlTestResultDto.getResultApprovedDate());
+	    
 		return testResultService.approveTestResults(labInchargeId, testResultList);
 	}
-
+	
 	@PostMapping("/reject/{labInchargeId}")
 	@PreAuthorize("hasAuthority('" + LabAccessCodes.EIDLAB_RESULTS_UNDER_APPROVAL + "') or hasAuthority('"
 			+ LabAccessCodes.VL_RESULT_UNDER_APPROVAL + "')")

@@ -2,6 +2,7 @@ package gov.naco.soch.lab.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -45,6 +46,7 @@ import gov.naco.soch.entity.MasterSampleStatus;
 import gov.naco.soch.entity.UserMaster;
 import gov.naco.soch.enums.FacilityTypeEnum;
 import gov.naco.soch.exception.ServiceException;
+import gov.naco.soch.lab.dto.LabTestSampleDto;
 import gov.naco.soch.lab.dto.TestResultDto;
 import gov.naco.soch.lab.dto.TestSamplesResponseDto;
 import gov.naco.soch.lab.mapper.AdvanceSearchMapperUtil;
@@ -167,7 +169,7 @@ public class TestResultService {
 					.collect(Collectors.toList());
 			LoginResponseDto currentUser = UserUtils.getLoggedInUserDetails();
 			if (FacilityTypeEnum.VL_PUBLIC.getFacilityType().equals(currentUser.getFacilityTypeId())) {
-				fetchVLTestCount(testResultDto);
+				// fetchVLTestCount(testResultDto); //commented by Asjad
 			}
 
 			if (FacilityTypeEnum.LABORATORY_EID.getFacilityType().equals(currentUser.getFacilityTypeId())) {
@@ -225,6 +227,10 @@ public class TestResultService {
 
 	public List<TestResultDto> approveTestResults(Long labInchargeId, List<TestResultDto> testResultList) {
 
+		Long facilityType = UserUtils.getLoggedInUserDetails().getFacilityTypeId();
+		LabTestSampleDto labTestSampleDto = new LabTestSampleDto();
+		System.out.println(labTestSampleDto.getResultApprovedDate());
+		
 		List<Long> idList = testResultList.stream().map(s -> s.getSampleId()).collect(Collectors.toList());
 
 		List<LabTestSample> labTestSampleList = labTestSampleRepository.findAllById(idList);
@@ -245,26 +251,38 @@ public class TestResultService {
 
 		List<Long> batchIds = labTestSampleList.stream().map(s -> s.getLabTestSampleBatch().getId())
 				.collect(Collectors.toList());
-
+		
+		 String resltAprDate= null;
+		 LocalDateTime resultApprovedDat = LocalDateTime.now();
+		// DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS");
+		//resultApprovedDat = LocalDateTime.parse(resltAprDate, formatter);
+		
+		if (facilityType != FacilityTypeEnum.LABORATORY_EID.getFacilityType()) {
+			for(TestResultDto d : testResultList) {
+				resltAprDate = d.getResultApprovedDate();
+				resultApprovedDat = LocalDateTime.parse(resltAprDate);
+			}
+		}	
+		
+		
 		List<TestResultDto> testResultDto = new ArrayList<>();
 		if (!CollectionUtils.isEmpty(labTestSampleList)) {
 			for (LabTestSample s : labTestSampleList) {
 				s.setMasterSampleStatus(masterSampleStatus);
 				s.setMasterResultStatus(masterResultStatus);
 				s.setArtcSampleStatus("RESULT POSTED");
-				s.setLabInCharge(labIncharge);
-				s.setResultApprovedDate(LocalDateTime.now());
-				s.setResultDispatchDate(LocalDateTime.now());
+				s.setLabInCharge(labIncharge);		
+				s.setResultApprovedDate(resultApprovedDat);
+				s.setResultDispatchDate(resultApprovedDat);									
+
 				s.setAuthorizer(labIncharge);
 			}
 			labTestSampleList = labTestSampleRepository.saveAll(labTestSampleList);
 
-			testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
-					.collect(Collectors.toList());
+			testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s)).collect(Collectors.toList());
 			// Change the status of batch
-			changeBatchStatus(batchIds);
-
-			Long facilityType = UserUtils.getLoggedInUserDetails().getFacilityTypeId();
+			changeBatchStatus(batchIds);			
+			
 			if (facilityType == FacilityTypeEnum.LABORATORY_EID.getFacilityType()) {
 				updateIctc(labTestSampleList);
 				updateIctcBeneficiaryAndStatusTracking(labTestSampleList);
@@ -274,8 +292,16 @@ public class TestResultService {
 		return testResultDto;
 	}
 
-	public List<TestResultDto> rejectTestResults(Long labInchargeId, List<TestResultDto> testResultList) {
 
+	// Method to change Test Result Approval Status
+		public void updateApprovalStatus(Integer batchId, Integer sampleId, LocalDateTime resultApprovedDate) {			
+			logger.debug("Entering into updateApprovalStatus  method  - TestResultService");
+			labTestSampleRepository.updateApprovalStatus(batchId, sampleId, resultApprovedDate);
+		}
+	
+	public List<TestResultDto> rejectTestResults(Long labInchargeId, List<TestResultDto> testResultList) {
+		
+		Long facilityType = UserUtils.getLoggedInUserDetails().getFacilityTypeId();
 		List<Long> idList = testResultList.stream().map(s -> s.getSampleId()).collect(Collectors.toList());
 
 		List<LabTestSample> labTestSampleList = labTestSampleRepository.findAllById(idList);
@@ -294,6 +320,16 @@ public class TestResultService {
 			throw new ServiceException("Invalid User", null, HttpStatus.BAD_REQUEST);
 		}
 
+		String resltAprDate= null;
+		LocalDateTime resultApprovedDat = LocalDateTime.now();
+		
+		if (facilityType != FacilityTypeEnum.LABORATORY_EID.getFacilityType()) {			
+			for(TestResultDto d : testResultList) {
+				resltAprDate = d.getResultApprovedDate();
+				resultApprovedDat = LocalDateTime.parse(resltAprDate);
+			}
+		}
+		
 		List<TestResultDto> testResultDto = new ArrayList<>();
 		if (!CollectionUtils.isEmpty(labTestSampleList)) {
 			for (LabTestSample s : labTestSampleList) {
@@ -301,16 +337,16 @@ public class TestResultService {
 				s.setMasterResultStatus(masterResultStatus);
 				s.setLabInCharge(labIncharge);
 				s.setAuthorizer(labIncharge);
-				s.setArtcSampleStatus("RESULT POSTED");
-				s.setResultApprovedDate(LocalDateTime.now());
-				s.setResultDispatchDate(LocalDateTime.now());
+				s.setArtcSampleStatus("RESULT POSTED");			
+				s.setResultApprovedDate(resultApprovedDat);
+				s.setResultDispatchDate(resultApprovedDat);									
+
 			}
 			labTestSampleList = labTestSampleRepository.saveAll(labTestSampleList);
 
 			testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 					.collect(Collectors.toList());
 
-			Long facilityType = UserUtils.getLoggedInUserDetails().getFacilityTypeId();
 			if (facilityType == FacilityTypeEnum.LABORATORY_EID.getFacilityType()) {
 				updateIctc(labTestSampleList);
 				updateIctcBeneficiaryAndStatusTracking(labTestSampleList);
@@ -701,7 +737,7 @@ public class TestResultService {
 					.collect(Collectors.toList());
 			LoginResponseDto currentUser = UserUtils.getLoggedInUserDetails();
 			if (FacilityTypeEnum.VL_PUBLIC.getFacilityType().equals(currentUser.getFacilityTypeId())) {
-				fetchVLTestCount(testResultDto);
+				// fetchVLTestCount(testResultDto);
 			}
 
 			if (FacilityTypeEnum.LABORATORY_EID.getFacilityType().equals(currentUser.getFacilityTypeId())) {
