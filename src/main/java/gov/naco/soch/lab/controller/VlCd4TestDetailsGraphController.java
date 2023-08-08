@@ -3,8 +3,11 @@ package gov.naco.soch.lab.controller;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Logger;
+import java.text.SimpleDateFormat;
 
 import org.ehcache.shadow.org.terracotta.offheapstore.paging.Page;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,11 +31,11 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import gov.naco.soch.lab.dto.BeneficiaryTestDetailsDto;
 import gov.naco.soch.lab.service.TestDetailsGraphService;
-import gov.naco.soch.repository.BeneficiaryVisitRegisterRepository;
-
+import java.util.ArrayList;
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
+
 public class VlCd4TestDetailsGraphController {
 	
 	
@@ -111,13 +114,6 @@ public class VlCd4TestDetailsGraphController {
 		                }
 		            }
 		        }
-
-		        // Set the formula for the sum of rows
-//		        int sumFormulaRowIdx = rowIdx;
-//		        Row sumFormulaRow = sheet.createRow(sumFormulaRowIdx);
-//		        Cell sumFormulaCell = sumFormulaRow.createCell(4); // Assuming the sum is in the first column (column index 0)
-//		        sumFormulaCell.setCellFormula("SUM(A2:A" + (rowIdx - 1) + ")"); // Adjust the range based on your data
-
 		        workbook.setForceFormulaRecalculation(true); // Enable automatic formula recalculation
 
 		        workbook.write(outputStream);

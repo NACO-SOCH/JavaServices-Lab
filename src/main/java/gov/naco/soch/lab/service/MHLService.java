@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -394,5 +395,34 @@ public class MHLService {
 			return REJECTED;
 		}
 		return PARTIALLY_RECEIVED;
+	}
+	
+//	public List<Object[]> getloginCount(Integer stateId, Date startDate, Date endDate,  Integer facilityId, Integer facilityTypeId) {
+//		if(facilityId && facilityTypeId == null) {
+//	    return masterBatchStatusRepository.getLoginCount(stateId,startDate, endDate);
+//	}else if(facilityId == null){
+//		return masterBatchStatusRepository.getLoginCountallfac(stateId,startDate, endDate, facilityTypeId);
+//	}
+//	else {
+//		return masterBatchStatusRepository.getLoginCountfac(stateId,startDate, endDate, facilityId, facilityTypeId);
+//	}
+//	}
+	
+	public List<Object[]> getloginCount(Integer stateId, Date startDate, Date endDate, Integer facilityId, Integer facilityTypeId) {
+	    if (facilityId == null && facilityTypeId == null) {
+	        return masterBatchStatusRepository.getLoginCount(stateId, startDate, endDate);
+	    } else if (facilityId == null && facilityTypeId != null) {
+	        return masterBatchStatusRepository.getLoginCountfac(stateId, startDate, endDate, facilityTypeId);
+	    } else {
+	        return masterBatchStatusRepository.getLoginCountallfac(stateId, startDate, endDate, facilityId, facilityTypeId);
+	    }
+	}
+	
+	public List<Object[]> getFacilities(Long stateId, Long facilityTypeId) {
+		if ( facilityTypeId == null) {
+	        return masterBatchStatusRepository.getFacilitiesbystate(stateId);
+	    }else {
+        return masterBatchStatusRepository.getFacilities(stateId, facilityTypeId);
+	    }	
 	}
 }
