@@ -72,13 +72,14 @@ public class MHLController {
 	    @RequestParam String startDate,
 	    @RequestParam String endDate,
 	    @RequestParam Integer facilityId,
-	    @RequestParam Integer facilityTypeId) throws ParseException {
+	    @RequestParam Integer facilityTypeId,
+	    @RequestParam Integer DistrictId) throws ParseException {
 
 	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 	    Date parsedStartDate = dateFormat.parse(startDate);
 	    Date parsedEndDate = dateFormat.parse(endDate);
 
-	    List<Object[]> allData = new ArrayList<>(mhlService.getloginCount(stateId, parsedStartDate, parsedEndDate, facilityId, facilityTypeId));
+	    List<Object[]> allData = new ArrayList<>(mhlService.getLoginCount(stateId, parsedStartDate, parsedEndDate, facilityId, facilityTypeId, DistrictId));
 
 	    HttpHeaders headers = new HttpHeaders();
 	    headers.add("X-Total-Records", String.valueOf(allData.size()));
@@ -91,9 +92,10 @@ public class MHLController {
 	@GetMapping("facilities")
     public ResponseEntity<List<Object[]>> getFacilities(
             @RequestParam Long stateId,
-            @RequestParam Long facilityTypeId
+            @RequestParam Long facilityTypeId,
+            @RequestParam Long DistrictId
     ) {
-        List<Object[]> facilities = mhlService.getFacilities(stateId, facilityTypeId);
+        List<Object[]> facilities = mhlService.getFacilities(stateId, facilityTypeId,DistrictId);
         return ResponseEntity.ok(facilities);
     }
 

@@ -396,33 +396,29 @@ public class MHLService {
 		}
 		return PARTIALLY_RECEIVED;
 	}
-	
-//	public List<Object[]> getloginCount(Integer stateId, Date startDate, Date endDate,  Integer facilityId, Integer facilityTypeId) {
-//		if(facilityId && facilityTypeId == null) {
-//	    return masterBatchStatusRepository.getLoginCount(stateId,startDate, endDate);
-//	}else if(facilityId == null){
-//		return masterBatchStatusRepository.getLoginCountallfac(stateId,startDate, endDate, facilityTypeId);
-//	}
-//	else {
-//		return masterBatchStatusRepository.getLoginCountfac(stateId,startDate, endDate, facilityId, facilityTypeId);
-//	}
-//	}
-	
-	public List<Object[]> getloginCount(Integer stateId, Date startDate, Date endDate, Integer facilityId, Integer facilityTypeId) {
-	    if (facilityId == null && facilityTypeId == null) {
-	        return masterBatchStatusRepository.getLoginCount(stateId, startDate, endDate);
-	    } else if (facilityId == null && facilityTypeId != null) {
-	        return masterBatchStatusRepository.getLoginCountfac(stateId, startDate, endDate, facilityTypeId);
-	    } else {
-	        return masterBatchStatusRepository.getLoginCountallfac(stateId, startDate, endDate, facilityId, facilityTypeId);
-	    }
-	}
-	
-	public List<Object[]> getFacilities(Long stateId, Long facilityTypeId) {
-		if ( facilityTypeId == null) {
-	        return masterBatchStatusRepository.getFacilitiesbystate(stateId);
-	    }else {
-        return masterBatchStatusRepository.getFacilities(stateId, facilityTypeId);
-	    }	
+	public List<Object[]>getLoginCount(Integer stateId, Date startDate, Date endDate, Integer facilityId, Integer facilityTypeId, Integer DistrictId) {
+		if (facilityId == null && facilityTypeId == null && DistrictId == null) {
+			return masterBatchStatusRepository.getLoginCount(stateId, startDate, endDate);
+		} else if (facilityId == null && facilityTypeId != null && DistrictId == null) {
+			return masterBatchStatusRepository.getLoginCountfac(stateId, startDate, endDate, facilityTypeId);
+		} else if (facilityId == null && facilityTypeId == null && DistrictId != null) {
+			return masterBatchStatusRepository.getLoginCountWithDistrict(stateId, startDate, endDate, DistrictId);
+		} else if (facilityId == null && facilityTypeId != null && DistrictId != null) {
+			return masterBatchStatusRepository.getLoginCountFacAndDistrict(stateId, startDate, endDate, facilityTypeId, DistrictId);
+		} else {
+			return masterBatchStatusRepository.getLoginCountallfac(stateId, startDate, endDate, facilityId, facilityTypeId, DistrictId);
+			}
+		}
+
+	public List<Object[]>getFacilities(Long stateId, Long facilityTypeId, Long DistrictId) {
+		if (DistrictId != null && facilityTypeId != null) {
+			return masterBatchStatusRepository.getFacilitiesByDistrict(stateId, facilityTypeId, DistrictId);
+	     } else if (facilityTypeId != null) {
+	    	 return masterBatchStatusRepository.getFacilitiesByStateAndType(stateId, facilityTypeId);
+		 } else if (DistrictId != null) {
+			return masterBatchStatusRepository.getFacilitiesByStateAndDistrict(stateId, DistrictId);
+		} else {
+			return masterBatchStatusRepository.getFacilitiesByState(stateId);
+		}
 	}
 }
