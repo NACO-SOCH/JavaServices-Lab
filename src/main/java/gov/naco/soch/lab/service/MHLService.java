@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -420,5 +421,31 @@ public class MHLService {
 		} else {
 			return masterBatchStatusRepository.getFacilitiesByState(stateId);
 		}
+	}
+	
+	public Stream<Object[]>getLoginReport(Date startDate, Date endDate) {
+	   return masterBatchStatusRepository.getLoginReport(startDate, endDate).stream();
+		
+		}
+	public Stream<Object[]>getLoginReportRole(Integer stateId, Date startDate, Date endDate) {
+		if (stateId == null) {
+			return masterBatchStatusRepository.getLoginReportRoleAll(startDate, endDate).stream();		   			
+			}
+		else {
+			return masterBatchStatusRepository.getLoginReportRole(stateId, startDate, endDate).stream();
+		}
+	}
+	
+	public Stream<Object[]>getLoginReportSacs(Date startDate, Date endDate) {
+		   return masterBatchStatusRepository.getLoginReportSacs(startDate, endDate).stream();
+			
+			}
+	
+	public Stream<Object[]>getFacilityLine(Integer stateId) {
+			return masterBatchStatusRepository.getFacilityLine(stateId).stream();
+		}
+	
+	public Stream<Object[]>getMasterLine(Integer stateId) {
+		return masterBatchStatusRepository.getMasterLine(stateId).stream();
 	}
 }
