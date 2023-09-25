@@ -448,4 +448,8 @@ public class MHLService {
 	public Stream<Object[]>getMasterLine(Integer stateId) {
 		return masterBatchStatusRepository.getMasterLine(stateId).stream();
 	}
+	
+	public Stream<Object[]>getdispensationReport(Integer facilityId, Date startDate, Date endDate) {
+		   return masterBatchStatusRepository.getdispensationReport(facilityId, startDate, endDate).stream();			
+	}
 }
