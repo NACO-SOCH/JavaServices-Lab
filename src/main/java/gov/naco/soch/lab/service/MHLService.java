@@ -79,7 +79,7 @@ public class MHLService {
 					resultDto = MHLMapper.mapLabTestSampleToResponseDto(labTestSample);
 					return responseManager(resultDto, "Success", false);
 				} else {
-					return responseManager(null, "Invalid data!", false);
+					return responseManager(null, "Invalid data!", false); 
 				}
 			} else {
 				return responseManager(null, "Authentication failed!", true);

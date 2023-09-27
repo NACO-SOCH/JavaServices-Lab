@@ -3,23 +3,37 @@ package gov.naco.soch.lab.service;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
 import gov.naco.soch.lab.dto.TestDetailsHeaderDto;
+import gov.naco.soch.lab.dto.TestResultDto;
+import gov.naco.soch.lab.dto.TestSamplesResponseDto;
 import gov.naco.soch.lab.dto.VlValueConstantsForLabDto;
+import gov.naco.soch.lab.mapper.TestResultMapper;
+import gov.naco.soch.lab.dto.NewRecordResultDto;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 import gov.naco.soch.lab.dto.TestDetailsBodyDto;
+import gov.naco.soch.dto.LoginResponseDto;
+import gov.naco.soch.entity.LabTestSample;
+import gov.naco.soch.enums.FacilityTypeEnum;
 import gov.naco.soch.lab.constants.VlResultTypeConstatnts;
 import gov.naco.soch.lab.controller.VlCd4TestDetailsGraphController;
 import gov.naco.soch.lab.dto.BeneficiaryTestDetailsDto;
@@ -27,6 +41,9 @@ import gov.naco.soch.lab.dto.TestDetailsAdheranceDto;
 import gov.naco.soch.projection.TestDetailsAdheranceProjection;
 import gov.naco.soch.projection.TestDetailsGraphBodyProjection;
 import gov.naco.soch.repository.TestDetailsGraphRepository;
+import gov.naco.soch.util.UserUtils;
+
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -169,6 +186,42 @@ public class TestDetailsGraphService {
 		}
 		return value;
 	}
+	
+	
+//	public TestSamplesResponseDto getRecordResultsList(Long labId, Integer pageNo, Integer pageSize) {
+//	    Pageable paging = PageRequest.of(pageNo, pageSize);
+//	    Page<LabTestSample> labTestSampleList = testDetailsGraphRepository.findSamplesToRecordResult(labId, paging);
+//
+//	    List<TestResultDto> testResultDtoList = labTestSampleList
+//	        .stream()
+//	        .map(TestResultMapper::mapToTestResultDto)
+//	        .collect(Collectors.toList());
+//
+//	    if (FacilityTypeEnum.VL_PUBLIC.getFacilityType().equals(UserUtils.getLoggedInUserDetails().getFacilityTypeId())) {
+//	        fetchVLTestCount(testResultDtoList);
+//	    }
+//
+//	    testResultDtoList.sort(Comparator.comparing(TestResultDto::getBatchId).reversed());
+//
+//	    return new TestSamplesResponseDto(pageNo, pageSize, testResultDtoList, labTestSampleList.getTotalElements());
+//	}
+	
+//	public Page<NewRecordResultDto> getRecordResultsList(Long labId, Integer pageNo, Integer pageSize) {
+//	    Pageable paging = PageRequest.of(pageNo, pageSize);
+//	    return testDetailsGraphRepository.findSamplesToRecordResult(labId, paging);
+//	}
+
+
+
+
+//	void fetchVLTestCount(List<TestResultDto> testResultDto) {
+//		if (!CollectionUtils.isEmpty(testResultDto)) {
+//			testResultDto.forEach(s -> {
+//				Long count = labTestSampleRepository.getVLTestCountOfBeneficiary(s.getBeneficiaryId());
+//				s.setVlTestCount(count);
+//			});
+//		}
+//	}
 	
 	
 //	public Stream<Object[]> getMPRData(Integer facility_id, Integer mpr_month, Integer mpr_year, Integer ictc_state_id) {

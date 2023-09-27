@@ -1,37 +1,24 @@
 package gov.naco.soch.lab.controller;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.ParseException;
-import java.util.Date;
-import java.util.List;
-import java.util.logging.Logger;
-import java.text.SimpleDateFormat;
 
-import org.ehcache.shadow.org.terracotta.offheapstore.paging.Page;
+import java.util.logging.Logger;
+import org.springframework.data.domain.Page;
+//import org.ehcache.shadow.org.terracotta.offheapstore.paging.Page;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.util.Streamable;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.mvc.method.annotation.StreamingResponseBody;
-import org.springframework.http.MediaType;
-
-import org.apache.poi.ss.usermodel.*;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import gov.naco.soch.lab.constants.LabAccessCodes;
 import gov.naco.soch.lab.dto.BeneficiaryTestDetailsDto;
+import gov.naco.soch.lab.service.NewRecordResultService;
 import gov.naco.soch.lab.service.TestDetailsGraphService;
-import java.util.ArrayList;
+import gov.naco.soch.lab.dto.NewRecordResultDto;
 @RestController
 @RequestMapping("/api")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
@@ -44,6 +31,9 @@ public class VlCd4TestDetailsGraphController {
 	@Autowired
 	private TestDetailsGraphService artBeneficiaryTestDetailsService;
 	
+	@Autowired
+	private NewRecordResultService newRecordResultService;
+	
 	@GetMapping("/testdetailsgraph/{beneficiaryId}/{facilityId}")
 	public ResponseEntity<BeneficiaryTestDetailsDto> getBeneficiaryTestDetails(
 			@PathVariable("beneficiaryId") Long beneficiaryId, @PathVariable("facilityId") Long facilityId) {
@@ -55,7 +45,8 @@ public class VlCd4TestDetailsGraphController {
 		}
 		return new ResponseEntity<BeneficiaryTestDetailsDto>(beneficiaryTestDetailsDto, HttpStatus.OK);
 	}
-	
+
+
 	
 //	@GetMapping("/ictcmpr")
 //	public ResponseEntity<byte[]> getTiMpr(
