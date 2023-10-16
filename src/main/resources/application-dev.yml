@@ -22,9 +22,9 @@ spring:
         poolName: Hikari
 logging:
    level:
-       root: error
-       org: error
-       gov: error
+       root: info
+       org: info
+       gov: info
 mhl:
   auth_key: c2285c7c4cdaf31f8486b35f171c643c
 accessKey: devkey@3

@@ -1,9 +1,11 @@
 package gov.naco.soch.lab.service;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +37,8 @@ import gov.naco.soch.entity.BeneficiaryFamilyDetail;
 import gov.naco.soch.entity.Facility;
 import gov.naco.soch.entity.IctcSampleCollection;
 import gov.naco.soch.entity.IctcTestResult;
+import gov.naco.soch.entity.LabRecordResults;
+import gov.naco.soch.entity.LabTest;
 import gov.naco.soch.entity.LabTestSample;
 import gov.naco.soch.entity.LabTestSampleBatch;
 import gov.naco.soch.entity.MasterBatchStatus;
@@ -46,19 +50,24 @@ import gov.naco.soch.entity.UserMaster;
 import gov.naco.soch.enums.FacilityTypeEnum;
 import gov.naco.soch.exception.ServiceException;
 import gov.naco.soch.lab.dto.RecordBatchResultDto;
+import gov.naco.soch.lab.dto.TestRecordResultDto;
 import gov.naco.soch.lab.dto.TestResultDto;
 import gov.naco.soch.lab.dto.TestSamplesResponseDto;
+import gov.naco.soch.lab.dto.TestSamplesResponseNewDTO;
 import gov.naco.soch.lab.mapper.AdvanceSearchMapperUtil;
 import gov.naco.soch.lab.mapper.TestResultMapper;
 import gov.naco.soch.repository.BeneficiaryFamilyDetailRepository;
 import gov.naco.soch.repository.IctcSampleCollectionRepository;
 import gov.naco.soch.repository.IctcTestResultRepository;
+import gov.naco.soch.repository.LabRecordResultRepository;
 import gov.naco.soch.repository.LabTestSampleRepository;
 import gov.naco.soch.repository.MasterBatchStatusRepository;
 import gov.naco.soch.repository.MasterInfantBreastFeedRepository;
 import gov.naco.soch.repository.MasterResultStatusRepository;
 import gov.naco.soch.repository.MasterResultTypeRepository;
 import gov.naco.soch.repository.MasterSampleStatusRepository;
+import gov.naco.soch.repository.PrisonResultRepository;
+import gov.naco.soch.repository.TestDetailsGraphRepository;
 import gov.naco.soch.repository.UserMasterRepository;
 import gov.naco.soch.util.UserUtils;
 
@@ -111,7 +120,13 @@ public class RecordResultsService {
 
 	@Autowired
 	private TestResultService testResultService;
-
+	
+	@Autowired
+	private LabRecordResultRepository labRecordResultRepository;
+	
+	@Autowired
+	private TestDetailsGraphRepository testDetailsGraphRepository;
+	
 	public TestSamplesResponseDto getRecordResultsList(Long labId, Integer pageNo, Integer pageSize) {
 
 		logger.debug("In getRecordResultsList() of RecordResultsService");
@@ -144,6 +159,71 @@ public class RecordResultsService {
 		return dto;
 	}
 
+
+//	public TestSamplesResponseNewDTO getRecordResultsList(Long labId, Integer pageNo, Integer pageSize) {
+//
+//		logger.debug("In getRecordResultsList() of RecordResultsService");
+//		logger.info("inside service class function");
+//		TestSamplesResponseNewDTO dto = new TestSamplesResponseNewDTO();
+//		Pageable paging = PageRequest.of(pageNo, pageSize);
+//
+//		List<TestRecordResultDto> testResultDto = new ArrayList<>();
+//		logger.info("Query run!!"+labRecordResultRepository.findSamplesToRecordResult(labId, paging));
+//		
+//
+//		List<LabTest> obj = labRecordResultRepository.findSamplesToRecordResult(labId, paging);
+//		logger.info("Query run!!"+ obj.toString());
+//		
+//		
+////		testResultDto = obj.stream().map(s -> TestResultMapper.mapToTestResultDto1(s))
+////		.collect(Collectors.toList());
+//		
+//		testResultDto = obj.stream()
+//			    .map(dto1 -> {
+//			    	TestRecordResultDto mapper = new TestRecordResultDto();
+//		        	try {
+////		        	important
+//		        	logger.info("CheckPoint1");
+//		        	//mapper.setLabId(dto1.getId());
+////		        	logger.info(""+dto1.getId());
+//		    		mapper.setBatchId(dto1.getBatchId());
+////		            mapper.setId(dto1.getId());
+////		            mapper.setCreatedBy(dto1.getCreatedBy());
+////		            mapper.setCreatedTime(dto1.getCreatedTime().toLocalDate());
+//		            logger.info("CheckPoint2");
+//		    		
+//		        	}catch(Exception ex) {
+//		        		ex.getMessage();
+//		        		logger.info(ex.getMessage());
+//		        		logger.info(""+ex.getStackTrace());
+//		        	}
+//		        	logger.info("CheckPoint3");
+//		            return mapper;
+//		        })
+//		        .collect(Collectors.toList());
+//
+//			LoginResponseDto currentUser = UserUtils.getLoggedInUserDetails();
+//			if (FacilityTypeEnum.VL_PUBLIC.getFacilityType().equals(currentUser.getFacilityTypeId())) {
+//				fetchVLTestCount1(testResultDto);
+//			}
+//
+//			if (FacilityTypeEnum.LABORATORY_EID.getFacilityType().equals(currentUser.getFacilityTypeId())) {
+////				fetchIctcInfantDetails(testResultDto);
+////				findPreviousDBSDetails(testResultDto);
+//			}
+//
+//			testResultDto = testResultDto.stream()
+//				    .sorted(Comparator.comparing(TestRecordResultDto::getBatchId).reversed())
+//				    .collect(Collectors.toList());
+//
+//			dto.setSamples(testResultDto);
+////			dto.setTotalCount(obj.getTotalElements());
+//		
+//		dto.setPageNumber(pageNo);
+//		dto.setCurrentCount(pageSize);
+//		return dto;
+//	}
+
 	void fetchVLTestCount(List<TestResultDto> testResultDto) {
 		if (!CollectionUtils.isEmpty(testResultDto)) {
 			testResultDto.forEach(s -> {
@@ -152,6 +232,19 @@ public class RecordResultsService {
 			});
 		}
 	}
+	
+	void fetchVLTestCount1(List<TestRecordResultDto> testResultDto) {
+		if (!CollectionUtils.isEmpty(testResultDto)) {
+			testResultDto.forEach(s -> {
+				Long count = labTestSampleRepository.getVLTestCountOfBeneficiary(s.getBeneficiaryId());
+//				s.setVlTestCount(count);
+			});
+		}
+	}
+	
+
+
+
 
 	public TestResultDto saveRecordResult(Long sampleId, TestResultDto labTestSampleDto) {
 
@@ -348,6 +441,9 @@ public class RecordResultsService {
 			}
 		}
 	}
+	
+	
+	
 
 	void findPreviousDBSDetails(List<TestResultDto> testDetails) {
 
@@ -376,6 +472,8 @@ public class RecordResultsService {
 			}
 		}
 	}
+	
+	
 
 	private void handleMHLFacilityTest(LabTestSample labTestSample, TestResultDto labTestSampleDto) {
 

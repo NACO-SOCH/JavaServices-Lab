@@ -130,7 +130,7 @@ public class TestResultService {
 		}else {
 		//}
 		//if (pageSize != null && pageNo != null) {
-			String sortColumn = "modifiedTime";
+			String sortColumn = "id";
 			if (sortBy.equalsIgnoreCase("bdn")) {
 				sortColumn = "b.bdnSerialNumber";
 			} else if (sortBy.equalsIgnoreCase("artcentre")) {

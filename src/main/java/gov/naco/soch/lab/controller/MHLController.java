@@ -1,5 +1,9 @@
 package gov.naco.soch.lab.controller;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.slf4j.Logger;
@@ -8,15 +12,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import gov.naco.soch.lab.dto.MHLBarcodeValidationDto;
 import gov.naco.soch.lab.dto.PatientLoadDto;
 import gov.naco.soch.lab.dto.RecordResultDto;
 import gov.naco.soch.lab.service.MHLService;
-
+import java.text.SimpleDateFormat;
+import java.text.ParseException;
+import org.springframework.http.HttpHeaders;
 /**
  * Controller class for managing MHL related APIs
  *
@@ -56,5 +64,38 @@ public class MHLController {
 		logger.debug("getVLPatientLoad() method returns with parameter {}", loadDetails);
 		return loadDetails;
 	}
+	
+	@GetMapping("/loginCount")
+	public ResponseEntity<List<Object[]>> getloginCount(
+		@RequestParam Integer stateId,
+	    @RequestParam String startDate,
+	    @RequestParam String endDate,
+	    @RequestParam Integer facilityId,
+	    @RequestParam Integer facilityTypeId,
+	    @RequestParam Integer DistrictId) throws ParseException {
+
+	    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+	    Date parsedStartDate = dateFormat.parse(startDate);
+	    Date parsedEndDate = dateFormat.parse(endDate);
+
+	    List<Object[]> allData = new ArrayList<>(mhlService.getLoginCount(stateId, parsedStartDate, parsedEndDate, facilityId, facilityTypeId, DistrictId));
+
+	    HttpHeaders headers = new HttpHeaders();
+	    headers.add("X-Total-Records", String.valueOf(allData.size()));
+
+	    return ResponseEntity.ok()
+	            .headers(headers)
+	            .body(allData);
+	}
+	
+	@GetMapping("facilities")
+    public ResponseEntity<List<Object[]>> getFacilities(
+            @RequestParam Long stateId,
+            @RequestParam Long facilityTypeId,
+            @RequestParam Long DistrictId
+    ) {
+        List<Object[]> facilities = mhlService.getFacilities(stateId, facilityTypeId, DistrictId);
+        return ResponseEntity.ok(facilities);
+    }
 
 }

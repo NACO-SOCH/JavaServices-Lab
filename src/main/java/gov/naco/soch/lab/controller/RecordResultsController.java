@@ -23,12 +23,13 @@ import gov.naco.soch.lab.constants.LabAccessCodes;
 import gov.naco.soch.lab.dto.RecordBatchResultDto;
 import gov.naco.soch.lab.dto.TestResultDto;
 import gov.naco.soch.lab.dto.TestSamplesResponseDto;
+import gov.naco.soch.lab.dto.TestSamplesResponseNewDTO;
 import gov.naco.soch.lab.service.RecordResultsService;
 
 @RestController
 @RequestMapping("/recordresults")
 @CrossOrigin(origins = "*", allowedHeaders = "*")
-public class RecordResultsController {
+public class RecordResultsController 	 {
 
 	private static final Logger logger = LoggerFactory.getLogger(RecordResultsController.class);
 
@@ -48,9 +49,10 @@ public class RecordResultsController {
 	@GetMapping("/list/{labId}")
 	@PreAuthorize("hasAuthority('" + LabAccessCodes.EIDLAB_RECORD_RESULTS + "') or hasAuthority('"
 			+ LabAccessCodes.VL_RECORD_RESULTS + "')")
-	public TestSamplesResponseDto getRecordResultsList(@PathVariable("labId") Long labId,
+	public TestSamplesResponseDto  getRecordResultsList(@PathVariable("labId") Long labId,
 			@RequestParam(defaultValue = "0") Integer pageNo, @RequestParam(defaultValue = "10") Integer pageSize) {
 		logger.debug("getRecordResultsList is invoked!");
+		logger.info("Function!");
 		return recordResultsService.getRecordResultsList(labId, pageNo, pageSize);
 	}
 

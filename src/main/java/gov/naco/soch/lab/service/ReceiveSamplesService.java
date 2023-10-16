@@ -40,6 +40,7 @@ import gov.naco.soch.entity.Test;
 import gov.naco.soch.entity.UserMaster;
 import gov.naco.soch.enums.FacilityTypeEnum;
 import gov.naco.soch.exception.ServiceException;
+import gov.naco.soch.lab.controller.RecieveSamplesController;
 import gov.naco.soch.lab.dto.LabTestSampleBatchDto;
 import gov.naco.soch.lab.dto.LabTestSampleDto;
 import gov.naco.soch.lab.dto.ReceiceSamplesResponseDto;
@@ -76,6 +77,7 @@ public class ReceiveSamplesService {
 	private static String REJECTED = "REJECTED";
 
 	private static String PARTIALLY_RECEIVED = "PARTIALLY RECEIVED";
+	
 
 	@Autowired
 	private LabTestSampleBatchRepository labTestSampleBatchRepository;
@@ -147,15 +149,17 @@ public class ReceiveSamplesService {
 
 		Page<LabTestReceiveBatchProjection> labTestSampleBatchList = labTestSampleBatchRepository
 				.findTestBatchesByLabId(labId, paging);
-
+		logger.info("inside fetchReceiveSamplesList");
 		if (labTestSampleBatchList.hasContent()) {
 
 			List<LabTestSampleBatchDto> labTestSampleBatchDtoList = new ArrayList<>();
 
 			List<Long> batchIds = labTestSampleBatchList.stream().map(l -> l.getBatchId()).collect(Collectors.toList());
 
+			logger.info("batchIds"+ batchIds);
 			List<LabTestReceiveBatchProjection> labTestSampleList = labTestSampleBatchRepository
 					.findTestSamplesInBatches(batchIds);
+			
 			Map<Long, List<LabTestReceiveBatchProjection>> labTestSampleMap = labTestSampleList.stream()
 					.collect(Collectors.groupingBy(LabTestReceiveBatchProjection::getBatchId));
 
@@ -171,6 +175,7 @@ public class ReceiveSamplesService {
 
 			List<Long> facilityIds = labTestSampleBatchDtoList.stream().map(l -> l.getArtcId()).filter(i -> i != null)
 					.distinct().collect(Collectors.toList());
+			logger.info("facilityIds"+ facilityIds);
 			List<FacilityProjection> facilityDetails = facilityRepository.findFacilityNameByIds(facilityIds);
 			Map<Long, String> facilityDetailsMap = facilityDetails.stream()
 					.collect(Collectors.toMap(FacilityProjection::getId, FacilityProjection::getName));
