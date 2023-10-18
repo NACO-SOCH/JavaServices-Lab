@@ -2,7 +2,6 @@ package gov.naco.soch.lab.service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -67,7 +66,8 @@ import gov.naco.soch.repository.MasterResultStatusRepository;
 import gov.naco.soch.repository.MasterSampleStatusRepository;
 import gov.naco.soch.repository.UserMasterRepository;
 import gov.naco.soch.util.UserUtils;
-
+import java.time.ZoneId;
+import java.util.Date;
 @Service
 @Transactional
 public class TestResultService {
@@ -120,7 +120,7 @@ public class TestResultService {
 	private Integer exportRecordsLimit;
 
 	public TestSamplesResponseDto fetchTestResultsList(Long labId, Integer pageNo, Integer pageSize , String sortBy, String sortType) {
-
+	    
 		logger.debug("In fetchTestResultsList() of TestResultService");
 
 		Pageable pageable = null;
@@ -163,7 +163,15 @@ public class TestResultService {
 		Pageable paging = PageRequest.of(pageNo, pageSize);
 
 		List<TestResultDto> testResultDto = new ArrayList<>();
+		
+		long startTime = System.currentTimeMillis();
+		
 		Page<LabTestSample> labTestSampleList = labTestSampleRepository.findSamplesTestResults(labId, pageable);
+		
+		long endTime1 = System.currentTimeMillis();
+		long duration = endTime1 - startTime;
+		logger.info("Time taken labTestSampleList: " + duration + " milliseconds");
+		
 		if (labTestSampleList.hasContent()) {
 			testResultDto = labTestSampleList.stream().map(s -> TestResultMapper.mapToTestResultDto(s))
 					.collect(Collectors.toList());
@@ -180,6 +188,11 @@ public class TestResultService {
 			dto.setSamples(testResultDto);
 			dto.setTotalCount(labTestSampleList.getTotalElements());
 		}
+		
+		long endTime2 = System.currentTimeMillis();
+		long duration1 = endTime2 - startTime;
+		logger.info("Time taken testresultDto : " + duration1 + " milliseconds");
+		
 		dto.setPageNumber(pageNo);
 		dto.setCurrentCount(pageSize);
 		return dto;
@@ -226,13 +239,13 @@ public class TestResultService {
 	}
 
 	public List<TestResultDto> approveTestResults(Long labInchargeId, List<TestResultDto> testResultList) {
-
+		logger.debug("In approveTestResults() of TestResultService");
 		Long facilityType = UserUtils.getLoggedInUserDetails().getFacilityTypeId();
 		LabTestSampleDto labTestSampleDto = new LabTestSampleDto();
 		System.out.println(labTestSampleDto.getResultApprovedDate());
-		
+		logger.debug("In approveTestResults() of TestResultService 1");
 		List<Long> idList = testResultList.stream().map(s -> s.getSampleId()).collect(Collectors.toList());
-
+		logger.debug("In approveTestResults() of TestResultService 2 ");
 		List<LabTestSample> labTestSampleList = labTestSampleRepository.findAllById(idList);
 
 		MasterSampleStatus masterSampleStatus = masterSampleStatusRepository.findByStatusAndIsDelete("RESULT POSTED",
@@ -240,7 +253,7 @@ public class TestResultService {
 
 		MasterResultStatus masterResultStatus = masterResultStatusRepository.findByStatusAndIsDelete("APPROVED",
 				Boolean.FALSE);
-
+		
 		UserMaster labIncharge = null;
 		Optional<UserMaster> labInchargeOpt = userMasterRepository.findById(labInchargeId);
 		if (labInchargeOpt.isPresent()) {
