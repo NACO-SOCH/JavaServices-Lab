@@ -3,23 +3,37 @@ package gov.naco.soch.lab.service;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
 
 import gov.naco.soch.lab.dto.TestDetailsHeaderDto;
+import gov.naco.soch.lab.dto.TestResultDto;
+import gov.naco.soch.lab.dto.TestSamplesResponseDto;
 import gov.naco.soch.lab.dto.VlValueConstantsForLabDto;
+import gov.naco.soch.lab.mapper.TestResultMapper;
+import gov.naco.soch.lab.dto.NewRecordResultDto;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 
 import gov.naco.soch.lab.dto.TestDetailsBodyDto;
+import gov.naco.soch.dto.LoginResponseDto;
+import gov.naco.soch.entity.LabTestSample;
+import gov.naco.soch.enums.FacilityTypeEnum;
 import gov.naco.soch.lab.constants.VlResultTypeConstatnts;
 import gov.naco.soch.lab.controller.VlCd4TestDetailsGraphController;
 import gov.naco.soch.lab.dto.BeneficiaryTestDetailsDto;
@@ -27,6 +41,9 @@ import gov.naco.soch.lab.dto.TestDetailsAdheranceDto;
 import gov.naco.soch.projection.TestDetailsAdheranceProjection;
 import gov.naco.soch.projection.TestDetailsGraphBodyProjection;
 import gov.naco.soch.repository.TestDetailsGraphRepository;
+import gov.naco.soch.util.UserUtils;
+
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -170,35 +187,96 @@ public class TestDetailsGraphService {
 		return value;
 	}
 	
-//	public List<Object[]> getMPRData(Integer facility_id , Integer mpr_month, Integer mpr_year, Integer ictc_state_id ) {
-// 		
-// 		if (facility_id == null && ictc_state_id == null ) {
-// 			logger.info("method 1");
-// 			List<Object[]>  obj =  testDetailsGraphRepository.getIctcMPRData(  mpr_month, mpr_year);
-// 			logger.info(obj.size()+"size");
-// 			return testDetailsGraphRepository.getIctcMPRData(  mpr_month, mpr_year);
-// 		}else if (facility_id != null ) {
-// 			logger.info("method 2");
-// 			return testDetailsGraphRepository.getIctcMPRDataName(  mpr_month, mpr_year, facility_id);
-// 		}else {
-// 			return testDetailsGraphRepository.getIctcMPRDatastate(mpr_month, mpr_year, ictc_state_id);
-// 		}
-//     }
 	
-	public Stream<Object[]> getMPRData(Integer facility_id, Integer mpr_month, Integer mpr_year, Integer ictc_state_id) {
+//	public TestSamplesResponseDto getRecordResultsList(Long labId, Integer pageNo, Integer pageSize) {
+//	    Pageable paging = PageRequest.of(pageNo, pageSize);
+//	    Page<LabTestSample> labTestSampleList = testDetailsGraphRepository.findSamplesToRecordResult(labId, paging);
+//
+//	    List<TestResultDto> testResultDtoList = labTestSampleList
+//	        .stream()
+//	        .map(TestResultMapper::mapToTestResultDto)
+//	        .collect(Collectors.toList());
+//
+//	    if (FacilityTypeEnum.VL_PUBLIC.getFacilityType().equals(UserUtils.getLoggedInUserDetails().getFacilityTypeId())) {
+//	        fetchVLTestCount(testResultDtoList);
+//	    }
+//
+//	    testResultDtoList.sort(Comparator.comparing(TestResultDto::getBatchId).reversed());
+//
+//	    return new TestSamplesResponseDto(pageNo, pageSize, testResultDtoList, labTestSampleList.getTotalElements());
+//	}
+	
+//	public Page<NewRecordResultDto> getRecordResultsList(Long labId, Integer pageNo, Integer pageSize) {
+//	    Pageable paging = PageRequest.of(pageNo, pageSize);
+//	    return testDetailsGraphRepository.findSamplesToRecordResult(labId, paging);
+//	}
 
-	    if (facility_id == null && ictc_state_id == null) {
-	        logger.info("method 1");
-	        return testDetailsGraphRepository.getIctcMPRData(mpr_month, mpr_year).stream();
-//	        logger.info(objStream.count() + " size");//
-//	        return objStream;
-	    } else if (facility_id != null) {
-	        logger.info("method 2");
-	        return testDetailsGraphRepository.getIctcMPRDataName(mpr_month, mpr_year, facility_id).stream();
-	    } else {
-	        return testDetailsGraphRepository.getIctcMPRDatastate(mpr_month, mpr_year, ictc_state_id).stream();
-	    }
-	}
 
 
+
+//	void fetchVLTestCount(List<TestResultDto> testResultDto) {
+//		if (!CollectionUtils.isEmpty(testResultDto)) {
+//			testResultDto.forEach(s -> {
+//				Long count = labTestSampleRepository.getVLTestCountOfBeneficiary(s.getBeneficiaryId());
+//				s.setVlTestCount(count);
+//			});
+//		}
+//	}
+	
+	
+//	public Stream<Object[]> getMPRData(Integer facility_id, Integer mpr_month, Integer mpr_year, Integer ictc_state_id) {
+//
+//	    if (facility_id == null && ictc_state_id == null) {
+//	        logger.info("method 1");
+//	        return testDetailsGraphRepository.getIctcMPRData(mpr_month, mpr_year).stream();
+//	    } else if (facility_id != null) {
+//	        logger.info("method 2");
+//	        return testDetailsGraphRepository.getIctcMPRDataName(mpr_month, mpr_year, facility_id).stream();
+//	    } else {
+//	        return testDetailsGraphRepository.getIctcMPRDatastate(mpr_month, mpr_year, ictc_state_id).stream();
+//	    }
+//	}
+//	
+//	
+//	public Stream<Object[]> getVLMPRData(Integer Lab_id, Integer mpr_month, Integer mpr_year, Integer state_id) {
+//
+//	    if (Lab_id == null && state_id == null) {
+//	        logger.info("method 1");
+//	        return testDetailsGraphRepository.getVLMPRData(mpr_month, mpr_year).stream();
+//	    } else if (Lab_id != null) {
+//	        logger.info("method 2");
+//	        return testDetailsGraphRepository.getVLMPRDataName(mpr_month, mpr_year, Lab_id).stream();
+//	    } else {
+//	        return testDetailsGraphRepository.getVLMPRDatastate(mpr_month, mpr_year, state_id).stream();
+//	    }
+//	}
+//	
+//	
+//	public Stream<Object[]> getCD4MPRData(Integer Lab_id, Integer mpr_month, Integer mpr_year, Integer state_id) {
+//
+//	    if (Lab_id == null && state_id == null) {
+//	        logger.info("method 1");
+//	        return testDetailsGraphRepository.getCD4MPRData(mpr_month, mpr_year).stream();
+//	    } else if (Lab_id != null) {
+//	        logger.info("method 2");
+//	        return testDetailsGraphRepository.getCD4MPRDataName(mpr_month, mpr_year, Lab_id).stream();
+//	    } else {
+//	    	logger.info("method 3");
+//	        return testDetailsGraphRepository.getCD4MPRDatastate(mpr_month, mpr_year, state_id).stream();
+//	    }
+//	}
+//	
+//	public Stream<Object[]> getEidMPRData(Integer Lab_id, Integer mpr_month, Integer mpr_year, Integer state_id) {
+//
+//	    if (Lab_id == null && state_id == null) {
+//	        logger.info("method 1");
+//	        return testDetailsGraphRepository.getEidMPRData(mpr_month, mpr_year).stream();
+//	    } else if (Lab_id != null) {
+//	        logger.info("method 2");
+//	        return testDetailsGraphRepository.getEidMPRDataName(mpr_month, mpr_year, Lab_id).stream();
+//	    } else {
+//	    	logger.info("method 3");
+//	        return testDetailsGraphRepository.getEidMPRDatastate(mpr_month, mpr_year, state_id).stream();
+//	    }
+//	} 
 }

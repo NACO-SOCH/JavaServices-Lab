@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
@@ -78,7 +79,7 @@ public class MHLService {
 					resultDto = MHLMapper.mapLabTestSampleToResponseDto(labTestSample);
 					return responseManager(resultDto, "Success", false);
 				} else {
-					return responseManager(null, "Invalid data!", false);
+					return responseManager(null, "Invalid data!", false); 
 				}
 			} else {
 				return responseManager(null, "Authentication failed!", true);
@@ -396,6 +397,7 @@ public class MHLService {
 		}
 		return PARTIALLY_RECEIVED;
 	}
+<<<<<<< HEAD
 	
 	public List<Object[]> getLoginCount(Integer stateId, Date startDate, Date endDate, Integer facilityId, Integer facilityTypeId, Integer DistrictId) {
 	    if (facilityId == null && facilityTypeId == null && DistrictId == null) {
@@ -430,5 +432,61 @@ public class MHLService {
 	    } else {
 	        return masterBatchStatusRepository.getFacilitiesByState(stateId);
 	    }
+=======
+	public List<Object[]>getLoginCount(Integer stateId, Date startDate, Date endDate, Integer facilityId, Integer facilityTypeId, Integer DistrictId) {
+		if (facilityId == null && facilityTypeId == null && DistrictId == null) {
+			return masterBatchStatusRepository.getLoginCount(stateId, startDate, endDate);
+		} else if (facilityId == null && facilityTypeId != null && DistrictId == null) {
+			return masterBatchStatusRepository.getLoginCountfac(stateId, startDate, endDate, facilityTypeId);
+		} else if (facilityId == null && facilityTypeId == null && DistrictId != null) {
+			return masterBatchStatusRepository.getLoginCountWithDistrict(stateId, startDate, endDate, DistrictId);
+		} else if (facilityId == null && facilityTypeId != null && DistrictId != null) {
+			return masterBatchStatusRepository.getLoginCountFacAndDistrict(stateId, startDate, endDate, facilityTypeId, DistrictId);
+		} else {
+			return masterBatchStatusRepository.getLoginCountallfac(stateId, startDate, endDate, facilityId, facilityTypeId, DistrictId);
+			}
+		}
+
+	public List<Object[]>getFacilities(Long stateId, Long facilityTypeId, Long DistrictId) {
+		if (DistrictId != null && facilityTypeId != null) {
+			return masterBatchStatusRepository.getFacilitiesByDistrict(stateId, facilityTypeId, DistrictId);
+	     } else if (facilityTypeId != null) {
+	    	 return masterBatchStatusRepository.getFacilitiesByStateAndType(stateId, facilityTypeId);
+		 } else if (DistrictId != null) {
+			return masterBatchStatusRepository.getFacilitiesByStateAndDistrict(stateId, DistrictId);
+		} else {
+			return masterBatchStatusRepository.getFacilitiesByState(stateId);
+		}
+	}
+	
+	public Stream<Object[]>getLoginReport(Date startDate, Date endDate) {
+	   return masterBatchStatusRepository.getLoginReport(startDate, endDate).stream();
+		
+		}
+	public Stream<Object[]>getLoginReportRole(Integer stateId, Date startDate, Date endDate) {
+		if (stateId == null) {
+			return masterBatchStatusRepository.getLoginReportRoleAll(startDate, endDate).stream();		   			
+			}
+		else {
+			return masterBatchStatusRepository.getLoginReportRole(stateId, startDate, endDate).stream();
+		}
+	}
+	
+	public Stream<Object[]>getLoginReportSacs(Date startDate, Date endDate) {
+		   return masterBatchStatusRepository.getLoginReportSacs(startDate, endDate).stream();
+			
+			}
+	
+	public Stream<Object[]>getFacilityLine(Integer stateId) {
+			return masterBatchStatusRepository.getFacilityLine(stateId).stream();
+		}
+	
+	public Stream<Object[]>getMasterLine(Integer stateId) {
+		return masterBatchStatusRepository.getMasterLine(stateId).stream();
+	}
+	
+	public Stream<Object[]>getdispensationReport(Integer facilityId, Date startDate, Date endDate) {
+		   return masterBatchStatusRepository.getdispensationReport(facilityId, startDate, endDate).stream();			
+>>>>>>> d24c73822b38325e281954ce4c24abfee2324ead
 	}
 }
