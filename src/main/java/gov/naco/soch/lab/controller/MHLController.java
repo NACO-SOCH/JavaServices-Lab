@@ -1,10 +1,5 @@
 package gov.naco.soch.lab.controller;
 
-<<<<<<< HEAD
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-=======
 
 import java.io.IOException;
 import java.io.ByteArrayOutputStream;
@@ -16,7 +11,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
->>>>>>> d24c73822b38325e281954ce4c24abfee2324ead
 
 import javax.validation.Valid;
 
@@ -44,9 +38,7 @@ import gov.naco.soch.lab.dto.MHLBarcodeValidationDto;
 import gov.naco.soch.lab.dto.PatientLoadDto;
 import gov.naco.soch.lab.dto.RecordResultDto;
 import gov.naco.soch.lab.service.MHLService;
-import java.text.SimpleDateFormat;
-import java.text.ParseException;
-import org.springframework.http.HttpHeaders;
+
 /**
  * Controller class for managing MHL related APIs
  *
@@ -110,8 +102,6 @@ public class MHLController {
 	            .body(allData);
 	}
 	
-<<<<<<< HEAD
-=======
 //	@GetMapping("/ComprehensiveloginReport")
 //	public ResponseEntity<List<Object[]>> getloginReport(
 //	    @RequestParam String startDate,
@@ -440,18 +430,12 @@ public class MHLController {
 	
 	
 	
->>>>>>> d24c73822b38325e281954ce4c24abfee2324ead
 	@GetMapping("facilities")
     public ResponseEntity<List<Object[]>> getFacilities(
             @RequestParam Long stateId,
             @RequestParam Long facilityTypeId,
             @RequestParam Long DistrictId
     ) {
-<<<<<<< HEAD
-        List<Object[]> facilities = mhlService.getFacilities(stateId, facilityTypeId, DistrictId);
-        return ResponseEntity.ok(facilities);
-    }
-=======
         List<Object[]> facilities = mhlService.getFacilities(stateId, facilityTypeId,DistrictId);
         return ResponseEntity.ok(facilities);
     }
@@ -600,6 +584,5 @@ public class MHLController {
 	            .body(outputStream.toByteArray());
 	}
 	
->>>>>>> d24c73822b38325e281954ce4c24abfee2324ead
 
 }
