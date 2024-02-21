@@ -45,6 +45,7 @@ public class RecieveSamplesController {
 		return receiveSamplesService.fetchReceiveSamplesList(labId, pageNo, pageSize);
 	}
 
+	//sun007
 	@PostMapping("/{batchId}")
 	@PreAuthorize("hasAuthority('" + LabAccessCodes.VL_RECIEVE_SAMPLES + "') or hasAuthority('"
 			+ LabAccessCodes.EIDLAB_RECEIVE_SAMPLES + "')")

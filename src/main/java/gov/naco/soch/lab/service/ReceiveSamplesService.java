@@ -304,12 +304,14 @@ public class ReceiveSamplesService {
 				String batchStatus = findBatchStatus(labTestSampleBatch.getLabTestSamples());
 				MasterBatchStatus masterBatchStatus = masterBatchStatusRepository.findByStatusAndIsDelete(batchStatus,
 						Boolean.FALSE);
+				logger.info(	masterBatchStatus.getId() + "307");
 				if (masterBatchStatus != null) {
 					labTestSampleBatch.setMasterBatchStatus(masterBatchStatus);
 				}
 			}
 
 			LabTestSampleBatch labTestSampleBatchSaved = labTestSampleBatchRepository.save(labTestSampleBatch);
+			logger.info(	labTestSampleBatchSaved.getId() + "313");
 			updateIctc(labTestSampleBatchSaved);
 			return ReceiveSamplesServiceMapperUtil.mapToLabTestSampleBatchDto(labTestSampleBatchSaved);
 		} else {
@@ -351,6 +353,7 @@ public class ReceiveSamplesService {
 
 			List<String> barcodes = labTestSampleBatch.getLabTestSamples().stream().map(s -> s.getBarcodeNumber())
 					.collect(Collectors.toList());
+			logger.info(barcodes.get(0)+"barcodes");
 			if (!CollectionUtils.isEmpty(barcodes)) {
 
 				List<IctcSampleCollection> samples = ictcSampleCollectionRepository.findBySampleBatchBarcodes(barcodes);
@@ -373,6 +376,8 @@ public class ReceiveSamplesService {
 								s.setSampleCollectionStatus(6L);
 							}
 							s.setSampleReceivedDate(labSampleOpt.get().getSampleReceivedDate());
+							logger.info("id"+labTestSampleBatch.getMasterBatchStatus().getId());
+							//2
 							s.getBatch().setBatchStatus(labTestSampleBatch.getMasterBatchStatus().getId());
 						}
 					});
